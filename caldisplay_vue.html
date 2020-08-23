@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Test</title>
+</head>
+<body>
+	<h1>Loading calendar data with VueJS</h1>
+	<p>This kind of page might be in an iframe.  It loads a JSON document
+	and displays information in it</p>
+    <div id="app">
+        <h3>Fetched {{info.data.length}} competitions</h3>
+        <div v-for="comp in info.data">{{comp.date}}: {{comp.full_name}}: {{comp.country}}</div>
+        
+    </div>
+    <!-- production version, optimized for size and speed -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+    	new Vue({
+              el: '#app',
+              data () {
+                return {
+                  info: null
+                }
+              },
+              mounted () {
+                axios
+                  .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                  .then(response => (this.info = response))
+              }
+            })
+    </script>
+</body>
+</html>
