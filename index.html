@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Test</title>
+</head>
+<body>
+	<h1>Loading calendar data</h1>
+	<p>This kind of page might be in an iframe.  It loads a JSON document
+	and displays information in it</p>
+    <div id="myData"></div>
+    <script>
+    	const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    	const url = "https://file.opentrack.run/live/euroath/european_calendar_2020.json"
+        fetch(proxyurl + url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+        function appendData(data) {
+            var mainContainer = document.getElementById("myData");
+            var div = document.createElement("h3");
+            div.innerHTML = 'Fetched ' + data.length + ' competitions';
+            mainContainer.appendChild(div);
+
+            for (var i = 0; i < data.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = data[i].country + ': ' + data[i].date + ' : ' + data[i].full_name;
+                mainContainer.appendChild(div);
+            }
+        }
+    </script>
+</body>
+</html>
