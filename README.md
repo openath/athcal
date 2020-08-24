@@ -7,8 +7,8 @@ web sites - such as clubs.
 
 ## Examples
 
-[VueJS calendar with clickable months](https://htmlpreview.github.io/?https://github.com/openath/athcal/caldisplay_vue.html)
-[Vanilla JS calendar ](https://htmlpreview.github.io/?https://github.com/openath/athcal/caldisplay_vanilla.html) (unstyled)
+[VueJS calendar with clickable months](https://opentrack.run/athcal/caldisplay_vue.html)
+[Vanilla JS calendar ](https://opentrack.run/athcal/caldisplay_vanilla.html) (unstyled)
 
 
 ## sample data
