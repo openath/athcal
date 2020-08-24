@@ -13,7 +13,9 @@ Current examples:
 
  - [Vanilla JS calendar ](https://opentrack.run/athcal/caldisplay_vanilla.html) (unstyled)
 
-*A version of this repo is published by Github Pages under https://opentrack.run/athcal/ so you can always click links to something in the repo, and see it in your browser.*
+ - VueJS calendar [within an iframe in another page](https://opentrack.run/athcal/iframed.html)
+
+*A version of this repo is published by Github Pages under https://opentrack.run/athcal/ so you can always click links to something in the repo, and see it in your browser, if it works raw.  To see output of build or compile processes, I need someone a bit smarter with npm, travis etc.*
 
 ## sample data
 
