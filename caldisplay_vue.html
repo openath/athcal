@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,33 +6,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JSON Test</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
 </head>
 <body>
 	<h1>Loading calendar data with VueJS</h1>
 	<p>This kind of page might be in an iframe.  It loads a JSON document
-	and displays information in it</p>
+    and displays information in it</p>
+    
     <div id="app">
-        <h3>Fetched {{info.data.length}} competitions</h3>
-        <div v-for="comp in info.data">{{comp.date}}: {{comp.full_name}}: {{comp.country}}</div>
-        
+        <div class="container-fluid mb-5">
+            <div id="months" class="row">
+                <div v-html="getMonthData(1)" v-on:click="applyDateFilter(1)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(2)" v-on:click="applyDateFilter(2)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(3)" v-on:click="applyDateFilter(3)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(4)" v-on:click="applyDateFilter(4)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(5)" v-on:click="applyDateFilter(5)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(6)" v-on:click="applyDateFilter(6)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(7)" v-on:click="applyDateFilter(7)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(8)" v-on:click="applyDateFilter(8)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(9)" v-on:click="applyDateFilter(9)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(10)" v-on:click="applyDateFilter(10)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(11)" v-on:click="applyDateFilter(11)" class="col-md-1 text-center border p-3"></div>
+                <div v-html="getMonthData(12)" v-on:click="applyDateFilter(12)" class="col-md-1 text-center border p-3"></div>
+            </div>
+        </div>
+        <div class="container">
+            <h3>Fetched {{info.data.length}} competitions</h3>
+
+            <table class="table">
+                <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Country</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="filteredCompetitions.length == 0">
+                        <td>No competitions</td>
+                    </tr>
+                    <tr v-for="comp in filteredCompetitions" :key="comp.id">
+                        <td>{{comp.date}}</td>
+                        <td>{{comp.full_name}}</td>
+                        <td>{{comp.country}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <!-- production version, optimized for size and speed -->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-    	new Vue({
-              el: '#app',
-              data () {
+
+        var app = new Vue({
+            el: '#app',
+              data() {
                 return {
-                  info: null
+                  info: null,
+                  filteredCompetitions: null,
+                  selectedMonth: null,
+                  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 }
               },
-              mounted () {
+            methods:{
+                applyDateFilter: function(month) {
+                    this.selectedMonth = this.months[month-1];
+                    this.filteredCompetitions = this.filteredComps(month);
+
+
+                    var calMonths = document.getElementById('months');
+                    Array.from(calMonths.children).forEach(mon => mon.classList.remove("bg-primary", "text-white"));
+
+                    var clickedMonth = calMonths.children[month-1];
+                    clickedMonth.classList.add("bg-primary", "text-white");
+                },
+                getMonthData: function(month) {
+                    var data = this.filteredComps(month);
+                    var html = `${this.months[month-1]} <b>(${data.length})</b>`;
+                    return html;
+                },
+                filteredComps: function (month) {
+                    // Make it suitable for string
+                    var StringValue = String(month).padStart(2, '0')
+                    if (month) {
+                        return this.info.data
+                        .filter((item)=>{
+                            return item.date.match(`2020-${StringValue}`);
+                        })
+                    }else {
+                        return this.info.data;
+                    }
+                }
+              },
+            mounted() {
                 axios
-                  .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
-                  .then(response => (this.info = response))
+                    .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                    .then(response => {
+                      this.info = response;
+                      this.filteredCompetitions = this.filteredComps(null);
+                    })
               }
-            })
+        })
     </script>
 </body>
 </html>
