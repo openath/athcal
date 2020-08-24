@@ -5,6 +5,11 @@ This project will contain some pure front-end components to display competition 
 The idea is to produce pages suitable for inclusion with iframes, or as web components, in other
 web sites - such as clubs. 
 
+## Examples
+
+[VueJS calendar with clickable months](https://htmlpreview.github.io/?https://github.com/openath/athcal/caldisplay_vue.html)
+[Vanilla JS calendar ](https://htmlpreview.github.io/?https://github.com/openath/athcal/caldisplay_vanilla.html) (unstyled)
+
 
 ## sample data
 
