@@ -4,38 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>JSON Test</title>
+    <title>Athletics Calendars</title>
 </head>
 <body>
-	<h1>Loading calendar data</h1>
-	<p>This kind of page might be in an iframe.  It loads a JSON document
-	and displays information in it</p>
-    <div id="myData"></div>
-    <script>
-    	const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    	const url = "https://file.opentrack.run/live/euroath/european_calendar_2020.json"
-        fetch(proxyurl + url)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                appendData(data);
-            })
-            .catch(function (err) {
-                console.log('error: ' + err);
-            });
-        function appendData(data) {
-            var mainContainer = document.getElementById("myData");
-            var div = document.createElement("h3");
-            div.innerHTML = 'Fetched ' + data.length + ' competitions';
-            mainContainer.appendChild(div);
+	<h1>Experiments loading calendar data</h1>
+    <p>This project has a few experiments at displaying static JSON data
+    in web pages. I am deliberately using NO FORMATTING at this stage, unless it's bundled
+    with the example, as this is about how we should do Javascript</p>
 
-            for (var i = 0; i < data.length; i++) {
-                var div = document.createElement("div");
-                div.innerHTML = data[i].country + ': ' + data[i].date + ' : ' + data[i].full_name;
-                mainContainer.appendChild(div);
-            }
-        }
-    </script>
+
+    <p>Three pages below use different Javascipt approaches.  They all load 
+        <a href="">this json file</a> from an Amazon S3 bucket, fronted by
+    Amazon Cloudfront in a CORS-friendly way, so hopefully could take
+    web scale loads, and they will still work if our server is down or restarting.</p>
+
+    <ul>
+        <li><a href="caldisplay_vanilla.html">Here</a>, using <a href="http://vanilla-js.com/">handwritten vanilla Javascript</a>,
+        <li><a href="caldisplay_svelte.html">Here</a>, using <a href="http://svelte.dev">Svelte</a> which compiles to vanilla Javascript, and
+        <li><a href="caldisplay_vue.html">Here</a>, using <a href="http://vuejs.org">VueJS</a>, OpenTrack's usual framework 
+    </ul>
+    
 </body>
 </html>

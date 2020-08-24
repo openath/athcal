@@ -7,9 +7,13 @@ web sites - such as clubs.
 
 ## Examples
 
-[VueJS calendar with clickable months](https://opentrack.run/athcal/caldisplay_vue.html)
-[Vanilla JS calendar ](https://opentrack.run/athcal/caldisplay_vanilla.html) (unstyled)
+Current examples:
 
+ - [VueJS calendar with clickable months](https://opentrack.run/athcal/caldisplay_vue.html)
+
+ - [Vanilla JS calendar ](https://opentrack.run/athcal/caldisplay_vanilla.html) (unstyled)
+
+*A version of this repo is published by Github Pages under https://opentrack.run/athcal/ so you can always click links to something in the repo, and see it in your browser.*
 
 ## sample data
 
