@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app" style="font-family: roboto;">
+
+        <!-- Competition Cards -->
+        <v-card max-width="344" v-for="competition in competitions" style="margin-bottom: 20px;">
+
+            <!-- Header Text -->
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
+                    <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
+                    </v-list-item-subtitle>
+                </v-list-item-content>
+            </v-list-item>
+
+            <!-- Displays description if there is one -->
+            <template v-if="competition.basic_description">
+                <v-card-title>Description</v-card-title>
+                <v-card-text>{{ competition.basic_description }}</v-card-text>
+            </template>
+
+
+            <!-- Action Buttons -->
+            <v-card-actions>
+                <v-btn v-if="competition.entry_link" text color="deep-purple accent-4" :href="competition.entry_link">
+                    Register
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+
+    </div>
+
+    <!-- production version of Vue 2 and Vuetify -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+    <!-- Axios - Library to pull in JSON data -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data() {
+                return {
+                    competitions: [],
+                    filteredCompetitions: null,
+                    selectedMonth: null,
+                    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+                        'September', 'October', 'November', 'December'
+                    ],
+                }
+            },
+            mounted() {
+                axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                    .then(response => {
+                        this.competitions = response.data;
+                    })
+            },
+            methods: {
+                competitonDateFormatter(competition) {
+                    if (competition.date == competition.finish_date) {
+                        return competition.date
+                    } else {
+                        return competition.date + " - " + competition.finish_date
+                    }
+                },
+                applyDateFilter: function (month) {
+                    this.selectedMonth = this.months[month - 1];
+                    this.filteredCompetitions = this.filteredComps(month);
+
+
+                    var calMonths = document.getElementById('months');
+                    Array.from(calMonths.children).forEach(mon => mon.classList.remove("bg-primary",
+                        "text-white"));
+
+                    var clickedMonth = calMonths.children[month - 1];
+                    clickedMonth.classList.add("bg-primary", "text-white");
+                },
+                getMonthData: function (month) {
+                    var data = this.filteredComps(month);
+                    var html = `${this.months[month-1]} <b>(${data.length})</b>`;
+                    return html;
+                },
+                filteredComps: function (month) {
+                    // Make it suitable for string
+                    var StringValue = String(month).padStart(2, '0')
+                    if (month) {
+                        return this.info.data
+                            .filter((item) => {
+                                return item.date.match(`2020-${StringValue}`);
+                            })
+                    } else {
+                        return this.info.data;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
