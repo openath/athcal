@@ -9,7 +9,27 @@
 </head>
 
 <body>
-    <div id="app" style="font-family: roboto;">
+    <v-app id="app" style="font-family: roboto;">
+
+        <!-- Filter Container -->
+        <v-container fluid>
+            <!-- Filters Axios Search -->
+            <v-row align="center">
+                <v-col class="d-flex" cols="12" sm="6">
+                    <v-select :items="months" label="Month" outlined></v-select>
+                </v-col>
+            </v-row>
+
+            <!-- Filters the search results -->
+            <v-row align="center">
+                <v-col class="d-flex" cols="12" sm="6">
+                    <v-select label="Sort By" outlined></v-select>
+                </v-col>
+                <v-col class="d-flex" cols="12" sm="6">
+                    <v-select label="Order By" outlined></v-select>
+                </v-col>
+            </v-row>
+        </v-container>
 
         <!-- Competition Cards -->
         <v-card max-width="344" v-for="competition in competitions" style="margin-bottom: 20px;">
@@ -38,7 +58,7 @@
             </v-card-actions>
         </v-card>
 
-    </div>
+    </v-app>
 
     <!-- production version of Vue 2 and Vuetify -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
@@ -54,11 +74,8 @@
             data() {
                 return {
                     competitions: [],
-                    filteredCompetitions: null,
-                    selectedMonth: null,
                     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-                        'September', 'October', 'November', 'December'
-                    ],
+                        'September', 'October', 'November', 'December'],
                 }
             },
             mounted() {
@@ -73,35 +90,6 @@
                         return competition.date
                     } else {
                         return competition.date + " - " + competition.finish_date
-                    }
-                },
-                applyDateFilter: function (month) {
-                    this.selectedMonth = this.months[month - 1];
-                    this.filteredCompetitions = this.filteredComps(month);
-
-
-                    var calMonths = document.getElementById('months');
-                    Array.from(calMonths.children).forEach(mon => mon.classList.remove("bg-primary",
-                        "text-white"));
-
-                    var clickedMonth = calMonths.children[month - 1];
-                    clickedMonth.classList.add("bg-primary", "text-white");
-                },
-                getMonthData: function (month) {
-                    var data = this.filteredComps(month);
-                    var html = `${this.months[month-1]} <b>(${data.length})</b>`;
-                    return html;
-                },
-                filteredComps: function (month) {
-                    // Make it suitable for string
-                    var StringValue = String(month).padStart(2, '0')
-                    if (month) {
-                        return this.info.data
-                            .filter((item) => {
-                                return item.date.match(`2020-${StringValue}`);
-                            })
-                    } else {
-                        return this.info.data;
                     }
                 }
             }
