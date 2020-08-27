@@ -17,10 +17,10 @@
                 <!-- Filters the search results -->
                 <v-row align="center">
                     <v-col class="d-flex" cols="12" sm="4">
-                        <v-select :items="months" label="Month" outlined></v-select>
+                        <v-select :items="months" label="Month" v-model="currentMonth" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex" cols="12" sm="4">
-                        <v-select :items="countries" label="Country" outlined></v-select>
+                        <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex" cols="12" sm="4">
                         <v-select label="Sort By" outlined></v-select>
@@ -28,23 +28,12 @@
                 </v-row>
             </v-container>
         </div>
-
-        <!-- Current Month Title -->
-        <div class="d-flex">
-            <v-container fluid>
-                <v-row align="center">
-                    <v-col cols="12">
-                        <h1>{{ currentMonth }}</h1>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </div>
         <v-divider></v-divider>
 
         <!-- Competition Cards -->
-        <div class="d-flex" style="height: 100%; overflow-y: auto; flex-direction: row; flex-wrap: wrap;">
-            <v-card max-width="344" v-for="competition in competitions"
-                style="max-width: 344px; margin: 10px; min-width: 344px;">
+        <div class="d-flex" style="height: 100%; overflow-y: auto; flex-direction: row; flex-wrap: wrap; align-content: flex-start;">
+            <v-card max-width="344" v-for="competition in filteredCompetitions"
+                style="max-width: 344px; margin: 10px; min-width: 344px; height: fit-content;">
 
                 <!-- Header Text -->
                 <v-list-item>
@@ -91,15 +80,33 @@
     <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
 
     <script>
+        // The select all value for the selectors.
+        const allSelectOption = "1: Select All"
+
         new Vue({
             el: '#app',
             vuetify: new Vuetify(),
             data() {
                 return {
                     competitions: [],
-                    currentMonth: null,
-                    months: [],
-                    countries: []
+                    currentMonth: allSelectOption,
+                    months: [allSelectOption],
+                    currentCountry: allSelectOption,
+                    countries: [allSelectOption]
+                }
+            },
+            computed: {
+                filteredCompetitions() {
+                    return this.competitions.filter(competition => {
+                        // If the compeititon is in the currently selected month.
+                        if (this.currentMonth == allSelectOption || moment(competition.date).format("MMMM YYYY") == this.currentMonth) {
+                            // If the competiton is in the currently selected country.
+                            if (this.currentCountry == allSelectOption || competition.country == this.currentCountry) {
+                                return true
+                            }
+                        }
+                        return false
+                    })
                 }
             },
             created() {
@@ -110,6 +117,9 @@
 
                         // Sets the current month.
                         this.currentMonth = moment().format("MMMM YYYY")
+                        if (!this.months.includes(this.currentMonth)) {
+                            this.months.push(this.currentMonth)
+                        }
 
                         // Adds all the available months and countries from list.
                         this.competitions.forEach(competition => {
