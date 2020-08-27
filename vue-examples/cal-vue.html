@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%; overflow: hidden;">
 
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
@@ -8,55 +8,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 </head>
 
-<body>
-    <v-app id="app" style="font-family: roboto;">
+<body style="height: 100%;">
+    <v-app id="app" style="font-family: roboto; height: 100%;">
 
         <!-- Filter Container -->
-        <v-container fluid>
-            <!-- Filters Axios Search -->
-            <v-row align="center">
-                <v-col class="d-flex" cols="12" sm="6">
-                    <v-select :items="months" label="Month" outlined></v-select>
-                </v-col>
-            </v-row>
+        <div class="d-flex">
+            <v-container fluid>
+                <!-- Filters the search results -->
+                <v-row align="center">
+                    <v-col class="d-flex" cols="12" sm="4">
+                        <v-select :items="months" label="Month" outlined></v-select>
+                    </v-col>
+                    <v-col class="d-flex" cols="12" sm="4">
+                        <v-select :items="countries" label="Country" outlined></v-select>
+                    </v-col>
+                    <v-col class="d-flex" cols="12" sm="4">
+                        <v-select label="Sort By" outlined></v-select>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </div>
 
-            <!-- Filters the search results -->
-            <v-row align="center">
-                <v-col class="d-flex" cols="12" sm="6">
-                    <v-select label="Sort By" outlined></v-select>
-                </v-col>
-                <v-col class="d-flex" cols="12" sm="6">
-                    <v-select label="Order By" outlined></v-select>
-                </v-col>
-            </v-row>
-        </v-container>
+        <!-- Current Month Title -->
+        <div class="d-flex">
+            <v-container fluid>
+                <v-row align="center">
+                    <v-col cols="12">
+                        <h1>{{ currentMonth }}</h1>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </div>
+        <v-divider></v-divider>
 
         <!-- Competition Cards -->
-        <v-card max-width="344" v-for="competition in competitions" style="margin-bottom: 20px;">
+        <div class="d-flex" style="height: 100%; overflow-y: auto; flex-direction: row; flex-wrap: wrap;">
+            <v-card max-width="344" v-for="competition in competitions"
+                style="max-width: 344px; margin: 10px; min-width: 344px;">
 
-            <!-- Header Text -->
-            <v-list-item>
-                <v-list-item-content>
-                    <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
-                    <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
-                    </v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
+                <!-- Header Text -->
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
+                        <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
 
-            <!-- Displays description if there is one -->
-            <template v-if="competition.basic_description">
-                <v-card-title>Description</v-card-title>
-                <v-card-text>{{ competition.basic_description }}</v-card-text>
-            </template>
+                <!-- Action Buttons -->
+                <v-card-actions>
+                    <!-- Register Button -->
+                    <v-btn :disabled="!competition.entry_link" :color="styleRegisterButton(competition)"
+                        :href="competition.entry_link" text>
+                        Register
+                    </v-btn>
 
+                    <v-spacer></v-spacer>
 
-            <!-- Action Buttons -->
-            <v-card-actions>
-                <v-btn v-if="competition.entry_link" text color="deep-purple accent-4" :href="competition.entry_link">
-                    Register
-                </v-btn>
-            </v-card-actions>
-        </v-card>
+                    <!-- Contact Button -->
+                    <v-tooltip bottom v-if="competition.contact_details">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn icon v-bind="attrs" v-on="on">
+                                <v-icon>mdi-contacts</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ competition.contact_details }}</span>
+                    </v-tooltip>
+                </v-card-actions>
+            </v-card>
+        </div>
 
     </v-app>
 
@@ -67,6 +87,9 @@
     <!-- Axios - Library to pull in JSON data -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+    <!-- Moment.js  - Library to work with date and time -->
+    <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
+
     <script>
         new Vue({
             el: '#app',
@@ -74,23 +97,61 @@
             data() {
                 return {
                     competitions: [],
-                    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-                        'September', 'October', 'November', 'December'],
+                    currentMonth: null,
+                    months: [],
+                    countries: []
                 }
             },
-            mounted() {
+            created() {
+                // Gathers all the competition data before the DOM is mounted.
                 axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
                     .then(response => {
-                        this.competitions = response.data;
+                        this.competitions = response.data
+
+                        // Sets the current month.
+                        this.currentMonth = moment().format("MMMM YYYY")
+
+                        // Adds all the available months and countries from list.
+                        this.competitions.forEach(competition => {
+                            // Adds available months.
+                            var month = moment(competition.date).format("MMMM YYYY")
+                            if (!this.months.includes(month)) {
+                                this.months.push(month)
+                            }
+
+                            // Adds available countries.
+                            if (!this.countries.includes(competition.country)) {
+                                this.countries.push(competition.country)
+                            }
+                        })
+                    })
+                    .catch(error => {
+                        // TODO: Add catch clause.
                     })
             },
             methods: {
+                /**
+                 * Takes a competition date and formats it into something
+                 * more readable. If the start date and end date are different
+                 * then both will be returned.
+                 */
                 competitonDateFormatter(competition) {
                     if (competition.date == competition.finish_date) {
-                        return competition.date
+                        return moment(competition.date).format("MMM Do YYYY")
                     } else {
-                        return competition.date + " - " + competition.finish_date
+                        return moment(competition.date).format("MMM Do YYYY") +
+                            " - " + moment(competition.finish_date).format("MMM Do YYYY")
                     }
+                },
+                /**
+                 * Styles the 'Register' button based on if an entry link
+                 * has been provided.
+                 */
+                styleRegisterButton(competition) {
+                    if (competition.entry_link) {
+                        return "green accent-4"
+                    }
+                    return "red accent-4"
                 }
             }
         })
