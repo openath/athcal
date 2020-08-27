@@ -84,7 +84,7 @@
                         <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex select-container" cols="12" sm="4">
-                        <v-select label="Sort By" outlined></v-select>
+                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort" @change="updateSort($event, filteredCompetitions)" outlined></v-select>
                     </v-col>
                 </v-row>
             </v-container>
@@ -171,12 +171,23 @@
                     currentMonth: allSelectOption,
                     months: [allSelectOption],
                     currentCountry: allSelectOption,
-                    countries: [allSelectOption]
+                    countries: [allSelectOption],
+                    currentSort: 1,
+                    sortOptions: [{
+                            text: "Months - Ascending",
+                            value: 1,
+                        },
+                        {
+                            text: "Months - Descending",
+                            value: 2,
+                        }
+                    ]
                 }
             },
             computed: {
                 filteredCompetitions() {
-                    return this.competitions.filter(competition => {
+                    // Filters it to a temp array.
+                    var temp = this.competitions.filter(competition => {
                         // If the compeititon is in the currently selected month.
                         if (this.currentMonth == allSelectOption || moment(competition.date).format(
                                 "MMMM YYYY") == this.currentMonth) {
@@ -188,6 +199,10 @@
                         }
                         return false
                     })
+
+                    // Sorts the temp array and returns it.
+                    this.updateSort(this.currentSort, temp)
+                    return temp
                 }
             },
             created() {
@@ -235,6 +250,36 @@
                     } else {
                         return moment(competition.date).format("MMM Do YYYY") +
                             " - " + moment(competition.finish_date).format("MMM Do YYYY")
+                    }
+                },
+                /**
+                 * This function is run everytime the sort by select item is changed.
+                 * It sorts the provided list of competitions.
+                 */
+                updateSort(itemValue, competitions) {
+                    // Months - Ascending
+                    if (itemValue == 1) {
+                        competitions.sort(function (x, y) {
+                            if (moment(x.date).isBefore(y.date)) {
+                                return -1
+                            }
+                            if (moment(x.date).isAfter(y.date)) {
+                                return 1
+                            }
+                            return 0
+                        })
+
+                    // Months - Descending
+                    } else if (itemValue == 2) {
+                        competitions.sort(function (x, y) {
+                            if (moment(y.date).isBefore(x.date)) {
+                                return -1
+                            }
+                            if (moment(y.date).isAfter(x.date)) {
+                                return 1
+                            }
+                            return 0
+                        })
                     }
                 }
             }
