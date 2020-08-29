@@ -84,7 +84,8 @@
                         <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort" @change="updateSort($event, filteredCompetitions)" outlined></v-select>
+                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort"
+                            @change="updateSort($event, filteredCompetitions)" outlined></v-select>
                     </v-col>
                 </v-row>
             </v-container>
@@ -131,7 +132,7 @@
                     <!-- Contact Button -->
                     <v-tooltip bottom v-if="competition.contact_details">
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn icon v-bind="attrs" v-on="on">
+                            <v-btn icon v-bind="attrs" v-on="on" @click="copyContactToClipboard(competition)">
                                 <v-icon>mdi-contacts</v-icon>
                             </v-btn>
                         </template>
@@ -144,6 +145,11 @@
             <div v-if="filteredCompetitions.length == 0" class="no-comp-container">
                 <p>No Competitions found!</p>
             </div>
+
+            <!-- Global Snackbar -->
+            <v-snackbar v-model="snackbar" timeout=2000>
+                Contact information copied to clipboard.
+            </v-snackbar>
         </div>
 
     </v-app>
@@ -181,7 +187,8 @@
                             text: "Months - Descending",
                             value: 2,
                         }
-                    ]
+                    ],
+                    snackbar: false
                 }
             },
             computed: {
@@ -269,7 +276,7 @@
                             return 0
                         })
 
-                    // Months - Descending
+                        // Months - Descending
                     } else if (itemValue == 2) {
                         competitions.sort(function (x, y) {
                             if (moment(y.date).isBefore(x.date)) {
@@ -281,6 +288,19 @@
                             return 0
                         })
                     }
+                },
+                /**
+                 * Copies the competition contact information to the clipboard.
+                 * Then displays a snackbar to tell the user something has happened.
+                 */
+                copyContactToClipboard(competition) {
+                    navigator.clipboard.writeText(competition.contact_details)
+                        .then(() => {
+                            // Makes the snackbar visible.
+                            this.snackbar = true
+                        }).catch(error => {
+                            console.error(error)
+                        })
                 }
             }
         })
