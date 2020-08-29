@@ -77,13 +77,13 @@
             <v-container fluid class="filter-container">
                 <!-- Filters the search results -->
                 <v-row align="center">
-                    <v-col class="d-flex select-container" cols="12" sm="4">
+                    <v-col class="d-flex select-container" sm="4">
                         <v-select :items="months" label="Month" v-model="currentMonth" outlined></v-select>
                     </v-col>
-                    <v-col class="d-flex select-container" cols="12" sm="4">
+                    <v-col class="d-flex select-container" sm="4">
                         <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
                     </v-col>
-                    <v-col class="d-flex select-container" cols="12" sm="4">
+                    <v-col class="d-flex select-container" sm="4">
                         <v-select :items="sortOptions" label="Sort By" v-model="currentSort" @change="updateSort($event, filteredCompetitions)" outlined></v-select>
                     </v-col>
                 </v-row>
