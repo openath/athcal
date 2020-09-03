@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <style>
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            height: 100%;
+        }
+
+        #app {
+            font-family: roboto;
+            height: 100%;
+        }
+
+        .compcard-container {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .compcard {
+            width: 100%;
+            margin: 10px;
+            height: fit-content;
+        }
+
+        .no-comp-container {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .select-container {
+            padding: 0px 12px;
+        }
+
+        .filter-container {
+            padding-bottom: 0px;
+        }
+
+        @media only screen and (min-width: 600px) {
+            .compcard {
+                max-width: 344px;
+                min-width: 344px;
+            }
+
+            .select-container {
+                padding: 12px;
+            }
+
+            .filter-container {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <v-app id="app">
+
+        <!-- Filter Container -->
+        <div class="d-flex">
+            <v-container fluid class="filter-container">
+                <!-- Filters the search results -->
+                <v-row align="center">
+                    <v-col class="d-flex select-container" sm="4">
+                        <v-select :items="months" label="Month" v-model="currentMonth" outlined></v-select>
+                    </v-col>
+                    <v-col class="d-flex select-container" sm="4">
+                        <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
+                    </v-col>
+                    <v-col class="d-flex select-container" sm="4">
+                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort"
+                            @change="updateSort($event, filteredCompetitions)" outlined></v-select>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </div>
+        <v-divider></v-divider>
+
+        <!-- Competition Cards -->
+        <div class="d-flex compcard-container">
+            <v-card v-for="competition in filteredCompetitions" class="compcard">
+
+                <!-- Header Text -->
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
+                        <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <!-- Action Buttons -->
+                <v-card-actions>
+                    <!-- Register Button -->
+                    <template v-if="competition.entry_link">
+                        <v-btn color="green accent-4" :href="competition.entry_link" text>
+                            Register
+                        </v-btn>
+                    </template>
+
+                    <!-- Register Button Disabled-->
+                    <template v-else>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <div v-bind="attrs" v-on="on">
+                                    <v-btn :disabled="!competition.entry_link" color="green accent-4" href="#" text>
+                                        Register
+                                    </v-btn>
+                                </div>
+                            </template>
+                            <span>No entry link available</span>
+                        </v-tooltip>
+                    </template>
+                    <v-spacer></v-spacer>
+
+                    <!-- Contact Button -->
+                    <v-tooltip bottom v-if="competition.contact_details">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn icon v-bind="attrs" v-on="on" @click="copyContactToClipboard(competition)">
+                                <v-icon>mdi-contacts</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ competition.contact_details }}</span>
+                    </v-tooltip>
+                </v-card-actions>
+            </v-card>
+
+            <!-- No Competitions Container -->
+            <div v-if="filteredCompetitions.length == 0" class="no-comp-container">
+                <p>No Competitions found!</p>
+            </div>
+
+            <!-- Global Snackbar -->
+            <v-snackbar v-model="snackbar" timeout=2000>
+                Contact information copied to clipboard.
+            </v-snackbar>
+        </div>
+
+    </v-app>
+
+    <!-- production version of Vue 2 and Vuetify -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+    <!-- Axios - Library to pull in JSON data -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- Moment.js  - Library to work with date and time -->
+    <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
+
+    <script>
+        // The select all value for the selectors.
+        const allSelectOption = "1: Select All"
+
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data() {
+                return {
+                    competitions: [],
+                    currentMonth: allSelectOption,
+                    months: [allSelectOption],
+                    currentCountry: allSelectOption,
+                    countries: [allSelectOption],
+                    currentSort: 1,
+                    sortOptions: [{
+                            text: "Months - Ascending",
+                            value: 1,
+                        },
+                        {
+                            text: "Months - Descending",
+                            value: 2,
+                        }
+                    ],
+                    snackbar: false
+                }
+            },
+            computed: {
+                filteredCompetitions() {
+                    // Filters it to a temp array.
+                    var temp = this.competitions.filter(competition => {
+                        // If the compeititon is in the currently selected month.
+                        if (this.currentMonth == allSelectOption || moment(competition.date).format(
+                                "MMMM YYYY") == this.currentMonth) {
+                            // If the competiton is in the currently selected country.
+                            if (this.currentCountry == allSelectOption || competition.country == this
+                                .currentCountry) {
+                                return true
+                            }
+                        }
+                        return false
+                    })
+
+                    // Sorts the temp array and returns it.
+                    this.updateSort(this.currentSort, temp)
+                    return temp
+                }
+            },
+            created() {
+                // Gathers all the competition data before the DOM is mounted.
+                axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                    .then(response => {
+                        this.competitions = response.data
+
+                        // Sets the current month.
+                        this.currentMonth = moment().format("MMMM YYYY")
+                        if (!this.months.includes(this.currentMonth)) {
+                            this.months.push(this.currentMonth)
+                        }
+
+                        // Adds all the available months and countries from list.
+                        this.competitions.forEach(competition => {
+                            // Adds available months.
+                            var month = moment(competition.date).format("MMMM YYYY")
+                            if (!this.months.includes(month)) {
+                                this.months.push(month)
+                            }
+
+                            // Adds available countries.
+                            if (!this.countries.includes(competition.country)) {
+                                this.countries.push(competition.country)
+                            }
+                        })
+
+                        // Sorts the counties in alphabetical order.
+                        this.countries.sort()
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+            },
+            methods: {
+                /**
+                 * Takes a competition date and formats it into something
+                 * more readable. If the start date and end date are different
+                 * then both will be returned.
+                 */
+                competitonDateFormatter(competition) {
+                    if (competition.date == competition.finish_date) {
+                        return moment(competition.date).format("MMM Do YYYY")
+                    } else {
+                        return moment(competition.date).format("MMM Do YYYY") +
+                            " - " + moment(competition.finish_date).format("MMM Do YYYY")
+                    }
+                },
+                /**
+                 * This function is run everytime the sort by select item is changed.
+                 * It sorts the provided list of competitions.
+                 */
+                updateSort(itemValue, competitions) {
+                    // Months - Ascending
+                    if (itemValue == 1) {
+                        competitions.sort(function (x, y) {
+                            if (moment(x.date).isBefore(y.date)) {
+                                return -1
+                            }
+                            if (moment(x.date).isAfter(y.date)) {
+                                return 1
+                            }
+                            return 0
+                        })
+
+                        // Months - Descending
+                    } else if (itemValue == 2) {
+                        competitions.sort(function (x, y) {
+                            if (moment(y.date).isBefore(x.date)) {
+                                return -1
+                            }
+                            if (moment(y.date).isAfter(x.date)) {
+                                return 1
+                            }
+                            return 0
+                        })
+                    }
+                },
+                /**
+                 * Copies the competition contact information to the clipboard.
+                 * Then displays a snackbar to tell the user something has happened.
+                 */
+                copyContactToClipboard(competition) {
+                    navigator.clipboard.writeText(competition.contact_details)
+                        .then(() => {
+                            // Makes the snackbar visible.
+                            this.snackbar = true
+                        }).catch(error => {
+                            console.error(error)
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
