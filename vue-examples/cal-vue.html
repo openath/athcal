@@ -115,27 +115,45 @@
                     <!-- Competition Title Info -->
                     <v-list-item-content>
                         <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
-                        <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
+                        <!-- Country -->
+                        <v-list-item-subtitle>
+                            {{competition.country}}
                         </v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
 
+                <!-- Address -->
+                <v-card-subtitle class="pb-0 pt-0" v-if="competition.address">
+                    Address: {{ competition.address }}
+                </v-card-subtitle>
+                <v-card-subtitle class="pb-0 pt-0" v-else>
+                    Address: Not Provided
+                </v-card-subtitle>
+
+                <!-- Finish Date if on a seperate day -->
+                <v-card-subtitle class="pb-0 pt-0" v-if="competition.date != competition.finish_date">
+                    Finish Date: {{ competitonDateFormatterFinishDate(competition) }}
+                </v-card-subtitle>
+                <v-card-subtitle class="pb-0 pt-0" v-else>
+                    Finish Date: Same day
+                </v-card-subtitle>
+
                 <!-- Action Buttons -->
                 <v-card-actions>
-                    <!-- Register Button -->
+                    <!-- View Button -->
                     <template v-if="competition.entry_link">
                         <v-btn color="green accent-4" :href="competition.entry_link" text>
-                            Register
+                            View
                         </v-btn>
                     </template>
 
-                    <!-- Register Button Disabled-->
+                    <!-- View Button Disabled-->
                     <template v-else>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
                                 <div v-bind="attrs" v-on="on">
                                     <v-btn :disabled="!competition.entry_link" color="green accent-4" href="#" text>
-                                        Register
+                                        View
                                     </v-btn>
                                 </div>
                             </template>
@@ -279,6 +297,9 @@
                 },
                 competitonDateFormatterMonth(competition) {
                     return moment(competition.date).format("MMM")
+                },
+                competitonDateFormatterFinishDate(competition) {
+                    return moment(competition.finish_date).format("MMM Do YYYY")
                 },
                 /**
                  * This function is run everytime the sort by select item is changed.
