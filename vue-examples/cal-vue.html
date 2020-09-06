@@ -94,10 +94,25 @@
 
         <!-- Competition Cards -->
         <div class="d-flex compcard-container">
-            <v-card v-for="competition in filteredCompetitions" class="compcard">
+            <v-card v-for="competition in filteredCompetitions" class="compcard" :flat="true">
 
                 <!-- Header Text -->
                 <v-list-item>
+
+                    <!-- Calendar Style Date -->
+                    <v-list-item-avatar color="grey lighten-3">
+                        <p style="margin: 0px; line-height: 0.75;">
+                            <span style="font-size: 25px;">
+                                {{ competitonDateFormatterDay(competition) }}
+                            </span>
+                            <br>
+                            <span style="text-transform: uppercase; font-size: 12px;">
+                                {{ competitonDateFormatterMonth(competition) }}
+                            </span>
+                        </p>
+                    </v-list-item-avatar>
+
+                    <!-- Competition Title Info -->
                     <v-list-item-content>
                         <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
                         <v-list-item-subtitle>{{competition.country}} : {{competitonDateFormatter(competition)}}
@@ -258,6 +273,12 @@
                         return moment(competition.date).format("MMM Do YYYY") +
                             " - " + moment(competition.finish_date).format("MMM Do YYYY")
                     }
+                },
+                competitonDateFormatterDay(competition) {
+                    return moment(competition.date).format("DD")
+                },
+                competitonDateFormatterMonth(competition) {
+                    return moment(competition.date).format("MMM")
                 },
                 /**
                  * This function is run everytime the sort by select item is changed.
