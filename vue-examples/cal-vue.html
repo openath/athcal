@@ -118,16 +118,15 @@
                     <v-card v-for="competition in monthContainer.competitions" class="compcard" :flat="true">
                         <!-- Header Text -->
                         <v-list-item>
-
                             <!-- Calendar Style Date -->
                             <v-list-item-avatar color="grey lighten-3">
                                 <p style="margin: 0px; line-height: 0.75;">
                                     <span style="font-size: 25px;">
-                                        {{ competitonDateFormatterDay(competition) }}
+                                        {{ formatDate(competition.date, "DD") }}
                                     </span>
                                     <br>
                                     <span style="text-transform: uppercase; font-size: 12px;">
-                                        {{ competitonDateFormatterMonth(competition) }}
+                                        {{ formatDate(competition.date, "MMM") }}
                                     </span>
                                 </p>
                             </v-list-item-avatar>
@@ -166,7 +165,7 @@
                                 style="cursor: default; justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
                                 <v-icon left>mdi-flag-checkered</v-icon>
                                 <template v-if="competition.date != competition.finish_date">
-                                    {{ competitonDateFormatterFinishDate(competition) }}
+                                    {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
                                 </template>
                                 <template v-else>
                                     Same day
@@ -371,14 +370,12 @@
                     })
             },
             methods: {
-                competitonDateFormatterDay(competition) {
-                    return moment(competition.date).format("DD")
-                },
-                competitonDateFormatterMonth(competition) {
-                    return moment(competition.date).format("MMM")
-                },
-                competitonDateFormatterFinishDate(competition) {
-                    return moment(competition.finish_date).format("MMM Do YYYY")
+                /**
+                 * This function formats the given string based on the format
+                 * provided.
+                 */
+                formatDate(dateString, formatString) {
+                    return moment(dateString).format(formatString)
                 },
                 /**
                  * This function is run everytime the sort by select item is changed.
