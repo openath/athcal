@@ -310,19 +310,6 @@
                     })
             },
             methods: {
-                /**
-                 * Takes a competition date and formats it into something
-                 * more readable. If the start date and end date are different
-                 * then both will be returned.
-                 */
-                competitonDateFormatter(competition) {
-                    if (competition.date == competition.finish_date) {
-                        return moment(competition.date).format("MMM Do YYYY")
-                    } else {
-                        return moment(competition.date).format("MMM Do YYYY") +
-                            " - " + moment(competition.finish_date).format("MMM Do YYYY")
-                    }
-                },
                 competitonDateFormatterDay(competition) {
                     return moment(competition.date).format("DD")
                 },
