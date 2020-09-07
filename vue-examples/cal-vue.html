@@ -130,20 +130,26 @@
 
                 <!-- Address -->
                 <v-card-text class="pb-0 pt-0">
-                    <v-btn color="grey" text block @click="copyToClipboard(competition.address)"
-                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
-                        <v-icon left>mdi-map-marker</v-icon>
-                        <template v-if="competition.address">
-                            {{ competition.address }}
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn color="grey" text block v-bind="attrs" v-on="on"
+                                @click="copyToClipboard(competition.address)"
+                                style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                                <v-icon left>mdi-map-marker</v-icon>
+                                <template v-if="competition.address">
+                                    {{ competition.address }}
+                                </template>
+                                <template v-else>
+                                    Not Provided
+                                </template>
+                            </v-btn>
                         </template>
-                        <template v-else>
-                            Not Provided
-                        </template>
-                    </v-btn>
+                        <span>Copy Address</span>
+                    </v-tooltip>
 
                     <!-- Finish Date -->
                     <v-btn color="grey" text block
-                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                        style="cursor: default; justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
                         <v-icon left>mdi-flag-checkered</v-icon>
                         <template v-if="competition.date != competition.finish_date">
                             {{ competitonDateFormatterFinishDate(competition) }}
