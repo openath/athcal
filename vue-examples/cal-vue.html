@@ -300,6 +300,10 @@
 
                         // Sorts the counties in alphabetical order.
                         this.countries.sort()
+
+                        // Sorts the months in calendar order.
+                        this.months.sort(
+                            (x,y) => moment(x).format('YYYYMM') - moment(y).format('YYYYMM'));
                     })
                     .catch(error => {
                         console.error(error)
