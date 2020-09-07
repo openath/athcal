@@ -34,6 +34,7 @@
             width: 100%;
             margin: 10px;
             height: fit-content;
+            overflow: hidden;
         }
 
         .no-comp-container {
@@ -123,20 +124,28 @@
                 </v-list-item>
 
                 <!-- Address -->
-                <v-card-subtitle class="pb-0 pt-0" v-if="competition.address">
-                    Address: {{ competition.address }}
-                </v-card-subtitle>
-                <v-card-subtitle class="pb-0 pt-0" v-else>
-                    Address: Not Provided
-                </v-card-subtitle>
+                <v-btn color="grey" text block @click="copyToClipboard(competition.address)"
+                    style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                    <v-icon left>mdi-map-marker</v-icon>
+                    <template v-if="competition.address">
+                        {{ competition.address }}
+                    </template>
+                    <template v-else>
+                        Not Provided
+                    </template>
+                </v-btn>
 
-                <!-- Finish Date if on a seperate day -->
-                <v-card-subtitle class="pb-0 pt-0" v-if="competition.date != competition.finish_date">
-                    Finish Date: {{ competitonDateFormatterFinishDate(competition) }}
-                </v-card-subtitle>
-                <v-card-subtitle class="pb-0 pt-0" v-else>
-                    Finish Date: Same day
-                </v-card-subtitle>
+                <!-- Finish Date -->
+                <v-btn color="grey" text block
+                    style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                    <v-icon left>mdi-flag-checkered</v-icon>
+                    <template v-if="competition.date != competition.finish_date">
+                        {{ competitonDateFormatterFinishDate(competition) }}
+                    </template>
+                    <template v-else>
+                        Same day
+                    </template>
+                </v-btn>
 
                 <!-- Action Buttons -->
                 <v-card-actions>
@@ -165,7 +174,7 @@
                     <!-- Contact Button -->
                     <v-tooltip bottom v-if="competition.contact_details">
                         <template v-slot:activator="{ on, attrs }">
-                            <v-btn icon v-bind="attrs" v-on="on" @click="copyContactToClipboard(competition)">
+                            <v-btn icon v-bind="attrs" v-on="on" @click="copyToClipboard(competition.contact_details)">
                                 <v-icon>mdi-contacts</v-icon>
                             </v-btn>
                         </template>
@@ -181,7 +190,12 @@
 
             <!-- Global Snackbar -->
             <v-snackbar v-model="snackbar" timeout=2000>
-                Contact information copied to clipboard.
+                Copied to clipboard.
+                <template v-slot:action="{ attrs }">
+                    <v-btn dark text v-bind="attrs" @click="snackbar = false">
+                        Close
+                    </v-btn>
+                </template>
             </v-snackbar>
         </div>
 
@@ -332,11 +346,11 @@
                     }
                 },
                 /**
-                 * Copies the competition contact information to the clipboard.
+                 * Copies the given string of information to the clipboard.
                  * Then displays a snackbar to tell the user something has happened.
                  */
-                copyContactToClipboard(competition) {
-                    navigator.clipboard.writeText(competition.contact_details)
+                copyToClipboard(info_string) {
+                    navigator.clipboard.writeText(info_string)
                         .then(() => {
                             // Makes the snackbar visible.
                             this.snackbar = true
