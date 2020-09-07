@@ -98,8 +98,7 @@
                         <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort"
-                            @change="updateSort($event, monthContainers)" outlined></v-select>
+                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort" outlined></v-select>
                     </v-col>
                 </v-row>
             </v-container>
@@ -268,6 +267,13 @@
                 }
             },
             computed: {
+                /**
+                 * A computed property that contains a list of month objects.
+                 * These month objects contain a month name and a list of competitions
+                 * that are taking place within that month. All objects in this computed
+                 * property will be displayed on screen. This property is updated whenever
+                 * a month, country or sort option is changed.
+                 */
                 monthContainers() {
                     // Filters it to a temp array.
                     var filteredCompetitions = this.competitions.filter(competition => {
@@ -287,51 +293,16 @@
                     this.updateSort(this.currentSort, filteredCompetitions)
 
                     // Breaks the competitons down into month container objects.
-                    var monthContainers = []
-                    const filteredMonths = this.months.slice(1)
-                    filteredMonths.forEach(month => {
-                        monthContainers.push({
-                            name: month,
-                            competitions: []
-                        })
-                    })
-
-                    // Loops through each competition
-                    filteredCompetitions.forEach(competition => {
-                        // Loops through each month
-                        filteredMonths.forEach(month => {
-                            // If the competition month is the same as the current filtered month
-                            // then add it to its month container.
-                            if (moment(competition.date).format("MMMM YYYY") == moment(month)
-                                .format("MMMM YYYY")) {
-                                // Finds the month container that matches and adds the competition to its list.
-                                var monthContainer = monthContainers.find(monthContainer =>
-                                    monthContainer.name == month)
-                                monthContainer.competitions.push(competition)
-                            }
-                        })
-                    });
-
-                    // Removes empty month containers
-                    var tempMonthContainers = [...monthContainers]
-                    var monthContainersToRemove = []
-                    // Loops through the temp array and finds all indexs to remove.
-                    var i
-                    for (i = 0; i < tempMonthContainers.length; i++) {
-                        if (tempMonthContainers[i].competitions.length == 0) {
-                            monthContainersToRemove.push(i)
-                        }
-                    }
-                    // Loops through temp array in reverse order and removes empty elements.
-                    for (var i = monthContainersToRemove.length - 1; i >= 0; i--) {
-                        tempMonthContainers.splice(monthContainersToRemove[i], 1)
-                    }
-                    monthContainers = tempMonthContainers
+                    var monthContainers = this.monthTreeCreator(filteredCompetitions)
 
                     // Returns an array of month container objects.
                     return monthContainers
                 }
             },
+            /**
+             * This function is called once the vue instance has been created.
+             * It creates a list of competitons based on JSON data provided by opentrack.
+             */
             created() {
                 // Gathers all the competition data before the DOM is mounted.
                 axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
@@ -378,8 +349,9 @@
                     return moment(dateString).format(formatString)
                 },
                 /**
-                 * This function is run everytime the sort by select item is changed.
-                 * It sorts the provided list of competitions.
+                 * This function is called from a computed property. This function sorts
+                 * a list of competitions, based on the value provided from the sort
+                 * selector element.
                  */
                 updateSort(itemValue, competitions) {
                     // Months - Ascending
@@ -406,6 +378,55 @@
                             return 0
                         })
                     }
+                },
+                /**
+                 * Takes a list of competitions and breaks them down into a tree based on
+                 * the available months.
+                 */
+                monthTreeCreator(filteredCompetitions) {
+                    // Creates month containers and supplies is objects that contain each
+                    // available month.
+                    var monthContainers = []
+                    const filteredMonths = this.months.slice(1)
+                    filteredMonths.forEach(month => {
+                        monthContainers.push({
+                            name: month,
+                            competitions: []
+                        })
+                    })
+
+                    // Loops through each competition
+                    filteredCompetitions.forEach(competition => {
+                        // Loops through each month
+                        filteredMonths.forEach(month => {
+                            // If the competition month is the same as the current filtered month
+                            // then add it to its month container.
+                            if (moment(competition.date).format("MMMM YYYY") == moment(month)
+                                .format("MMMM YYYY")) {
+                                // Finds the month container that matches and adds the competition to its list.
+                                var monthContainer = monthContainers.find(monthContainer =>
+                                    monthContainer.name == month)
+                                monthContainer.competitions.push(competition)
+                            }
+                        })
+                    });
+
+                    // Removes empty month containers
+                    var tempMonthContainers = [...monthContainers]
+                    var monthContainersToRemove = []
+                    // Loops through the temp array and finds all indexs to remove.
+                    var i
+                    for (i = 0; i < tempMonthContainers.length; i++) {
+                        if (tempMonthContainers[i].competitions.length == 0) {
+                            monthContainersToRemove.push(i)
+                        }
+                    }
+                    // Loops through temp array in reverse order and removes empty elements.
+                    for (var i = monthContainersToRemove.length - 1; i >= 0; i--) {
+                        tempMonthContainers.splice(monthContainersToRemove[i], 1)
+                    }
+
+                    return tempMonthContainers
                 },
                 /**
                  * Copies the given string of information to the clipboard.
