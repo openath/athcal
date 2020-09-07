@@ -67,6 +67,11 @@
                 padding: 12px;
             }
         }
+
+        /* Vuetify Overload */
+        .v-btn:not(.v-btn--round).v-size--default {
+            padding: 0 8px;
+        }
     </style>
 </head>
 
@@ -124,28 +129,30 @@
                 </v-list-item>
 
                 <!-- Address -->
-                <v-btn color="grey" text block @click="copyToClipboard(competition.address)"
-                    style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
-                    <v-icon left>mdi-map-marker</v-icon>
-                    <template v-if="competition.address">
-                        {{ competition.address }}
-                    </template>
-                    <template v-else>
-                        Not Provided
-                    </template>
-                </v-btn>
+                <v-card-text class="pb-0 pt-0">
+                    <v-btn color="grey" text block @click="copyToClipboard(competition.address)"
+                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                        <v-icon left>mdi-map-marker</v-icon>
+                        <template v-if="competition.address">
+                            {{ competition.address }}
+                        </template>
+                        <template v-else>
+                            Not Provided
+                        </template>
+                    </v-btn>
 
-                <!-- Finish Date -->
-                <v-btn color="grey" text block
-                    style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
-                    <v-icon left>mdi-flag-checkered</v-icon>
-                    <template v-if="competition.date != competition.finish_date">
-                        {{ competitonDateFormatterFinishDate(competition) }}
-                    </template>
-                    <template v-else>
-                        Same day
-                    </template>
-                </v-btn>
+                    <!-- Finish Date -->
+                    <v-btn color="grey" text block
+                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                        <v-icon left>mdi-flag-checkered</v-icon>
+                        <template v-if="competition.date != competition.finish_date">
+                            {{ competitonDateFormatterFinishDate(competition) }}
+                        </template>
+                        <template v-else>
+                            Same day
+                        </template>
+                    </v-btn>
+                </v-card-text>
 
                 <!-- Action Buttons -->
                 <v-card-actions>
