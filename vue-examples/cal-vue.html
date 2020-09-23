@@ -61,6 +61,22 @@
             padding-bottom: 0px;
         }
 
+        .comp-title-container {
+            width: 100%;
+            height: 30px;
+            margin-bottom: 13px;
+            margin-top: 13px;
+            padding: 0px;
+        }
+
+        .comp-title {
+            height: 100%;
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
         @media only screen and (min-width: 600px) {
             .compcard {
                 max-width: 344px;
@@ -88,7 +104,7 @@
 
         <!-- Filter Container -->
         <div class="d-flex">
-            <v-container fluid class="filter-container">
+            <v-container class="filter-container">
                 <!-- Filters the search results -->
                 <v-row align="center">
                     <v-col class="d-flex select-container" sm="4">
@@ -131,12 +147,8 @@
                             </v-list-item-avatar>
 
                             <!-- Competition Title Info -->
-                            <v-list-item-content>
-                                <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
-                                <!-- Country -->
-                                <v-list-item-subtitle>
-                                    {{competition.country}}
-                                </v-list-item-subtitle>
+                            <v-list-item-content class="comp-title-container">
+                                <v-list-item-subtitle class="comp-title">{{ competition.full_name }}</v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
 
@@ -292,7 +304,7 @@
                     // Sorts the filteredCompetitions array.
                     this.updateSort(this.currentSort, filteredCompetitions)
 
-                    // Breaks the competitons down into month container objects.
+                    // Breaks the competitions down into month container objects.
                     var monthContainers = this.monthTreeCreator(filteredCompetitions)
 
                     // Returns an array of month container objects.
@@ -305,7 +317,7 @@
              */
             created() {
                 // Gathers all the competition data before the DOM is mounted.
-                axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                axios.get('https://file.opentrack.run/live/euroath/domestic_calendar_gbr_2020.json')
                     .then(response => {
                         this.competitions = response.data
 
