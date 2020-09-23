@@ -96,6 +96,9 @@
         .v-btn:not(.v-btn--round).v-size--default {
             padding: 0 8px;
         }
+        .v-btn__content {
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -158,13 +161,17 @@
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn color="grey" text block v-bind="attrs" v-on="on"
                                         @click="copyToClipboard(competition.address)"
-                                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
+                                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial; text-align: left;">
                                         <v-icon left>mdi-map-marker</v-icon>
                                         <template v-if="competition.address">
-                                            {{ competition.address }}
+                                            <span style="overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            width: 100%;">{{ competition.address }}</span>
                                         </template>
                                         <template v-else>
-                                            Not Provided
+                                            <span style="overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            width: 100%;">Not Provided</span>
                                         </template>
                                     </v-btn>
                                 </template>
