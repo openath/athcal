@@ -111,13 +111,13 @@
                 <!-- Filters the search results -->
                 <v-row align="center">
                     <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="months" label="Month" v-model="currentMonth" outlined></v-select>
+                        <v-select :items="months" label="Month" v-model="selectedMonth" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
+                        <v-select :items="countries" label="Country" v-model="selectedCountry" outlined></v-select>
                     </v-col>
                     <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort" outlined></v-select>
+                        <v-select :items="sortOptions" label="Sort By" v-model="selectedSort" outlined></v-select>
                     </v-col>
                 </v-row>
             </v-container>
@@ -127,13 +127,13 @@
         <!-- Competition Calendar -->
         <div class="comp-calendar">
 
-            <template v-for="monthContainer in monthContainers">
+            <template v-for="viewableBranch in viewableBranches">
                 <!-- Month Header -->
-                <h3 class="comp-month-header">{{ monthContainer.name }}</h3>
+                <h3 class="comp-month-header">{{ viewableBranch.month }}</h3>
 
                 <!-- Competition Cards -->
                 <div class="d-flex comp-month-card-container">
-                    <v-card v-for="competition in monthContainer.competitions" class="compcard" :flat="true">
+                    <v-card v-for="competition in viewableBranch.competitions" class="compcard" :flat="true">
                         <!-- Header Text -->
                         <v-list-item>
                             <!-- Calendar Style Date -->
@@ -232,7 +232,7 @@
             </template>
 
             <!-- No Competitions Container -->
-            <div v-if="monthContainers.length == 0" class="no-comp-container">
+            <div v-if="viewableBranches.length == 0" class="no-comp-container">
                 <p>No Competitions found!</p>
             </div>
 
@@ -260,19 +260,25 @@
 
     <script>
         // The select all value for the selectors.
-        const allSelectOption = "1: Select All"
+        const selectAllOption = "1: Select All"
 
         new Vue({
             el: '#app',
             vuetify: new Vuetify(),
             data() {
                 return {
-                    competitions: [],
-                    currentMonth: allSelectOption,
-                    months: [allSelectOption],
-                    currentCountry: allSelectOption,
-                    countries: [allSelectOption],
-                    currentSort: 1,
+                    // -- Competition Variables
+                    // Each compTree element is a branch. A branch is an object
+                    // that contains a month name and a list of competitions.
+                    // When the page is created, this variable is populated with
+                    // a branches that contain their related competitions.
+                    compTree: [],
+                    // -- Filter Variables
+                    months: [selectAllOption],
+                    countries: [selectAllOption],
+                    selectedMonth: selectAllOption,
+                    selectedCountry: selectAllOption,
+                    selectedSort: 1,
                     sortOptions: [{
                             text: "Competitions - Ascending",
                             value: 1,
@@ -282,78 +288,51 @@
                             value: 2,
                         }
                     ],
+                    // -- Other
                     snackbar: false
                 }
             },
             computed: {
                 /**
-                 * A computed property that contains a list of month objects.
-                 * These month objects contain a month name and a list of competitions
-                 * that are taking place within that month. All objects in this computed
-                 * property will be displayed on screen. This property is updated whenever
-                 * a month, country or sort option is changed.
+                 * A computed property that contains a list of branches from the comptree to display.
+                 * These branches are then flitered and sorted based on the users filter preferences.
                  */
-                monthContainers() {
-                    // Filters it to a temp array.
-                    var filteredCompetitions = this.competitions.filter(competition => {
-                        // If the compeititon is in the currently selected month.
-                        if (this.currentMonth == allSelectOption || moment(competition.date).format(
-                                "MMMM YYYY") == this.currentMonth) {
-                            // If the competiton is in the currently selected country.
-                            if (this.currentCountry == allSelectOption || competition.country == this
-                                .currentCountry) {
-                                return true
-                            }
+                viewableBranches() {
+                    var viewableBranches = []
+
+                    // Populates the viewableBranches by filtering out unselected months.
+                    this.compTree.forEach((branch) => {
+                        // If the branch month matches the selected month then add it to viewableBranches.
+                        if (this.selectedMonth == selectAllOption || moment(branch.month).format(
+                            "MMMM YYYY") == this.selectedMonth) {
+                                viewableBranches.push(branch)
                         }
-                        return false
                     })
 
-                    // Sorts the filteredCompetitions array.
-                    this.updateSort(this.currentSort, filteredCompetitions)
+                    // Applies the selected sort option to the competitions in the viewableBranches.
+                    viewableBranches.forEach((branch) => {
+                        this.updateSort(this.selectedSort, branch.competitions)
+                    })
 
-                    // Breaks the competitions down into month container objects.
-                    var monthContainers = this.monthTreeCreator(filteredCompetitions)
-
-                    // Returns an array of month container objects.
-                    return monthContainers
+                    return viewableBranches
                 }
             },
             /**
              * This function is called once the vue instance has been created.
-             * It creates a list of competitons based on JSON data provided by opentrack.
+             * It creates a competition tree based on JSON data provided by opentrack.
              */
             created() {
                 // Gathers all the competition data before the DOM is mounted.
                 axios.get('https://file.opentrack.run/live/euroath/domestic_calendar_gbr_2020.json')
                     .then(response => {
-                        this.competitions = response.data
+                        // Creates a temp list of competitons.
+                        const competitions = response.data
 
-                        // Sets the current month.
-                        this.currentMonth = moment().format("MMMM YYYY")
-                        if (!this.months.includes(this.currentMonth)) {
-                            this.months.push(this.currentMonth)
-                        }
-
-                        // Adds all the available months and countries from list.
-                        this.competitions.forEach(competition => {
-                            // Adds available months.
-                            var month = moment(competition.date).format("MMMM YYYY")
-                            if (!this.months.includes(month)) {
-                                this.months.push(month)
-                            }
-
-                            // Adds available countries.
-                            if (!this.countries.includes(competition.country)) {
-                                this.countries.push(competition.country)
-                            }
-                        })
-
-                        // Sorts the counties in alphabetical order.
-                        this.countries.sort()
-
-                        // Sorts the months in calendar order.
-                        this.months.sort(
-                            (x, y) => moment(x).format('YYYYMM') - moment(y).format('YYYYMM'));
+                        // Sets up all filter items.
+                        this.setUpFilters(competitions)
+                        
+                        // Makes a competition tree based on month.
+                        this.compTree = this.compTreeCreator(competitions)
                     })
                     .catch(error => {
                         console.error(error)
@@ -402,50 +381,52 @@
                  * Takes a list of competitions and breaks them down into a tree based on
                  * the available months.
                  */
-                monthTreeCreator(filteredCompetitions) {
+                 compTreeCreator(competitions) {
                     // Creates month containers and supplies is objects that contain each
                     // available month.
-                    var monthContainers = []
+                    var compBranches = []
+                    // Removes the 'Select All Month'.
                     const filteredMonths = this.months.slice(1)
                     filteredMonths.forEach(month => {
-                        monthContainers.push({
-                            name: month,
+                        compBranches.push({
+                            month: month,
                             competitions: []
                         })
                     })
 
                     // Loops through each competition
-                    filteredCompetitions.forEach(competition => {
+                    competitions.forEach(competition => {
                         // Loops through each month
                         filteredMonths.forEach(month => {
                             // If the competition month is the same as the current filtered month
-                            // then add it to its month container.
+                            // then add it to its branch.
                             if (moment(competition.date).format("MMMM YYYY") == moment(month)
                                 .format("MMMM YYYY")) {
-                                // Finds the month container that matches and adds the competition to its list.
-                                var monthContainer = monthContainers.find(monthContainer =>
-                                    monthContainer.name == month)
-                                monthContainer.competitions.push(competition)
+                                // Finds the branch that matches and adds the competition to its list.
+                                var branch = compBranches.find(branch => branch.month == month)
+                                branch.competitions.push(competition)
                             }
                         })
                     });
 
-                    // Removes empty month containers
-                    var tempMonthContainers = [...monthContainers]
-                    var monthContainersToRemove = []
+                    // Code section below removes all the branches without any competitions from
+                    // the list of compbranches. Its complicated to remove specific elements from
+                    // an array in javascript.
+                    var tempCompBranches = [...compBranches]
+                    var branchesToRemove = []
                     // Loops through the temp array and finds all indexs to remove.
                     var i
-                    for (i = 0; i < tempMonthContainers.length; i++) {
-                        if (tempMonthContainers[i].competitions.length == 0) {
-                            monthContainersToRemove.push(i)
+                    for (i = 0; i < tempCompBranches.length; i++) {
+                        if (tempCompBranches[i].competitions.length == 0) {
+                            branchesToRemove.push(i)
                         }
                     }
                     // Loops through temp array in reverse order and removes empty elements.
-                    for (var i = monthContainersToRemove.length - 1; i >= 0; i--) {
-                        tempMonthContainers.splice(monthContainersToRemove[i], 1)
+                    for (var i = branchesToRemove.length - 1; i >= 0; i--) {
+                        tempCompBranches.splice(branchesToRemove[i], 1)
                     }
 
-                    return tempMonthContainers
+                    return tempCompBranches
                 },
                 /**
                  * Copies the given string of information to the clipboard.
@@ -459,6 +440,37 @@
                         }).catch(error => {
                             console.error(error)
                         })
+                },
+                /**
+                 * Sets up the filters to include all available months and countries based off the
+                 * provided list of competitions (Untreed).
+                 */
+                setUpFilters(competitions) {
+                    // Adds the current month to list of available months.
+                    this.selectedMonth = moment().format("MMMM YYYY")
+                    if (!this.months.includes(this.selectedMonth)) {
+                        this.months.push(this.selectedMonth)
+                    }
+
+                    // Adds all the available months and countries from list.
+                    competitions.forEach(competition => {
+                        // Adds available months.
+                        var month = moment(competition.date).format("MMMM YYYY")
+                        if (!this.months.includes(month)) {
+                            this.months.push(month)
+                        }
+
+                        // Adds available countries.
+                        if (!this.countries.includes(competition.country)) {
+                            this.countries.push(competition.country)
+                        }
+                    })
+
+                    // Sorts the counties in alphabetical order.
+                    this.countries.sort()
+
+                    // Sorts the months in calendar order.
+                    this.months.sort((x, y) => moment(x).format('YYYYMM') - moment(y).format('YYYYMM'))
                 }
             }
         })
