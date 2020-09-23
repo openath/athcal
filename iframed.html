@@ -7,9 +7,10 @@
 
 <h1>iFrame container example</h1>
 <p>This outer page contains an iframe below.  Hopefully you will see a live calendar inside it.
-It's set to 100% width and 400 pixels high.</p>
+</p>
 <hr>
-<iframe onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"
+<iframe style="width:100%"
+	onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"
 	src="https://opentrack.run/athcal/caldisplay_vue.html" 
 	title="embedded calendar"></iframe>
 <hr>
