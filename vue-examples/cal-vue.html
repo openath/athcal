@@ -23,6 +23,7 @@
                 height: 100%;
             }
 
+            /* Competition Calendar Styling */
             .comp-calendar {
                 height: 100%;
                 overflow-y: auto;
@@ -49,6 +50,14 @@
                 overflow: hidden;
             }
 
+            .compcard .v-btn:not(.v-btn--round).v-size--default {
+                padding: 0 8px;
+            }
+
+            .compcard .v-btn__content {
+                width: 100%;
+            }
+
             .no-comp-container {
                 position: absolute;
                 top: 50%;
@@ -72,6 +81,14 @@
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
             }
+
+            @media only screen and (min-width: 550px) {
+                .compcard {
+                    max-width: 344px;
+                    min-width: 344px;
+                }
+            }
+            /* End of Competition Calendar Styling */
 
             /* Filter Section */
             .filter-top-bar {
@@ -104,30 +121,19 @@
             }
 
             .filter-dropdown-container-open {
-                max-height: 196px;
+                max-height: 294px;
             }
 
-            @media only screen and (min-width: 600px) {
+            .filter-dropdown-container .v-text-field {
+                height: 86px;
+            }
+
+            @media only screen and (min-width: 960px) {
                 .filter-dropdown-container-open {
                     max-height: 98px;
                 }
             }
             /* End of Filter Section */
-
-            @media only screen and (min-width: 600px) {
-                .compcard {
-                    max-width: 344px;
-                    min-width: 344px;
-                }
-            }
-
-            /* Vuetify Overload */
-            .v-btn:not(.v-btn--round).v-size--default {
-                padding: 0 8px;
-            }
-            .v-btn__content {
-                width: 100%;
-            }
         </style>
     </head>
 
@@ -158,8 +164,20 @@
                 >
                     <!-- Filters the search results -->
                     <v-row align="center">
+                        <!-- Search Bar -->
+                        <v-col class="d-flex select-container" cols="12" md="3" lg="5">
+                            <v-text-field
+                                hide-details
+                                clearable
+                                outlined
+                                single-line
+                                label="Find..."
+                                prepend-inner-icon="mdi-magnify"
+                            ></v-text-field>
+                        </v-col>
+
                         <!-- Month Select -->
-                        <v-col class="d-flex select-container" cols="7" sm="5" style="flex-direction: column">
+                        <v-col class="d-flex select-container" cols="12" md="3" lg="3">
                             <v-select
                                 :items="months"
                                 label="Month"
@@ -169,8 +187,13 @@
                             ></v-select>
                         </v-col>
 
+                        <!-- Sort By Select -->
+                        <v-col class="d-flex select-container" cols="7" md="3" lg="2">
+                            <v-select :items="sortOptions" label="Sort By" v-model="selectedSort" outlined></v-select>
+                        </v-col>
+
                         <!-- Country Select -->
-                        <v-col class="d-flex select-container" cols="5" sm="3">
+                        <v-col class="d-flex select-container" cols="5" md="3" lg="2">
                             <v-select
                                 :items="countries"
                                 item-text="countryCode"
@@ -178,11 +201,6 @@
                                 v-model="selectedCountry"
                                 outlined
                             ></v-select>
-                        </v-col>
-
-                        <!-- Sort By Select -->
-                        <v-col class="d-flex select-container" sm="4">
-                            <v-select :items="sortOptions" label="Sort By" v-model="selectedSort" outlined></v-select>
                         </v-col>
                     </v-row>
                 </v-container>
