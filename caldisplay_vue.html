@@ -51,9 +51,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country">Choose Country</label>
-                                            <select v-on:click="applyCountryFilter()" id="countryOption" class="form-control" >
+                                            <select multiple v-model="selectedCountries" class="form-control">
                                                 <option disabled selected hidden>...</option>
-                                                <option v-for="option in country_options">{{ option }}</option>
+                                                <option v-for="option in country_options" :value="option">{{ option }}</option>
                                             </select>
                                         </div>
                                     </form>
@@ -140,28 +140,13 @@
                                 <div class="card card-body">
                                     <form>
                                         <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">all age groups</label>
+                                            <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
+                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">all age groups
+                                            </label>
                                         </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Seniors</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Masters</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U23</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U20</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U18</label>
+                                        <div v-for="(ag, i) in ageGroups" class="form-group form-check">
+                                            <input class="form-check-input" :value="ag" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -172,13 +157,18 @@
                 <div class="col-md-10 min-vh-100" style="background-color: #F0F0F0;">
                     <div class="col-md-11 mt-3">
                         <div id="months-headings" class="row">
-                            <div class="col-md-1 d-inline" v-for="month in months()" >
-                                <h3 class="month-heading d-inline" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3><span class="badge badge-secondary float-right ">{{ month.numberOfComps }}</span>
+                            <div class="col-md-1 d-inline" v-for="month in months_data" >
+                                <h3 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3>
+                                <div class="d-block mx-auto" style="width:fit-content">
+                                    <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-11 mt-3">
-                        <span class="badge badge-secondary mb-0">Fetched {{info.data.length}} competitions</span>
+                        <span class="badge badge-secondary mb-0">{{ info.data && info.data.length || 0 }} total competitions</span>
+                        <span class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} filtered competitions</span>
+
                         <a href="javascript:location.reload(true)">Reset filters</a>
                         <table class="table">
                             <thead class="bg-primary text-white">
@@ -209,7 +199,8 @@
         </div>
     </div>
     <!-- production version, optimized for size and speed -->
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
         $(document).ready(() => {
@@ -226,34 +217,73 @@
 
         var app = new Vue({
             el: '#app',
+              props: {
+                ageGroups: {
+                    type: Array,
+                    default: function () {
+                        return ['Seniors', 'Masters', 'U23', 'U20', 'U18']
+                    }
+                },
+                allMonths: {
+                    type: Array,
+                    default: function () {
+                        return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+                    }
+                }
+              },
               data() {
                 return {
-                  info: null,
-                  filteredCompetitions: null,
+                  info: {},
+                  all_months: [],
+                  country_options: [],
+                  selectedYear: null,
                   selectedMonth: null,
-                  all_months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                  country_options: null,
+                  selectedAG: [],
+                  selectedCountries: []
                 }
               },
             computed: {
-               
+                filteredCompetitions: function () {
+                    var self = this,
+                        output = self.info.data;
+                    if (self.selectedCountries.length > 0) {
+                        output = output.filter(function (item) {
+                            return self.selectedCountries.indexOf(item.country) >= 0
+                        })
+                    }
+                    if (self.selectedAG.length > 0) {
+                        output = output.filter(function (item) {
+                            var ageGroups = item.age_groups.split(',').map(function(ag) { return ag.trim() });
+                            var hits = ageGroups.map(function (ag) {
+                                return self.selectedAG.indexOf(ag) >= 0
+                            })
+                            return hits.reduce(function (x, y) { return x || y }, false)
+                        })
+                    }
+                    if (self.selectedMonth) {
+                        output = self.filterByMonth(self.selectedMonth);
+                    }
+                    return output
+                },
+                months_data: function() {
+                    var self = this;
+                    if (self.info.data) {
+                        for (month in self.allMonths) {
+                            var monObject = {};
+                            monObject.num = parseInt(month)+1;
+                            monObject.name = self.allMonths[month];
+                            var compList = self.filterByMonth(String(monObject.num).padStart(2, '0'));
+                            monObject.numberOfComps = compList.length;
+                            self.all_months.push(monObject);
+                        }
+                    }
+                    var output = self.all_months;
+                    return output;
+                }
             },
             methods:{
-                months: function() {
-                    var monthObjects = [];
-                    for (month in this.all_months) {
-                        var monObject = {};
-                        monObject.num = parseInt(month)+1;
-                        monObject.name = this.all_months[month];
-                        monObject.numberOfComps = this.getMonthData(parseInt(month)+1);
-                        monthObjects.push(monObject);
-                    }
-                    console.log(monthObjects)
-                    return monthObjects;
-                },
                 applyDateFilter: function(month) {
-                    this.selectedMonth = this.all_months[month-1];
-                    this.filteredCompetitions = this.filteredComps(month);
+                    this.selectedMonth = String(month).padStart(2, '0');
 
                     // Diplays which month is currently being filtered by
                     var calMonths = document.getElementById('months-headings');
@@ -263,40 +293,24 @@
                     clickedMonth.children[0].style.color = "#E95420";
                     // clickedMonth.classList.add("bg-primary", "text-white");
                 },
-                getMonthData: function(month) {
-                    var numberOfComps = this.filteredComps(month);
-                    return numberOfComps.length;
-                },
-                filteredComps: function (month) {
-                    // Make it suitable for string
-                    var StringValue = String(month).padStart(2, '0')
-                    if (month) {
-                        return this.info.data
-                        .filter((item)=>{
-                            return item.date.match(`2020-${StringValue}`);
-                        })
-                    }else {
-                        return this.info.data;
-                    }
-                },
-                applyCountryFilter() {
-                        var filter = document.getElementById("countryOption");
-                        var option = filter.options[filter.selectedIndex].value;
-                    if (option != "...") {
-                        this.filteredCompetitions = this.info.data.filter(item => {
-                            return item.country == option
-                        })
-                    }
+                filterByMonth: function(month) {
+                    var output = this.info.data;
+                    console.log(this.info.data);
+                    return output.filter((item)=>{
+                        // Need to change this to selectedYear
+                        return item.date.match(`2021-${month}`);
+                    })
                 },
               },
             mounted() {
+                var self = this;
                 axios
                     .get('https://file.opentrack.run/live/euroath/european_calendar_2021.json')
                     .then(response => {
-                      this.info = response;
-                      console.log(this.info.data);
-                      this.filteredCompetitions = this.filteredComps(null);
-                      this.country_options = this.info.data.map(item => item.country).filter((value, index, self) => self.indexOf(value) === index)
+                        self.info = response;
+                        self.country_options = self.info.data.map(item => item.country
+                                            ).filter((value, index, list) => list.indexOf(value) === index);
+                        
                     })
               }
         })
