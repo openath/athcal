@@ -380,11 +380,11 @@
                         selectedSort: 1,
                         sortOptions: [
                             {
-                                text: "Competitions - Ascending",
+                                text: "Ascending",
                                 value: 1,
                             },
                             {
-                                text: "Competitions - Descending",
+                                text: "Descending",
                                 value: 2,
                             },
                         ],
@@ -411,8 +411,10 @@
 
                         // Applies the selected sort option to the competitions in the viewableBranches.
                         viewableBranches.forEach((branch) => {
-                            this.updateSort(this.selectedSort, branch.competitions)
+                            this.sortCompetitions(this.selectedSort, branch.competitions)
                         })
+                        // Finally after sorting the competitions in each branch, we then sort the branches themselves.
+                        this.sortBranches(this.selectedSort, viewableBranches)
 
                         return viewableBranches
                     },
@@ -483,7 +485,7 @@
                      * a list of competitions, based on the value provided from the sort
                      * selector element.
                      */
-                    updateSort(itemValue, competitions) {
+                    sortCompetitions(itemValue, competitions) {
                         // Months - Ascending
                         if (itemValue == 1) {
                             competitions.sort(function (x, y) {
@@ -503,6 +505,36 @@
                                     return -1
                                 }
                                 if (moment(y.date).isAfter(x.date)) {
+                                    return 1
+                                }
+                                return 0
+                            })
+                        }
+                    },
+                    /**
+                     * This function is called from a computed property. This function sorts
+                     * a list of branches based on their month.
+                     */
+                    sortBranches(itemValue, branches) {
+                        // Ascending
+                        if (itemValue == 1) {
+                            branches.sort(function (x, y) {
+                                if (moment(x.month).isBefore(y.month)) {
+                                    return -1
+                                }
+                                if (moment(x.month).isAfter(y.month)) {
+                                    return 1
+                                }
+                                return 0
+                            })
+
+                            // Descending
+                        } else if (itemValue == 2) {
+                            branches.sort(function (x, y) {
+                                if (moment(y.month).isBefore(x.month)) {
+                                    return -1
+                                }
+                                if (moment(y.month).isAfter(x.month)) {
                                     return 1
                                 }
                                 return 0
