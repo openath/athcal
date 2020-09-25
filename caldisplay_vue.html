@@ -54,9 +54,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country">Choose Country</label>
-                                            <select v-on:click="applyCountryFilter()" id="countryOption" class="form-control" >
+                                            <select multiple v-model="selectedCountries" class="form-control">
                                                 <option disabled selected hidden>...</option>
-                                                <option v-for="option in country_options">{{ option }}</option>
+                                                <option v-for="option in country_options" :value="option">{{ option }}</option>
                                             </select>
                                         </div>
                                     </form>
@@ -143,28 +143,13 @@
                                 <div class="card card-body">
                                     <form>
                                         <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">all age groups</label>
+                                            <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
+                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">all age groups
+                                            </label>
                                         </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Seniors</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Masters</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U23</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U20</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">U18</label>
+                                        <div v-for="(ag, i) in ageGroups" class="form-group form-check">
+                                            <input class="form-check-input" :value="ag" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -175,13 +160,13 @@
                 <div class="col-md-10 min-vh-100" style="background-color: #F0F0F0;">
                     <div class="col-md-11 mt-3">
                         <div id="months-headings" class="row">
-                            <div class="col-md-1 d-inline" v-for="month in months()" >
+                            <div class="col-md-1 d-inline" v-for="month in months" >
                                 <h3 class="month-heading d-inline" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3><span class="badge badge-secondary float-right ">{{ month.numberOfComps }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-11 mt-3">
-                        <span class="badge badge-secondary mb-0">Fetched {{info.data.length}} competitions</span>
+                        <span class="badge badge-secondary mb-0">Fetched {{ info.data && info.data.length || 0 }} competitions</span>
                         <table class="table">
                             <thead class="bg-primary text-white">
                             <tr>
@@ -211,25 +196,51 @@
         </div>
     </div>
     <!-- production version, optimized for size and speed -->
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
 
         var app = new Vue({
             el: '#app',
+              props: {
+                ageGroups: {
+                    type: Array,
+                    default: function () {
+                        return ['Seniors', 'Masters', 'U23', 'U20', 'U18']
+                    }
+                }
+              },
               data() {
                 return {
-                  info: null,
-                  filteredCompetitions: null,
+                  info: {},
                   selectedMonth: null,
                   all_months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                  country_options: null,
+                  country_options: [],
+                  selectedAG: [],
+                  selectedCountries: []
                 }
               },
             computed: {
-               
-            },
-            methods:{
+                filteredCompetitions: function () {
+                    var self = this,
+                        output = self.info.data;
+                    if (self.selectedCountries.length > 0) {
+                        output = output.filter(function (item) {
+                            return self.selectedCountries.indexOf(item.country) >= 0
+                        })
+                    }
+                    if (self.selectedAG.length > 0) {
+                        output = output.filter(function (item) {
+                            var ageGroups = item.age_groups.split(',').map(function(ag) { return ag.trim() });
+                            var hits = ageGroups.map(function (ag) {
+                                return self.selectedAG.indexOf(ag) >= 0
+                            })
+                            return hits.reduce(function (x, y) { return x || y }, false)
+                        })
+                    }
+                    return output
+                },
                 months: function() {
                     var monthObjects = [];
                     for (month in this.all_months) {
@@ -239,12 +250,14 @@
                         monObject.numberOfComps = this.getMonthData(parseInt(month)+1);
                         monthObjects.push(monObject);
                     }
-                    console.log(monthObjects)
+                    // console.log(monthObjects)
                     return monthObjects;
-                },
+                }
+            },
+            methods:{
                 applyDateFilter: function(month) {
                     this.selectedMonth = this.all_months[month-1];
-                    this.filteredCompetitions = this.filteredComps(month);
+                    // this.filteredCompetitions = this.filteredComps(month);
 
                     // Diplays which month is currently being filtered by
                     var calMonths = document.getElementById('months-headings');
@@ -260,34 +273,28 @@
                 },
                 filteredComps: function (month) {
                     // Make it suitable for string
-                    var StringValue = String(month).padStart(2, '0')
-                    if (month) {
-                        return this.info.data
+                    var StringValue = String(month).padStart(2, '0'),
+                        out;
+                    if (this.info.data)
+                        out = this.info.data
                         .filter((item)=>{
                             return item.date.match(`2020-${StringValue}`);
-                        })
-                    }else {
-                        return this.info.data;
-                    }
-                },
-                applyCountryFilter() {
-                        var filter = document.getElementById("countryOption");
-                        var option = filter.options[filter.selectedIndex].value;
-                    if (option != "...") {
-                        this.filteredCompetitions = this.info.data.filter(item => {
-                            return item.country == option
-                        })
-                    }
-                },
+                        });
+                    else
+                        out = [];
+                    return out
+                }
               },
             mounted() {
+                var self = this;
                 axios
                     .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
                     .then(response => {
-                      this.info = response;
-                      console.log(this.info.data);
-                      this.filteredCompetitions = this.filteredComps(null);
-                      this.country_options = this.info.data.map(item => item.country).filter((value, index, self) => self.indexOf(value) === index)
+                      self.info = response;
+                      // console.log(self.info.data);
+                      // self.filteredCompetitions = self.filteredComps(null);
+                      self.country_options = self.info.data.map(item => item.country
+                                            ).filter((value, index, list) => list.indexOf(value) === index);
                     })
               }
         })
