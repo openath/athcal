@@ -173,6 +173,7 @@
                                 single-line
                                 label="Find..."
                                 prepend-inner-icon="mdi-magnify"
+                                v-model="searchText"
                             ></v-text-field>
                         </v-col>
 
@@ -374,11 +375,7 @@
                 data() {
                     return {
                         // -- Competition Variables
-                        // Each compTree element is a branch. A branch is an object
-                        // that contains a month name and a list of competitions.
-                        // When the page is created, this variable is populated with
-                        // a branches that contain their related competitions.
-                        compTree: [],
+                        competitions: [],
                         // -- Filter Variables
                         dropdownState: false,
                         months: [],
@@ -393,6 +390,7 @@
                                 ],
                             },
                         ],
+                        searchText: "",
                         selectedMonth: null,
                         selectedCountry: null,
                         selectedSort: 1,
@@ -413,14 +411,15 @@
                 },
                 computed: {
                     /**
-                     * A computed property that contains a list of branches from the comptree to display.
+                     * A computed property that creates a list of branches from the comptree to display.
                      * These branches are then flitered and sorted based on the users filter preferences.
                      */
                     viewableBranches() {
                         var viewableBranches = []
+                        var tempCompTree = this.compTreeCreator(this.competitions)
 
                         // Populates the viewableBranches by filtering out unselected months.
-                        this.compTree.forEach((branch) => {
+                        tempCompTree.forEach((branch) => {
                             // If the branch month matches the selected month then add it to viewableBranches.
                             if (this.selectAllMonth || moment(branch.month).format("MMMM YYYY") == this.selectedMonth) {
                                 viewableBranches.push(branch)
@@ -483,13 +482,10 @@
 
                         // Flatterns the competitions as after the promise it
                         // contains an array as an element for each json url called.
-                        competitions = competitions.flat()
+                        this.competitions = competitions.flat()
 
                         // Sets up all filter items.
-                        this.setUpFilters(competitions)
-
-                        // Makes a competition tree based on month.
-                        this.compTree = this.compTreeCreator(competitions)
+                        this.setUpFilters(this.competitions)
                     },
                     /**
                      * This function formats the given string based on the format
@@ -579,8 +575,13 @@
                             // Loops through each month
                             this.months.forEach((month) => {
                                 // If the competition month is the same as the current filtered month
+                                // and the competition name matches the search text or the search text is empty
                                 // then add it to its branch.
-                                if (moment(competition.date).format("MMMM YYYY") == moment(month).format("MMMM YYYY")) {
+                                if (
+                                    moment(competition.date).format("MMMM YYYY") == moment(month).format("MMMM YYYY") &&
+                                    (competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+                                        this.searchText == "")
+                                ) {
                                     // Finds the branch that matches and adds the competition to its list.
                                     var branch = compBranches.find((branch) => branch.month == month)
                                     branch.competitions.push(competition)
