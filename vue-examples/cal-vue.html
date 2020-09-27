@@ -29,6 +29,29 @@
                 overflow-y: auto;
                 overflow-x: hidden;
             }
+            /* Compeititon Calendar Scroll Bar */
+            /* width */
+            .comp-calendar::-webkit-scrollbar {
+                width: 12px;
+                background-color: transparent;
+            }
+
+            /* Track */
+            .comp-calendar::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            /* Handle */
+            .comp-calendar::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(230, 230, 230, 0.9);
+            }
+
+            /* Handle on hover */
+            .comp-calendar::-webkit-scrollbar-thumb:hover {
+                background: lightgray;
+            }
+            /* End of Compeititon Calendar Scroll Bar */
 
             .comp-month-header {
                 font-size: 30px;
@@ -41,6 +64,7 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-content: flex-start;
+                place-content: center;
             }
 
             .compcard {
@@ -208,7 +232,7 @@
             </div>
 
             <!-- Competition Calendar -->
-            <div class="comp-calendar">
+            <v-container class="comp-calendar">
                 <template v-for="viewableBranch in viewableBranches">
                     <!-- Month Header -->
                     <h3 class="comp-month-header">{{ viewableBranch.month }}</h3>
@@ -355,7 +379,7 @@
                         <v-btn dark text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
                     </template>
                 </v-snackbar>
-            </div>
+            </v-container>
         </v-app>
 
         <!-- production version of Vue 2 and Vuetify -->
@@ -577,14 +601,16 @@
                                 // If the competition month is the same as the current filtered month
                                 // and the competition name matches the search text or the search text is empty
                                 // then add it to its branch.
-                                if (
-                                    moment(competition.date).format("MMMM YYYY") == moment(month).format("MMMM YYYY") &&
-                                    (competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
-                                        this.searchText == "")
-                                ) {
-                                    // Finds the branch that matches and adds the competition to its list.
-                                    var branch = compBranches.find((branch) => branch.month == month)
-                                    branch.competitions.push(competition)
+                                if (moment(competition.date).format("MMMM YYYY") == moment(month).format("MMMM YYYY")) {
+                                    if (
+                                        this.searchText == null ||
+                                        competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+                                        this.searchText == ""
+                                    ) {
+                                        // Finds the branch that matches and adds the competition to its list.
+                                        var branch = compBranches.find((branch) => branch.month == month)
+                                        branch.competitions.push(competition)
+                                    }
                                 }
                             })
                         })
