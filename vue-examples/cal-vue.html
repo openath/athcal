@@ -103,6 +103,11 @@
                 -webkit-line-clamp: 2;
             }
 
+            .comp-load-more-container {
+                text-align: center;
+                margin: 40px;
+            }
+
             @media only screen and (min-width: 550px) {
                 .compcard {
                     max-width: 344px;
@@ -229,8 +234,8 @@
             </div>
 
             <!-- Competition Calendar -->
-            <v-container class="comp-calendar">
-                <template v-for="viewableBranch in viewableBranches">
+            <v-container class="comp-calendar" id="competition-calendar" v-scroll.self="calendarScrollHandler">
+                <template v-for="viewableBranch in viewableBranches.slice(0, infiniteLoaderCounter)">
                     <!-- Month Header -->
                     <h3 class="comp-month-header">{{ viewableBranch.month }}</h3>
 
@@ -364,6 +369,11 @@
                     </div>
                 </template>
 
+                <!-- Infinite Scroller - Load More Button -->
+                <div v-if="infiniteLoaderCounter < viewableBranches.length" class="comp-load-more-container">
+                    <v-btn @click="calendarScrollHandler">Load More...</v-btn>
+                </div>
+
                 <!-- No Competitions Container -->
                 <div v-if="viewableBranches.length == 0" class="no-comp-container">
                     <p>No Competitions found!</p>
@@ -428,6 +438,7 @@
                         selectAllMonth: false,
                         // -- Other
                         snackbar: false,
+                        infiniteLoaderCounter: 1,
                     }
                 },
                 watch: {
@@ -459,6 +470,9 @@
                         })
                         // Finally after sorting the competitions in each branch, we then sort the branches themselves.
                         this.sortBranches(this.selectedSort, viewableBranches)
+
+                        // Resets the infinite loader counter to 1.
+                        this.infiniteLoaderCounter = 1
 
                         return viewableBranches
                     },
@@ -675,6 +689,26 @@
 
                         // Sorts the months in calendar order.
                         this.months.sort((x, y) => moment(x).format("YYYYMM") - moment(y).format("YYYYMM"))
+                    },
+                    /**
+                     * This function is the scroll handler for the competition calendar.
+                     * It can also be called directly instead of waiting for the handler to self
+                     * execute. This function loads additional fixtures to the competition calendar.
+                     * This infinite scroll was created as the performace for rendering a large amount of html elements
+                     * was very taxing. The actual computation is fast but the rendering of elements was slow. An infinite
+                     * scroll was created to break down this long computation to much smaller ones.
+                     */
+                    calendarScrollHandler() {
+                        // Gets element by ID instead of using target so other buttons
+                        // can use this function.
+                        const element = document.getElementById("competition-calendar")
+
+                        // If the user has scrolled to the button then increment counter.
+                        if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+                            if (this.viewableBranches.length > this.infiniteLoaderCounter) {
+                                this.infiniteLoaderCounter++
+                            }
+                        }
                     },
                 },
             })
