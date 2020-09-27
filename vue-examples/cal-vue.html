@@ -101,11 +101,32 @@
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
+                font-weight: bolder;
             }
 
             .comp-load-more-container {
                 text-align: center;
                 margin: 40px;
+            }
+
+            .comp-button-finish {
+                cursor: default;
+                justify-content: start;
+                max-width: 100%;
+                text-transform: initial;
+                font-size: 14px;
+                width: 100%;
+                letter-spacing: initial;
+            }
+
+            .comp-button-address {
+                justify-content: start;
+                max-width: 100%;
+                text-transform: initial;
+                font-size: 14px;
+                width: 100%;
+                letter-spacing: initial;
+                text-align: left;
             }
 
             @media only screen and (min-width: 550px) {
@@ -274,15 +295,7 @@
                                             v-bind="attrs"
                                             v-on="on"
                                             @click="copyToClipboard(competition.address)"
-                                            style="
-                                                justify-content: start;
-                                                max-width: 100%;
-                                                text-transform: initial;
-                                                font-size: 14px;
-                                                width: 100%;
-                                                letter-spacing: initial;
-                                                text-align: left;
-                                            "
+                                            class="comp-button-address"
                                         >
                                             <v-icon left>mdi-map-marker</v-icon>
                                             <template v-if="competition.address">
@@ -301,25 +314,9 @@
                                 </v-tooltip>
 
                                 <!-- Finish Date -->
-                                <v-btn
-                                    color="grey"
-                                    text
-                                    block
-                                    style="
-                                        cursor: default;
-                                        justify-content: start;
-                                        max-width: 100%;
-                                        text-transform: initial;
-                                        font-size: 14px;
-                                        width: 100%;
-                                        letter-spacing: initial;
-                                    "
-                                >
+                                <v-btn color="grey" text block class="comp-button-finish">
                                     <v-icon left>mdi-flag-checkered</v-icon>
-                                    <template v-if="competition.date != competition.finish_date">
                                         {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
-                                    </template>
-                                    <template v-else> Same day </template>
                                 </v-btn>
                             </v-card-text>
 
@@ -327,7 +324,7 @@
                             <v-card-actions>
                                 <!-- View Button -->
                                 <template v-if="competition.entry_link">
-                                    <v-btn color="green accent-4" :href="competition.entry_link" text> View </v-btn>
+                                    <v-btn color="green" :href="competition.entry_link" text> View </v-btn>
                                 </template>
 
                                 <!-- View Button Disabled-->
@@ -335,12 +332,7 @@
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on, attrs }">
                                             <div v-bind="attrs" v-on="on">
-                                                <v-btn
-                                                    :disabled="!competition.entry_link"
-                                                    color="green accent-4"
-                                                    href="#"
-                                                    text
-                                                >
+                                                <v-btn :disabled="!competition.entry_link" color="green" href="#" text>
                                                     View
                                                 </v-btn>
                                             </div>
@@ -532,6 +524,20 @@
                      */
                     formatDate(dateString, formatString) {
                         return moment(dateString).format(formatString)
+                    },
+                    /**
+                     * This function checks if a given competition has already occured and is in the past.
+                     */
+                    hasExpired(competition) {
+                        // compares to the nearest day.
+                        return moment(competition.finish_date).isBefore(moment(), "day")
+                    },
+                    /**
+                     * This function checks if a given competiton will become past by the end of today.
+                     */
+                    expiresToday(competition) {
+                        // compares to the nearest day.
+                        return moment(competition.finish_date).isSame(moment(), "day")
                     },
                     /**
                      * This function is called from a computed property. This function sorts
