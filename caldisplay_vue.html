@@ -6,107 +6,311 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JSON Test</title>
-
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <style>
+        .month-heading {
+            color: #707070;
+            text-decoration: underline;
+        }
+        .month-heading:hover {
+            color: #E95420;
+            cursor: pointer;
+        }
+        .filter-heading {
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-	<h1>Loading calendar data with VueJS</h1>
-	<p>This kind of page might be in an iframe.  It loads a JSON document
-    and displays information in it</p>
-    
-    <div id="app">
+    <div id="app" style="height: 1080px">
         <div class="container-fluid mb-5">
-            <div id="months" class="row">
-                <div v-html="getMonthData(1)" v-on:click="applyDateFilter(1)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(2)" v-on:click="applyDateFilter(2)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(3)" v-on:click="applyDateFilter(3)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(4)" v-on:click="applyDateFilter(4)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(5)" v-on:click="applyDateFilter(5)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(6)" v-on:click="applyDateFilter(6)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(7)" v-on:click="applyDateFilter(7)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(8)" v-on:click="applyDateFilter(8)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(9)" v-on:click="applyDateFilter(9)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(10)" v-on:click="applyDateFilter(10)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(11)" v-on:click="applyDateFilter(11)" class="col-md-1 text-center border p-3"></div>
-                <div v-html="getMonthData(12)" v-on:click="applyDateFilter(12)" class="col-md-1 text-center border p-3"></div>
-            </div>
-        </div>
-        <div class="container">
-            <h3>Fetched {{info.data.length}} competitions</h3>
+            <div class="row">
+                <div class="col-md-2 px-0 min-vh-100" style="background-color: #E95420;">
+                    <div class="px-3" style="height: 200px;">
+                        <h4 class="text-white">Filter</h4>
+                        <div>
+                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#locationFilter" role="button" aria-expanded="false" aria-controls="locationFilter">
+                                Location <i class="fas fa-chevron-up d-inline"></i><i class="fas fa-chevron-down d-none"></i>
+                            </a>
+                            <div class="collapse" id="locationFilter">
+                                <div class="card card-body">
+                                    <form>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">All locations</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class="form-control" type="text" placeholder="Search by city">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="country">Choose Country</label>
+                                            <select multiple v-model="selectedCountries" class="form-control">
+                                                <option disabled selected hidden>...</option>
+                                                <option v-for="option in country_options" :value="option">{{ option }}</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#competitionFilter" role="button" aria-expanded="false" aria-controls="competitionFilter">
+                                Competition
+                            </a>
+                            <div class="collapse" id="competitionFilter">
+                                <div class="card card-body">
+                                    <form>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">All competitions</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">European athletics events and meetings</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">IAAF events and meetings</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Affiliated organisation competitions</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">International matches</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">National championships</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">International meetings with national permit</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#typeFilter" role="button" aria-expanded="false" aria-controls="typeFilter">
+                                Type
+                            </a>
+                            <div class="collapse" id="typeFilter">
+                                <div class="card card-body">
+                                    <form>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">all types</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Outdoor</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Indoor</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Road races</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Cross country</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Mountain running</label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" type="checkbox" name="" id="">
+                                            <label class="form-check-label" for="exampleCheck1">Race walking</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#ageGroupFilter" role="button" aria-expanded="false" aria-controls="ageGroupFilter">
+                                Age Groups
+                            </a>
+                            <div class="collapse" id="ageGroupFilter">
+                                <div class="card card-body">
+                                    <form>
+                                        <div class="form-group form-check">
+                                            <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
+                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">all age groups
+                                            </label>
+                                        </div>
+                                        <div v-for="(ag, i) in ageGroups" class="form-group form-check">
+                                            <input class="form-check-input" :value="ag" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag }}</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 min-vh-100" style="background-color: #F0F0F0;">
+                    <div class="col-md-11 mt-3">
+                        <div id="months-headings" class="row">
+                            <div class="col-md-1 d-inline" v-for="month in months_data" >
+                                <h3 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3>
+                                <div class="d-block mx-auto" style="width:fit-content">
+                                    <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-11 mt-3">
+                        <span class="badge badge-secondary mb-0">{{ info.data && info.data.length || 0 }} total competitions</span>
+                        <span class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} filtered competitions</span>
 
-            <table class="table">
-                <thead class="bg-primary text-white">
-                <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Full Name</th>
-                    <th scope="col">Country</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="filteredCompetitions.length == 0">
-                        <td>No competitions</td>
-                    </tr>
-                    <tr v-for="comp in filteredCompetitions" :key="comp.id">
-                        <td>{{comp.date}}</td>
-                        <td>{{comp.full_name}}</td>
-                        <td>{{comp.country}}</td>
-                    </tr>
-                </tbody>
-            </table>
+                        <a href="javascript:location.reload(true)">Reset filters</a>
+                        <table class="table">
+                            <thead class="bg-primary text-white">
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Age Groups</th>
+                                <th scope="col">Country</th>
+                                <th scope="col">Type</th>
+                            </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <tr v-if="filteredCompetitions.length == 0">
+                                    <td>No competitions</td>
+                                </tr>
+                                <tr v-for="comp in filteredCompetitions" :key="comp.id">
+                                    <td>{{comp.date}}</td>
+                                    <td>{{comp.full_name}}</td>
+                                    <td>{{comp.age_groups}}</td>
+                                    <td>{{comp.country}}</td>
+                                    <td>{{comp.type}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- production version, optimized for size and speed -->
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+        $(document).ready(() => {
+            // $(".filter-heading").click(function(){
+            //     console.log("clicked");
+            //     $(".collapse").collapse('toggle');
+            // });
+            // $('.collapse').on('show.bs.collapse', function(){
+            //     alert("run")
+            //     $('.fa-chevron-up').removeClass("d-inline");
+            // });
+
+        });
 
         var app = new Vue({
             el: '#app',
-              data() {
-                return {
-                  info: null,
-                  filteredCompetitions: null,
-                  selectedMonth: null,
-                  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                }
-              },
-            methods:{
-                applyDateFilter: function(month) {
-                    this.selectedMonth = this.months[month-1];
-                    this.filteredCompetitions = this.filteredComps(month);
-
-
-                    var calMonths = document.getElementById('months');
-                    Array.from(calMonths.children).forEach(mon => mon.classList.remove("bg-primary", "text-white"));
-
-                    var clickedMonth = calMonths.children[month-1];
-                    clickedMonth.classList.add("bg-primary", "text-white");
+              props: {
+                ageGroups: {
+                    type: Array,
+                    default: function () {
+                        return ['Seniors', 'Masters', 'U23', 'U20', 'U18']
+                    }
                 },
-                getMonthData: function(month) {
-                    var data = this.filteredComps(month);
-                    var html = `${this.months[month-1]} <b>(${data.length})</b>`;
-                    return html;
-                },
-                filteredComps: function (month) {
-                    // Make it suitable for string
-                    var StringValue = String(month).padStart(2, '0')
-                    if (month) {
-                        return this.info.data
-                        .filter((item)=>{
-                            return item.date.match(`2020-${StringValue}`);
-                        })
-                    }else {
-                        return this.info.data;
+                allMonths: {
+                    type: Array,
+                    default: function () {
+                        return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
                     }
                 }
               },
+              data() {
+                return {
+                  info: {},
+                  all_months: [],
+                  country_options: [],
+                  selectedYear: null,
+                  selectedMonth: null,
+                  selectedAG: [],
+                  selectedCountries: []
+                }
+              },
+            computed: {
+                filteredCompetitions: function () {
+                    var self = this,
+                        output = self.info.data;
+                    if (self.selectedCountries.length > 0) {
+                        output = output.filter(function (item) {
+                            return self.selectedCountries.indexOf(item.country) >= 0
+                        })
+                    }
+                    if (self.selectedAG.length > 0) {
+                        output = output.filter(function (item) {
+                            var ageGroups = item.age_groups.split(',').map(function(ag) { return ag.trim() });
+                            var hits = ageGroups.map(function (ag) {
+                                return self.selectedAG.indexOf(ag) >= 0
+                            })
+                            return hits.reduce(function (x, y) { return x || y }, false)
+                        })
+                    }
+                    if (self.selectedMonth) {
+                        output = self.filterByMonth(self.selectedMonth);
+                    }
+                    return output
+                },
+                months_data: function() {
+                    var self = this;
+                    if (self.info.data) {
+                        for (month in self.allMonths) {
+                            var monObject = {};
+                            monObject.num = parseInt(month)+1;
+                            monObject.name = self.allMonths[month];
+                            var compList = self.filterByMonth(String(monObject.num).padStart(2, '0'));
+                            monObject.numberOfComps = compList.length;
+                            self.all_months.push(monObject);
+                        }
+                    }
+                    var output = self.all_months;
+                    return output;
+                }
+            },
+            methods:{
+                applyDateFilter: function(month) {
+                    this.selectedMonth = String(month).padStart(2, '0');
+
+                    // Diplays which month is currently being filtered by
+                    var calMonths = document.getElementById('months-headings');
+                    Array.from(calMonths.children).forEach(mon => mon.children[0].style.color = "#707070");
+
+                    var clickedMonth = calMonths.children[month-1];
+                    clickedMonth.children[0].style.color = "#E95420";
+                    // clickedMonth.classList.add("bg-primary", "text-white");
+                },
+                filterByMonth: function(month) {
+                    var output = this.info.data;
+                    console.log(this.info.data);
+                    return output.filter((item)=>{
+                        // Need to change this to selectedYear
+                        return item.date.match(`2021-${month}`);
+                    })
+                },
+              },
             mounted() {
+                var self = this;
                 axios
-                    .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+                    .get('https://file.opentrack.run/live/euroath/european_calendar_2021.json')
                     .then(response => {
-                      this.info = response;
-                      this.filteredCompetitions = this.filteredComps(null);
+                        self.info = response;
+                        self.country_options = self.info.data.map(item => item.country
+                                            ).filter((value, index, list) => list.indexOf(value) === index);
+                        
                     })
               }
         })
