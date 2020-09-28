@@ -303,7 +303,12 @@
 
                     <!-- Competition Cards -->
                     <div class="d-flex comp-month-card-container">
-                        <v-card v-for="competition in viewableBranch.competitions" class="compcard" :flat="true">
+                        <v-card
+                            v-for="competition in viewableBranch.competitions"
+                            :key="competition.id"
+                            class="compcard"
+                            :flat="true"
+                        >
                             <!-- Header Text -->
                             <v-list-item>
                                 <!-- Calendar Style Date -->
@@ -346,16 +351,6 @@
                                     :ripple="false"
                                     v-if="hasExpired(competition)"
                                     >Expired</v-chip
-                                >
-                                <!-- If It Expires Today -->
-                                <v-chip
-                                    color="orange darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="expiresToday(competition)"
-                                    >Expires Today</v-chip
                                 >
                             </v-chip-group>
 
@@ -716,6 +711,9 @@
 
                         // Loops through each competition
                         competitions.forEach((competition) => {
+                            // Do not add the competition if it is a demo fixture and not an actual fixture.
+                            if (competition.is_demo) return
+
                             // Loops through each month
                             this.months.forEach((month) => {
                                 // If the competition month is the same as the current filtered month
