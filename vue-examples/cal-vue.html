@@ -8,6 +8,8 @@
             name="viewport"
             content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
         />
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+        <meta content="utf-8" http-equiv="encoding" />
         <style>
             html {
                 height: 100%;
@@ -485,7 +487,7 @@
                         // Populates the viewableBranches by filtering out unselected months.
                         tempCompTree.forEach((branch) => {
                             // If the branch month matches the selected month then add it to viewableBranches.
-                            if (this.selectAllMonth || moment(branch.month).format("MMMM YYYY") == this.selectedMonth) {
+                            if (this.selectAllMonth || branch.month == this.selectedMonth) {
                                 viewableBranches.push(branch)
                             }
                         })
@@ -667,7 +669,7 @@
                                 // If the competition month is the same as the current filtered month
                                 // and the competition name matches the search text or the search text is empty
                                 // then add it to its branch.
-                                if (moment(competition.date).format("MMMM YYYY") == moment(month).format("MMMM YYYY")) {
+                                if (moment(competition.date).format("MMMM YYYY") == month) {
                                     if (
                                         this.searchText == null ||
                                         competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
