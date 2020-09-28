@@ -84,6 +84,10 @@
                 width: 100%;
             }
 
+            .compcard .v-chip-group .v-chip {
+                cursor: default;
+            }
+
             .no-comp-container {
                 text-align: center;
                 font-size: 30px;
@@ -152,6 +156,20 @@
                 display: none;
             }
 
+            .filter-top-bar-filter-button-desktop {
+                display: none;
+                color: rgba(0, 0, 0, 0.54) !important; /* Same colour as icon buttons */
+            }
+
+            @media only screen and (min-width: 960px) {
+                .filter-top-bar-filter-button-desktop {
+                    display: flex;
+                }
+                .filter-top-bar-filter-button-mobile {
+                    display: none;
+                }
+            }
+
             .select-container {
                 padding-bottom: 0px;
             }
@@ -193,15 +211,36 @@
                 <!-- Top Bar Filter Options -->
                 <v-container>
                     <div class="filter-top-bar">
+                        <!-- Select All Checkbox -->
                         <v-checkbox
                             v-model="selectAllMonth"
                             label="Display All"
                             style="width: fit-content; margin: 0; display: inline-flex; padding-top: 0px"
                         ></v-checkbox>
                         <v-spacer></v-spacer>
-                        <v-btn icon small @click="dropdownState = !dropdownState">
+
+                        <!-- Filter Button Mobile -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-mobile"
+                            color="gray"
+                            small
+                            icon
+                            @click="dropdownState = !dropdownState"
+                        >
                             <v-icon v-if="!dropdownState">mdi-filter-menu</v-icon>
                             <v-icon v-else>mdi-filter-menu-outline</v-icon>
+                        </v-btn>
+
+                        <!-- Filter Button Desktop -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-desktop"
+                            small
+                            text
+                            @click="dropdownState = !dropdownState"
+                        >
+                            <span>Filter</span>
+                            <v-icon right v-if="!dropdownState">mdi-filter-menu</v-icon>
+                            <v-icon right v-else>mdi-filter-menu-outline</v-icon>
                         </v-btn>
                     </div>
                 </v-container>
@@ -359,21 +398,34 @@
                             <!-- Action Buttons -->
                             <v-card-actions>
                                 <!-- View Button -->
-                                <template v-if="competition.entry_link">
-                                    <v-btn color="green" :href="competition.entry_link" text> View </v-btn>
-                                </template>
-
-                                <!-- View Button Disabled-->
-                                <template v-else>
+                                <template>
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on, attrs }">
                                             <div v-bind="attrs" v-on="on">
-                                                <v-btn :disabled="!competition.entry_link" color="green" href="#" text>
-                                                    View
+                                                <!-- Button with Link -->
+                                                <v-btn
+                                                    v-if="competition.entry_link"
+                                                    color="green"
+                                                    :href="competition.entry_link"
+                                                    text
+                                                    >Visit Site</v-btn
+                                                >
+                                                <!-- Disabled button - no link -->
+                                                <v-btn
+                                                    v-else
+                                                    :disabled="!competition.entry_link"
+                                                    color="green"
+                                                    href="#"
+                                                    text
+                                                >
+                                                    Visit Site
                                                 </v-btn>
                                             </div>
                                         </template>
-                                        <span>No entry link available</span>
+                                        <span v-if="competition.entry_link"
+                                            >View competition and entry information (External Site)</span
+                                        >
+                                        <span v-else>No external site available</span>
                                     </v-tooltip>
                                 </template>
                                 <v-spacer></v-spacer>
