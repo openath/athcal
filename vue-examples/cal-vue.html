@@ -284,6 +284,40 @@
                                 </v-list-item-content>
                             </v-list-item>
 
+                            <!-- Competition Extra Information -->
+                            <v-chip-group mandatory class="px-6">
+                                <!-- If It is currently on now -->
+                                <v-chip
+                                    color="green darken-1"
+                                    outlined
+                                    label
+                                    x-small
+                                    :ripple="false"
+                                    v-if="isOnNow(competition)"
+                                    >On Now</v-chip
+                                >
+                                <!-- If Has Expired -->
+                                <v-chip
+                                    color="red darken-1"
+                                    outlined
+                                    label
+                                    x-small
+                                    :ripple="false"
+                                    v-if="hasExpired(competition)"
+                                    >Expired</v-chip
+                                >
+                                <!-- If It Expires Today -->
+                                <v-chip
+                                    color="orange darken-1"
+                                    outlined
+                                    label
+                                    x-small
+                                    :ripple="false"
+                                    v-if="expiresToday(competition)"
+                                    >Expires Today</v-chip
+                                >
+                            </v-chip-group>
+
                             <!-- Address -->
                             <v-card-text class="pb-0 pt-0">
                                 <v-tooltip bottom>
@@ -316,7 +350,7 @@
                                 <!-- Finish Date -->
                                 <v-btn color="grey" text block class="comp-button-finish">
                                     <v-icon left>mdi-flag-checkered</v-icon>
-                                        {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
+                                    {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
                                 </v-btn>
                             </v-card-text>
 
@@ -538,6 +572,17 @@
                     expiresToday(competition) {
                         // compares to the nearest day.
                         return moment(competition.finish_date).isSame(moment(), "day")
+                    },
+                    /**
+                     * This function checks if a given competition is currently on now.
+                     */
+                    isOnNow(competition) {
+                        // Expires today or in the future, and it has started in the past.
+                        return (
+                            (this.expiresToday(competition) ||
+                                moment(competition.finish_date).isAfter(moment(), "day")) &&
+                            moment(competition.date).isBefore(moment(), "day")
+                        )
                     },
                     /**
                      * This function is called from a computed property. This function sorts
