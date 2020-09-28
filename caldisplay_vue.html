@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JSON Test</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
     <!-- Bootstrap CSS -->
@@ -15,6 +17,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <style>
+        body {
+            /* font-family: 'Roboto', sans-serif; */
+        }
         .month-heading {
             color: #707070;
             text-decoration: underline;
@@ -36,21 +41,25 @@
                     <div class="px-3" style="height: 200px;">
                         <h4 class="text-white">Filter</h4>
                         <div>
+                            <form>
+                                <div class="form-group">
+                                    <input class="form-control" v-model="name_search_query" type="text" placeholder="Search name">
+                                </div>
+                            </form>
                             <a class="filter-heading d-block text-white" data-toggle="collapse" href="#locationFilter" role="button" aria-expanded="false" aria-controls="locationFilter">
                                 Location <i class="fas fa-chevron-up d-inline"></i><i class="fas fa-chevron-down d-none"></i>
                             </a>
                             <div class="collapse" id="locationFilter">
                                 <div class="card card-body">
                                     <form>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">All locations</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control" type="text" placeholder="Search by city">
-                                        </div>
                                         <div class="form-group">
                                             <label for="country">Choose Country</label>
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label" for="id-reset-loc" @change="selectedCountries=[]">
+                                                    <input class="form-check-input" type="checkbox" name="" id="id-reset-loc">
+                                                    All locations
+                                                </label>
+                                            </div>
                                             <select multiple v-model="selectedCountries" class="form-control">
                                                 <option disabled selected hidden>...</option>
                                                 <option v-for="option in country_options" :value="option">{{ option }}</option>
@@ -103,32 +112,14 @@
                                 <div class="card card-body">
                                     <form>
                                         <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">all types</label>
+                                            <label class="form-check-label" for="id-reset-compType" @change="selectedCompType=[]">
+                                                <input class="form-check-input" type="checkbox" id="id-reset-compType">
+                                                All Types
+                                            </label>
                                         </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Outdoor</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Indoor</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Road races</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Cross country</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Mountain running</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Race walking</label>
+                                        <div v-for="(type, i) in compTypes" class="form-group form-check">
+                                            <input class="form-check-input" :value="type.value" :id="'id-type-' + i" type="checkbox" v-model="selectedCompType">
+                                            <label class="form-check-label" :for="'id-type-' + i">{{ type.label }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -141,12 +132,13 @@
                                     <form>
                                         <div class="form-group form-check">
                                             <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
-                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">all age groups
+                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">
+                                                All Age Groups
                                             </label>
                                         </div>
                                         <div v-for="(ag, i) in ageGroups" class="form-group form-check">
-                                            <input class="form-check-input" :value="ag" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
-                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag }}</label>
+                                            <input class="form-check-input" :value="ag.value" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -158,7 +150,7 @@
                     <div class="col-md-11 mt-3">
                         <div id="months-headings" class="row">
                             <div class="col-md-1 d-inline" v-for="month in months_data" >
-                                <h3 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3>
+                                <h2 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h2>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
                                 </div>
@@ -166,26 +158,24 @@
                         </div>
                     </div>
                     <div class="col-md-11 mt-3">
-                        <span class="badge badge-secondary mb-0">{{ info.data && info.data.length || 0 }} total competitions</span>
-                        <span class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} filtered competitions</span>
-
+                        <span class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info.data && info.data.length || 0 }} competitions</span>
                         <a href="javascript:location.reload(true)">Reset filters</a>
-                        <table class="table">
+                        <table class="table list bg-white">
                             <thead class="bg-primary text-white">
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Full Name</th>
-                                <th scope="col">Age Groups</th>
-                                <th scope="col">Country</th>
-                                <th scope="col">Type</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col" class="d-lg-table-cell">Date</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Age Groups</th>
+                                    <th scope="col">Country</th>
+                                    <th scope="col">Type</th>
+                                </tr>
                             </thead>
-                            <tbody class="bg-white">
+                            <tbody>
                                 <tr v-if="filteredCompetitions.length == 0">
                                     <td>No competitions</td>
                                 </tr>
                                 <tr v-for="comp in filteredCompetitions" :key="comp.id">
-                                    <td>{{comp.date}}</td>
+                                    <td style="width:125px">{{comp.date}}</td>
                                     <td>{{comp.full_name}}</td>
                                     <td>{{comp.age_groups}}</td>
                                     <td>{{comp.country}}</td>
@@ -221,7 +211,13 @@
                 ageGroups: {
                     type: Array,
                     default: function () {
-                        return ['Seniors', 'Masters', 'U23', 'U20', 'U18']
+                        return [{label:'Seniors',value:'S'}, {label:'Masters',value:'M'}, {label:'U23',value:'U23'}, {label:'U20',value:'U20'}, {label:'U18',value:'U18'}]
+                    }
+                },
+                compTypes: {
+                    type: Array,
+                    default: function () {
+                        return [{label:'Outdoor', value:'Outdoor'}, {label:'Indoor', value:'Indoor'}, {label:'Road races', value:'Road races'}, {label:'Cross country', value:'Cross country'}, {label:'Mountain running', value:'Mountain running'}, {label:'Race walking', value:'Race walking'}]
                     }
                 },
                 allMonths: {
@@ -234,10 +230,12 @@
               data() {
                 return {
                   info: {},
+                  name_search_query: '',
                   all_months: [],
                   country_options: [],
                   selectedYear: null,
                   selectedMonth: null,
+                  selectedCompType: [],
                   selectedAG: [],
                   selectedCountries: []
                 }
@@ -246,6 +244,12 @@
                 filteredCompetitions: function () {
                     var self = this,
                         output = self.info.data;
+
+                    if (self.name_search_query != '') {
+                        output = output.filter(function (item) {
+                            return item.full_name.toLowerCase().includes(self.name_search_query.toLowerCase())
+                        })
+                    }
                     if (self.selectedCountries.length > 0) {
                         output = output.filter(function (item) {
                             return self.selectedCountries.indexOf(item.country) >= 0
@@ -295,17 +299,16 @@
                 },
                 filterByMonth: function(month) {
                     var output = this.info.data;
-                    console.log(this.info.data);
                     return output.filter((item)=>{
                         // Need to change this to selectedYear
-                        return item.date.match(`2021-${month}`);
+                        return item.date.match(`2020-${month}`);
                     })
                 },
               },
             mounted() {
                 var self = this;
                 axios
-                    .get('https://file.opentrack.run/live/euroath/european_calendar_2021.json')
+                    .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
                     .then(response => {
                         self.info = response;
                         self.country_options = self.info.data.map(item => item.country
