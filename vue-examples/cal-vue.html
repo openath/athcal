@@ -30,6 +30,9 @@
                 height: 100%;
                 overflow-y: auto;
                 overflow-x: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
             }
             /* Compeititon Calendar Scroll Bar */
             /* width */
@@ -76,6 +79,10 @@
                 overflow: hidden;
             }
 
+            .compcard .v-icon {
+                line-height: 0 !important;
+            }
+
             .compcard .v-btn:not(.v-btn--round).v-size--default {
                 padding: 0 8px;
             }
@@ -84,9 +91,27 @@
                 width: 100%;
             }
 
+            .compcard .v-chip-group .v-chip {
+                cursor: default;
+            }
+
             .no-comp-container {
                 text-align: center;
                 font-size: 30px;
+            }
+
+            .comp-date-container > p {
+                margin: 0px;
+                line-height: 0.75;
+            }
+
+            .comp-date-day {
+                font-size: 25px;
+            }
+
+            .comp-date-month {
+                text-transform: uppercase;
+                font-size: 12px;
             }
 
             .comp-title-container {
@@ -111,14 +136,8 @@
                 margin: 40px;
             }
 
-            .comp-button-finish {
-                cursor: default;
-                justify-content: start;
-                max-width: 100%;
-                text-transform: initial;
-                font-size: 14px;
-                width: 100%;
-                letter-spacing: initial;
+            .comp-chip-icon {
+                font-size: 12px !important;
             }
 
             .comp-button-address {
@@ -129,6 +148,63 @@
                 width: 100%;
                 letter-spacing: initial;
                 text-align: left;
+            }
+
+            .comp-button-address-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+            }
+
+            .comp-info-card-text {
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
+            }
+            /* Compeititon Info Card Text Scroll Bar */
+            /* width */
+            .comp-info-card-text::-webkit-scrollbar {
+                height: 5px;
+                background-color: transparent;
+            }
+
+            /* Track */
+            .comp-info-card-text::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            /* Handle */
+            .comp-info-card-text::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(230, 230, 230, 0.9);
+            }
+
+            /* Handle on hover */
+            .comp-info-card-text::-webkit-scrollbar-thumb:hover {
+                background: lightgray;
+            }
+            /* End of Compeititon Info Card Text Scroll Bar */
+
+            .comp-info-card-text-container {
+                display: inline-flex;
+                white-space: nowrap;
+                cursor: default;
+            }
+
+            .comp-info-card-vertical-divider {
+                display: inline;
+            }
+
+            .comp-hor-divider {
+                margin: 8px 16px;
+            }
+
+            .comp-info-card-icon {
+                font-size: 17px !important;
+                margin-right: 4px;
             }
 
             @media only screen and (min-width: 550px) {
@@ -150,6 +226,27 @@
 
             .filter-top-bar .v-messages {
                 display: none;
+            }
+
+            .filter-top-bar-filter-button-desktop {
+                display: none;
+                color: rgba(0, 0, 0, 0.54) !important; /* Same colour as icon buttons */
+            }
+
+            @media only screen and (min-width: 960px) {
+                .filter-top-bar-filter-button-desktop {
+                    display: flex;
+                }
+                .filter-top-bar-filter-button-mobile {
+                    display: none;
+                }
+            }
+
+            .filter-top-bar-checkbox {
+                width: fit-content;
+                margin: 0;
+                display: inline-flex;
+                padding-top: 0px;
             }
 
             .select-container {
@@ -193,15 +290,36 @@
                 <!-- Top Bar Filter Options -->
                 <v-container>
                     <div class="filter-top-bar">
+                        <!-- Select All Checkbox -->
                         <v-checkbox
                             v-model="selectAllMonth"
                             label="Display All"
-                            style="width: fit-content; margin: 0; display: inline-flex; padding-top: 0px"
+                            class="filter-top-bar-checkbox"
                         ></v-checkbox>
                         <v-spacer></v-spacer>
-                        <v-btn icon small @click="dropdownState = !dropdownState">
+
+                        <!-- Filter Button Mobile -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-mobile"
+                            color="gray"
+                            small
+                            icon
+                            @click="dropdownState = !dropdownState"
+                        >
                             <v-icon v-if="!dropdownState">mdi-filter-menu</v-icon>
                             <v-icon v-else>mdi-filter-menu-outline</v-icon>
+                        </v-btn>
+
+                        <!-- Filter Button Desktop -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-desktop"
+                            small
+                            text
+                            @click="dropdownState = !dropdownState"
+                        >
+                            <span>Filter</span>
+                            <v-icon right v-if="!dropdownState">mdi-filter-menu</v-icon>
+                            <v-icon right v-else>mdi-filter-menu-outline</v-icon>
                         </v-btn>
                     </div>
                 </v-container>
@@ -264,17 +382,20 @@
 
                     <!-- Competition Cards -->
                     <div class="d-flex comp-month-card-container">
-                        <v-card v-for="competition in viewableBranch.competitions" class="compcard" :flat="true">
+                        <v-card
+                            v-for="competition in viewableBranch.competitions"
+                            :key="competition.id"
+                            class="compcard my-5"
+                            :flat="true"
+                        >
                             <!-- Header Text -->
                             <v-list-item>
                                 <!-- Calendar Style Date -->
-                                <v-list-item-avatar color="grey lighten-3">
-                                    <p style="margin: 0px; line-height: 0.75">
-                                        <span style="font-size: 25px"> {{ formatDate(competition.date, "DD") }} </span>
+                                <v-list-item-avatar class="comp-date-container" color="grey lighten-3">
+                                    <p>
+                                        <span class="comp-date-day"> {{ formatDate(competition.date, "DD") }} </span>
                                         <br />
-                                        <span style="text-transform: uppercase; font-size: 12px">
-                                            {{ formatDate(competition.date, "MMM") }}
-                                        </span>
+                                        <span class="comp-date-month"> {{ formatDate(competition.date, "MMM") }} </span>
                                     </p>
                                 </v-list-item-avatar>
 
@@ -287,41 +408,126 @@
                             </v-list-item>
 
                             <!-- Competition Extra Information -->
-                            <v-chip-group mandatory class="px-6">
+                            <v-chip-group column class="px-6">
                                 <!-- If It is currently on now -->
-                                <v-chip
-                                    color="green darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="isOnNow(competition)"
-                                    >On Now</v-chip
-                                >
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="isOnNow(competition)"
+                                            >On Now
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is on now</span>
+                                </v-tooltip>
                                 <!-- If Has Expired -->
-                                <v-chip
-                                    color="red darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="hasExpired(competition)"
-                                    >Expired</v-chip
-                                >
-                                <!-- If It Expires Today -->
-                                <v-chip
-                                    color="orange darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="expiresToday(competition)"
-                                    >Expires Today</v-chip
-                                >
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="red darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="hasExpired(competition)"
+                                            >Expired
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is over</span>
+                                </v-tooltip>
+                                <!-- No. of participants -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="competition.num_competitors > 0"
+                                        >
+                                            <v-icon left class="comp-chip-icon">mdi-account-group</v-icon>{{
+                                            competition.num_competitors }}
+                                        </v-chip>
+                                    </template>
+                                    <span>No. of participants</span>
+                                </v-tooltip>
                             </v-chip-group>
 
+                            <!-- Competition Info - No Action -->
+                            <v-card-text class="py-0">
+                                <div class="comp-info-card-text pb-2">
+                                    <!-- Finish Date if on different to start date -->
+                                    <template v-if="!isFinishDateSame(competition)">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    <v-icon color="yellow darken-4" class="comp-info-card-icon"
+                                                        >mdi-information-outline</v-icon
+                                                    >
+                                                    {{ formatDate(competition.finish_date, "DD/MM/YY") }}
+                                                </div>
+                                            </template>
+                                            <span>Start date is different to finish date!</span>
+                                        </v-tooltip>
+                                        <v-divider class="comp-info-card-vertical-divider" vertical></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.type">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    {{ competition.type.charAt(0) +
+                                                    competition.type.toLowerCase().slice(1) }}
+                                                </div>
+                                            </template>
+                                            <span>Competition type</span>
+                                        </v-tooltip>
+                                        <v-divider class="comp-info-card-vertical-divider" vertical></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.age_groups">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    {{ competition.age_groups }}
+                                                </div>
+                                            </template>
+                                            <span>Competition age groups</span>
+                                        </v-tooltip>
+                                    </template>
+                                </div>
+                            </v-card-text>
+
+                            <!-- Compeition Information Divider - Action -->
+                            <v-divider class="comp-hor-divider"></v-divider>
+
                             <!-- Address -->
-                            <v-card-text class="pb-0 pt-0">
+                            <v-card-text class="py-0">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn
@@ -335,45 +541,48 @@
                                         >
                                             <v-icon left>mdi-map-marker</v-icon>
                                             <template v-if="competition.address">
-                                                <span style="overflow: hidden; text-overflow: ellipsis; width: 100%"
-                                                    >{{ competition.address }}</span
-                                                >
+                                                <span class="comp-button-address-text">{{ competition.address }}</span>
                                             </template>
                                             <template v-else>
-                                                <span style="overflow: hidden; text-overflow: ellipsis; width: 100%"
-                                                    >Not Provided</span
-                                                >
+                                                <span class="comp-button-address-text">Not Provided</span>
                                             </template>
                                         </v-btn>
                                     </template>
                                     <span>Copy Address</span>
                                 </v-tooltip>
-
-                                <!-- Finish Date -->
-                                <v-btn color="grey" text block class="comp-button-finish">
-                                    <v-icon left>mdi-flag-checkered</v-icon>
-                                    {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
-                                </v-btn>
                             </v-card-text>
 
                             <!-- Action Buttons -->
-                            <v-card-actions>
+                            <v-card-actions class="pt-0">
                                 <!-- View Button -->
-                                <template v-if="competition.entry_link">
-                                    <v-btn color="green" :href="competition.entry_link" text> View </v-btn>
-                                </template>
-
-                                <!-- View Button Disabled-->
-                                <template v-else>
+                                <template>
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on, attrs }">
                                             <div v-bind="attrs" v-on="on">
-                                                <v-btn :disabled="!competition.entry_link" color="green" href="#" text>
-                                                    View
+                                                <!-- Button with Link -->
+                                                <v-btn
+                                                    v-if="competition.entry_link"
+                                                    color="green"
+                                                    :href="competition.entry_link"
+                                                    text
+                                                    >Visit Site</v-btn
+                                                >
+                                                <!-- Disabled button - no link -->
+                                                <v-btn
+                                                    v-else
+                                                    :disabled="!competition.entry_link"
+                                                    color="green"
+                                                    href="#"
+                                                    text
+                                                >
+                                                    Visit Site
                                                 </v-btn>
                                             </div>
                                         </template>
-                                        <span>No entry link available</span>
+                                        <span v-if="competition.entry_link"
+                                            >View competition and entry information (External Site)</span
+                                        >
+                                        <span v-else>No external site available</span>
                                     </v-tooltip>
                                 </template>
                                 <v-spacer></v-spacer>
@@ -587,6 +796,13 @@
                         )
                     },
                     /**
+                     * This function checks if a given competition has a different finish date to its
+                     * start date.
+                     */
+                    isFinishDateSame(competition) {
+                        return moment(competition.date).isSame(moment(competition.finish_date), "day")
+                    },
+                    /**
                      * This function is called from a computed property. This function sorts
                      * a list of competitions, based on the value provided from the sort
                      * selector element.
@@ -595,10 +811,10 @@
                         // Months - Ascending
                         if (itemValue == 1) {
                             competitions.sort(function (x, y) {
-                                if (moment(x.date).isBefore(y.date)) {
+                                if (moment(x.date).isBefore(moment(y.date))) {
                                     return -1
                                 }
-                                if (moment(x.date).isAfter(y.date)) {
+                                if (moment(x.date).isAfter(moment(y.date))) {
                                     return 1
                                 }
                                 return 0
@@ -607,10 +823,10 @@
                             // Months - Descending
                         } else if (itemValue == 2) {
                             competitions.sort(function (x, y) {
-                                if (moment(y.date).isBefore(x.date)) {
+                                if (moment(y.date).isBefore(moment(x.date))) {
                                     return -1
                                 }
-                                if (moment(y.date).isAfter(x.date)) {
+                                if (moment(y.date).isAfter(moment(x.date))) {
                                     return 1
                                 }
                                 return 0
@@ -625,10 +841,10 @@
                         // Ascending
                         if (itemValue == 1) {
                             branches.sort(function (x, y) {
-                                if (moment(x.month).isBefore(y.month)) {
+                                if (moment(x.month, "MMMM YYYY").isBefore(moment(y.month, "MMMM YYYY", "month"))) {
                                     return -1
                                 }
-                                if (moment(x.month).isAfter(y.month)) {
+                                if (moment(x.month, "MMMM YYYY").isAfter(moment(y.month, "MMMM YYYY", "month"))) {
                                     return 1
                                 }
                                 return 0
@@ -637,10 +853,10 @@
                             // Descending
                         } else if (itemValue == 2) {
                             branches.sort(function (x, y) {
-                                if (moment(y.month).isBefore(x.month)) {
+                                if (moment(y.month, "MMMM YYYY").isBefore(moment(x.month, "MMMM YYYY", "month"))) {
                                     return -1
                                 }
-                                if (moment(y.month).isAfter(x.month)) {
+                                if (moment(y.month, "MMMM YYYY").isAfter(moment(x.month, "MMMM YYYY", "month"))) {
                                     return 1
                                 }
                                 return 0
@@ -664,12 +880,15 @@
 
                         // Loops through each competition
                         competitions.forEach((competition) => {
+                            // Do not add the competition if it is a demo fixture and not an actual fixture.
+                            if (competition.is_demo) return
+
                             // Loops through each month
                             this.months.forEach((month) => {
                                 // If the competition month is the same as the current filtered month
                                 // and the competition name matches the search text or the search text is empty
                                 // then add it to its branch.
-                                if (moment(competition.date).format("MMMM YYYY") == month) {
+                                if (moment(competition.date).isSame(moment(month, "MMMM YYYY"), "month")) {
                                     if (
                                         this.searchText == null ||
                                         competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
@@ -741,7 +960,7 @@
                         this.countries.sort()
 
                         // Sorts the months in calendar order.
-                        this.months.sort((x, y) => moment(x).format("YYYYMM") - moment(y).format("YYYYMM"))
+                        this.months.sort((x, y) => moment(x, "MMMM YYYY").isAfter(moment(y, "MMMM YYYY"), "month"))
                     },
                     /**
                      * This function is the scroll handler for the competition calendar.
