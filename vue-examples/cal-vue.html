@@ -30,6 +30,9 @@
                 height: 100%;
                 overflow-y: auto;
                 overflow-x: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
             }
             /* Compeititon Calendar Scroll Bar */
             /* width */
@@ -115,16 +118,6 @@
                 margin: 40px;
             }
 
-            .comp-button-finish {
-                cursor: default;
-                justify-content: start;
-                max-width: 100%;
-                text-transform: initial;
-                font-size: 14px;
-                width: 100%;
-                letter-spacing: initial;
-            }
-
             .comp-button-address {
                 justify-content: start;
                 max-width: 100%;
@@ -134,6 +127,38 @@
                 letter-spacing: initial;
                 text-align: left;
             }
+
+            .comp-info-card-text {
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
+            }
+            /* Compeititon Info Card Text Scroll Bar */
+            /* width */
+            .comp-info-card-text::-webkit-scrollbar {
+                height: 5px;
+                background-color: transparent;
+            }
+
+            /* Track */
+            .comp-info-card-text::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            /* Handle */
+            .comp-info-card-text::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(230, 230, 230, 0.9);
+            }
+
+            /* Handle on hover */
+            .comp-info-card-text::-webkit-scrollbar-thumb:hover {
+                background: lightgray;
+            }
+            /* End of Compeititon Info Card Text Scroll Bar */
 
             @media only screen and (min-width: 550px) {
                 .compcard {
@@ -331,31 +356,131 @@
                             </v-list-item>
 
                             <!-- Competition Extra Information -->
-                            <v-chip-group mandatory class="px-6">
+                            <v-chip-group column class="px-6">
                                 <!-- If It is currently on now -->
-                                <v-chip
-                                    color="green darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="isOnNow(competition)"
-                                    >On Now</v-chip
-                                >
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="isOnNow(competition)"
+                                            >On Now
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is on now</span>
+                                </v-tooltip>
                                 <!-- If Has Expired -->
-                                <v-chip
-                                    color="red darken-1"
-                                    outlined
-                                    label
-                                    x-small
-                                    :ripple="false"
-                                    v-if="hasExpired(competition)"
-                                    >Expired</v-chip
-                                >
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="red darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="hasExpired(competition)"
+                                            >Expired
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is over</span>
+                                </v-tooltip>
+                                <!-- No. of participants -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="competition.num_competitors > 0"
+                                        >
+                                            <v-icon left style="font-size: 12px">mdi-account-group</v-icon>{{
+                                            competition.num_competitors }}
+                                        </v-chip>
+                                    </template>
+                                    <span>No. of participants</span>
+                                </v-tooltip>
                             </v-chip-group>
 
+                            <!-- Competition Info - No Action -->
+                            <v-card-text class="py-0 pb-1">
+                                <div class="comp-info-card-text">
+                                    <!-- Finish Date if on different to start date -->
+                                    <template v-if="!isFinishDateSame(competition)">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    style="display: inline-flex; white-space: nowrap"
+                                                    class="px-2"
+                                                >
+                                                    <v-icon
+                                                        color="yellow darken-4"
+                                                        style="font-size: 17px; margin-right: 4px"
+                                                        >mdi-information-outline</v-icon
+                                                    >
+                                                    {{ formatDate(competition.finish_date, "DD/MM/YY") }}
+                                                </div>
+                                            </template>
+                                            <span>Start date is different to finish date!</span>
+                                        </v-tooltip>
+                                        <v-divider vertical style="display: inline"></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.type">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    style="display: inline-flex; white-space: nowrap"
+                                                    class="px-2"
+                                                >
+                                                    {{ competition.type.charAt(0) +
+                                                    competition.type.toLowerCase().slice(1) }}
+                                                </div>
+                                            </template>
+                                            <span>Competition type</span>
+                                        </v-tooltip>
+                                        <v-divider vertical style="display: inline"></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.age_groups">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    style="display: inline-flex; white-space: nowrap"
+                                                    class="px-2"
+                                                >
+                                                    {{ competition.age_groups }}
+                                                </div>
+                                            </template>
+                                            <span>Competition age groups</span>
+                                        </v-tooltip>
+                                    </template>
+                                </div>
+                            </v-card-text>
+
+                            <!-- Compeition Information Divider - Action -->
+                            <v-divider style="margin: 8px 16px"></v-divider>
+
                             <!-- Address -->
-                            <v-card-text class="pb-0 pt-0">
+                            <v-card-text class="py-0">
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn
@@ -382,16 +507,10 @@
                                     </template>
                                     <span>Copy Address</span>
                                 </v-tooltip>
-
-                                <!-- Finish Date -->
-                                <v-btn color="grey" text block class="comp-button-finish">
-                                    <v-icon left>mdi-flag-checkered</v-icon>
-                                    {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
-                                </v-btn>
                             </v-card-text>
 
                             <!-- Action Buttons -->
-                            <v-card-actions>
+                            <v-card-actions class="pt-0">
                                 <!-- View Button -->
                                 <template>
                                     <v-tooltip bottom>
@@ -632,6 +751,13 @@
                                 moment(competition.finish_date).isAfter(moment(), "day")) &&
                             moment(competition.date).isBefore(moment(), "day")
                         )
+                    },
+                    /**
+                     * This function checks if a given competition has a different finish date to its
+                     * start date.
+                     */
+                    isFinishDateSame(competition) {
+                        return moment(competition.date).isSame(moment(competition.finish_date), "day")
                     },
                     /**
                      * This function is called from a computed property. This function sorts
