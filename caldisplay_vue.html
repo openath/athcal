@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JSON Test</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
     <!-- Bootstrap CSS -->
@@ -15,6 +17,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <style>
+        body {
+            /* font-family: 'Roboto', sans-serif; */
+        }
         .month-heading {
             color: #707070;
             text-decoration: underline;
@@ -26,6 +31,10 @@
         .filter-heading {
             font-size: 1.2em;
         }
+
+        .fa-chevron-up {
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
@@ -36,21 +45,25 @@
                     <div class="px-3" style="height: 200px;">
                         <h4 class="text-white">Filter</h4>
                         <div>
-                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#locationFilter" role="button" aria-expanded="false" aria-controls="locationFilter">
-                                Location <i class="fas fa-chevron-up d-inline"></i><i class="fas fa-chevron-down d-none"></i>
+                            <form>
+                                <div class="form-group">
+                                    <input class="form-control" v-model="name_search_query" type="text" placeholder="Search name">
+                                </div>
+                            </form>
+                            <a class="filter-heading d-block text-white" id="location-filter-heading" data-toggle="collapse" href="#locationFilter" role="button" aria-expanded="false" aria-controls="locationFilter">
+                                Location <i class="fas fa-chevron-up"></i>
                             </a>
                             <div class="collapse" id="locationFilter">
                                 <div class="card card-body">
                                     <form>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">All locations</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <input class="form-control" type="text" placeholder="Search by city">
-                                        </div>
                                         <div class="form-group">
                                             <label for="country">Choose Country</label>
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label" for="id-reset-loc" @change="selectedCountries=[]">
+                                                    <input class="form-check-input" type="checkbox" name="" id="id-reset-loc">
+                                                    All locations
+                                                </label>
+                                            </div>
                                             <select multiple v-model="selectedCountries" class="form-control">
                                                 <option disabled selected hidden>...</option>
                                                 <option v-for="option in country_options" :value="option">{{ option }}</option>
@@ -103,32 +116,14 @@
                                 <div class="card card-body">
                                     <form>
                                         <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">all types</label>
+                                            <label class="form-check-label" for="id-reset-compType" @change="selectedCompType=[]">
+                                                <input class="form-check-input" type="checkbox" id="id-reset-compType">
+                                                All Types
+                                            </label>
                                         </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Outdoor</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Indoor</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Road races</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Cross country</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Mountain running</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Race walking</label>
+                                        <div v-for="(type, i) in compTypes" class="form-group form-check">
+                                            <input class="form-check-input" :value="type.value" :id="'id-type-' + i" type="checkbox" v-model="selectedCompType">
+                                            <label class="form-check-label" :for="'id-type-' + i">{{ type.label }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -141,12 +136,13 @@
                                     <form>
                                         <div class="form-group form-check">
                                             <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
-                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">all age groups
+                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">
+                                                All Age Groups
                                             </label>
                                         </div>
                                         <div v-for="(ag, i) in ageGroups" class="form-group form-check">
-                                            <input class="form-check-input" :value="ag" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
-                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag }}</label>
+                                            <input class="form-check-input" :value="ag.value" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
                                         </div>
                                     </form>
                                 </div>
@@ -157,8 +153,8 @@
                 <div class="col-md-10 min-vh-100" style="background-color: #F0F0F0;">
                     <div class="col-md-11 mt-3">
                         <div id="months-headings" class="row">
-                            <div class="col-md-1 d-inline" v-for="month in months_data" >
-                                <h3 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h3>
+                            <div class="col-md-1 d-inline" v-if="isLoading != 'undefined' && !isLoading" v-for="month in months_data" >
+                                <h2 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h2>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
                                 </div>
@@ -166,26 +162,29 @@
                         </div>
                     </div>
                     <div class="col-md-11 mt-3">
-                        <span class="badge badge-secondary mb-0">{{ info.data && info.data.length || 0 }} total competitions</span>
-                        <span class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} filtered competitions</span>
-
-                        <a href="javascript:location.reload(true)">Reset filters</a>
-                        <table class="table">
+                        <div class="d-flex flex-horizontal justify-content-between align-items-center">
+                            <div>
+                                <span v-if="filteredCompetitions" class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
+                                <a href="javascript:location.reload(true)">Reset filters</a>
+                            </div>
+                            <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
+                        </div>
+                        <table class="table list bg-white">
                             <thead class="bg-primary text-white">
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Full Name</th>
-                                <th scope="col">Age Groups</th>
-                                <th scope="col">Country</th>
-                                <th scope="col">Type</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col" class="d-lg-table-cell">Date</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Age Groups</th>
+                                    <th scope="col">Country</th>
+                                    <th scope="col">Type</th>
+                                </tr>
                             </thead>
-                            <tbody class="bg-white">
-                                <tr v-if="filteredCompetitions.length == 0">
+                            <tbody>
+                                <tr v-if="paginatedCompetitions().length == 0">
                                     <td>No competitions</td>
                                 </tr>
-                                <tr v-for="comp in filteredCompetitions" :key="comp.id">
-                                    <td>{{comp.date}}</td>
+                                <tr v-for="comp in paginatedCompetitions()" :key="comp.id">
+                                    <td style="width:125px">{{comp.date}}</td>
                                     <td>{{comp.full_name}}</td>
                                     <td>{{comp.age_groups}}</td>
                                     <td>{{comp.country}}</td>
@@ -194,25 +193,67 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="col-md-11">
+                        <nav class="d-flex justify-content-center mb-3">
+                            <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Navigator -->
+    <script type="text/template" id="navigator_template">
+        <ul class="pagination mr-0 my-1" v-if="isLoading || total > resultsPerPage" v-cloak>
+            <li :class="{'page-item': true, disabled: $parent.page == 0}">
+                <a class="page-link" @click="prevPage" aria-label="Previous">
+                    <span aria-hidden="true" class="d-none d-lg-inline-block hidden-xs hidden-sm hidden-md">Prev</span>
+                    <span class="d-inline-block d-lg-none hidden-lg">&laquo;</span>
+                </a>
+            </li>
+            <!--  partial -->
+            <li v-if="numPages > threshold && $parent.page > 2" :class="{'page-item': true, active: $parent.page == 1}"><a class="page-link" @click="setPage(1)">1</a></li>
+            <li v-if="numPages > threshold && $parent.page > 3" class="page-item disabled"><span class="page-link">...</span></li>
+            <li v-if="numPages > threshold" v-for="pi in _.range(Math.max(1, $parent.page - 1), Math.min(numPages, $parent.page + 2) + 1)"
+                :class="{'page-item': true, active: $parent.page == pi}">
+                <a @click="setPage(pi)" class="page-link">{{ pi }}</a>
+            </li>
+            <li v-if="numPages > threshold && $parent.page < numPages - 3" class="page-item disabled"><span class="page-link">...</span></li>
+            <li v-if="numPages > threshold && $parent.page < numPages - 2" class="page-item"><a class="page-link" @click="setPage(numPages)">-${ numPages }</a></li>
+            <li v-else-if="numPages <= threshold" v-for="i in _.range(1, numPages+1)" :class="{'page-item': true, active: $parent.page == i}">
+                <a @click="setPage(i)" class="page-link">{{ i }}</a>
+            </li>
+            <li :class="{'page-item': true, disabled: $parent.page == numPages}">
+                <a class="page-link" @click="nextPage" aria-label="Next">
+                    <span aria-hidden="true" class="d-none d-lg-inline-block hidden-xs hidden-sm hidden-md">
+                        <span v-if="isLoading"><img src="./img/ajax-loading.gif" alt="Loading" /> Loading ...</span>
+                        <span v-else>Next</span>
+                    </span>
+                    <span class="d-inline-block d-lg-none hidden-lg">
+                        <span v-if="isLoading"><img src="./img/ajax-loading.gif" alt="Loading" /> Loading ...</span>
+                        <span v-else>&raquo;</span>
+                    </span>
+                </a>
+            </li>
+        </ul>
+    </script>
     <!-- production version, optimized for size and speed -->
     <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/lodash.js"></script>
+
+    <script src="./js/navigator-script.js"></script>
     <script>
         $(document).ready(() => {
-            // $(".filter-heading").click(function(){
-            //     console.log("clicked");
-            //     $(".collapse").collapse('toggle');
-            // });
-            // $('.collapse').on('show.bs.collapse', function(){
-            //     alert("run")
-            //     $('.fa-chevron-up').removeClass("d-inline");
-            // });
-
+            $("#location-filter-heading").click(function(){
+                $("#locationFilter").collapse('toggle');
+            });
+            $('#locationFilter').on('show.bs.collapse', function() {
+                console.log("run");
+                $('#location-filter-heading > i').addClass("fa-flip-vertical");
+            });
         });
 
         var app = new Vue({
@@ -221,7 +262,13 @@
                 ageGroups: {
                     type: Array,
                     default: function () {
-                        return ['Seniors', 'Masters', 'U23', 'U20', 'U18']
+                        return [{label:'Seniors',value:'S'}, {label:'Masters',value:'M'}, {label:'U23',value:'U23'}, {label:'U20',value:'U20'}, {label:'U18',value:'U18'}]
+                    }
+                },
+                compTypes: {
+                    type: Array,
+                    default: function () {
+                        return [{label:'Outdoor', value:'Outdoor'}, {label:'Indoor', value:'Indoor'}, {label:'Road races', value:'Road races'}, {label:'Cross country', value:'Cross country'}, {label:'Mountain running', value:'Mountain running'}, {label:'Race walking', value:'Race walking'}]
                     }
                 },
                 allMonths: {
@@ -229,23 +276,39 @@
                     default: function () {
                         return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
                     }
+                },
+                pageSize: {
+                    type: Number,
+                    default: function () { return 50 }
                 }
               },
               data() {
                 return {
-                  info: {},
-                  all_months: [],
-                  country_options: [],
-                  selectedYear: null,
-                  selectedMonth: null,
-                  selectedAG: [],
-                  selectedCountries: []
+                    info: [],
+                    name_search_query: '',
+                    all_months: [],
+                    country_options: [],
+                    selectedYear: null,
+                    selectedMonth: null,
+                    selectedCompType: [],
+                    selectedAG: [],
+                    selectedCountries: [],
+
+                    showOnPage: 20,
+                    page: 1,
+                    isLoading: true,
                 }
               },
             computed: {
                 filteredCompetitions: function () {
                     var self = this,
-                        output = self.info.data;
+                        output = self.info || [];
+
+                    if (self.name_search_query != '') {
+                        output = output.filter(function (item) {
+                            return item.full_name.toLowerCase().includes(self.name_search_query.toLowerCase())
+                        })
+                    }
                     if (self.selectedCountries.length > 0) {
                         output = output.filter(function (item) {
                             return self.selectedCountries.indexOf(item.country) >= 0
@@ -261,13 +324,14 @@
                         })
                     }
                     if (self.selectedMonth) {
-                        output = self.filterByMonth(self.selectedMonth);
+                        output = self.filterByMonth(self.selectedMonth, output);
                     }
                     return output
                 },
                 months_data: function() {
                     var self = this;
-                    if (self.info.data) {
+                    self.all_months = [];
+                    if (self.info) {
                         for (month in self.allMonths) {
                             var monObject = {};
                             monObject.num = parseInt(month)+1;
@@ -293,24 +357,57 @@
                     clickedMonth.children[0].style.color = "#E95420";
                     // clickedMonth.classList.add("bg-primary", "text-white");
                 },
-                filterByMonth: function(month) {
-                    var output = this.info.data;
-                    console.log(this.info.data);
+                filterByMonth: function(month, data) {
+                    var output;
+                    if (data) {
+                        output = data;
+                    } else {
+                        output = this.info;
+                    }
                     return output.filter((item)=>{
                         // Need to change this to selectedYear
-                        return item.date.match(`2021-${month}`);
+                        return item.date.match(`2020-${month}`);
                     })
+                },
+
+
+                setPg: function (p) {
+                    this.page = p
+                },
+                mvPg: function (i) {
+                    this.page += i
+                },
+                maxPages: function () {
+                    var self = this,
+                        total = self.filteredCompetitions.length;
+                    return Math.max(1, Math.ceil(total / self.showOnPage))
+                },
+                pageStartIdx: function () {
+                    var self = this,
+                        maxPages = self.maxPages();
+                    if (self.page > maxPages)
+                        self.page = maxPages;
+                    return (self.page-1) * self.showOnPage + 1;
+                },
+                pageEndIdx: function () {
+                    var self = this;
+                    return Math.min(self.pageStartIdx() + self.showOnPage - 1, self.filteredCompetitions.length)
+                },
+                paginatedCompetitions: function () {
+                    var self = this,
+                        start = self.pageStartIdx() - 1;
+                    return self.filteredCompetitions.slice(start, start + self.showOnPage)
                 },
               },
             mounted() {
                 var self = this;
                 axios
-                    .get('https://file.opentrack.run/live/euroath/european_calendar_2021.json')
+                    .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
                     .then(response => {
-                        self.info = response;
-                        self.country_options = self.info.data.map(item => item.country
+                        self.info = response.data;
+                        self.country_options = self.info.map(item => item.country
                                             ).filter((value, index, list) => list.indexOf(value) === index);
-                        
+                        self.isLoading = false;                        
                     })
               }
         })
