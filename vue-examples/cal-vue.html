@@ -1,331 +1,958 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+        />
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+        <meta content="utf-8" http-equiv="encoding" />
+        <style>
+            html {
+                height: 100%;
+                overflow: hidden;
+            }
 
-<head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <style>
-        html {
-            height: 100%;
-            overflow: hidden;
-        }
+            body {
+                height: 100%;
+            }
 
-        body {
-            height: 100%;
-        }
+            #app {
+                font-family: roboto;
+                height: 100%;
+            }
 
-        #app {
-            font-family: roboto;
-            height: 100%;
-        }
+            /* Competition Calendar Styling */
+            .comp-calendar {
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
+            }
+            /* Compeititon Calendar Scroll Bar */
+            /* width */
+            .comp-calendar::-webkit-scrollbar {
+                width: 12px;
+                background-color: transparent;
+            }
 
-        .comp-calendar {
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+            /* Track */
+            .comp-calendar::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
 
-        .comp-month-header {
-            font-size: 30px;
-            margin-left: 25px;
-            margin-right: 25px;
-            border-bottom: 1px solid black;
-        }
+            /* Handle */
+            .comp-calendar::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(230, 230, 230, 0.9);
+            }
 
-        .comp-month-card-container{
-            flex-direction: row; flex-wrap: wrap; align-content: flex-start;
-        }
+            /* Handle on hover */
+            .comp-calendar::-webkit-scrollbar-thumb:hover {
+                background: lightgray;
+            }
+            /* End of Compeititon Calendar Scroll Bar */
 
-        .compcard {
-            width: 100%;
-            margin: 10px;
-            height: fit-content;
-            overflow: hidden;
-        }
+            .comp-month-header {
+                font-size: 30px;
+                margin-left: 25px;
+                margin-right: 25px;
+                border-bottom: 1px solid black;
+            }
 
-        .no-comp-container {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            text-align: center;
-            font-size: 30px;
-        }
+            .comp-month-card-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-content: flex-start;
+                place-content: center;
+            }
 
-        .select-container {
-            padding: 0px 12px;
-        }
-
-        .filter-container {
-            padding-bottom: 0px;
-        }
-
-        @media only screen and (min-width: 600px) {
             .compcard {
-                max-width: 344px;
-                min-width: 344px;
+                width: 100%;
+                margin: 10px;
+                height: fit-content;
+                overflow: hidden;
+            }
+
+            .compcard .v-icon {
+                line-height: 0 !important;
+            }
+
+            .compcard .v-btn:not(.v-btn--round).v-size--default {
+                padding: 0 8px;
+            }
+
+            .compcard .v-btn__content {
+                width: 100%;
+            }
+
+            .compcard .v-chip-group .v-chip {
+                cursor: default;
+            }
+
+            .no-comp-container {
+                text-align: center;
+                font-size: 30px;
+            }
+
+            .comp-date-container > p {
+                margin: 0px;
+                line-height: 0.75;
+            }
+
+            .comp-date-day {
+                font-size: 25px;
+            }
+
+            .comp-date-month {
+                text-transform: uppercase;
+                font-size: 12px;
+            }
+
+            .comp-title-container {
+                width: 100%;
+                height: 32px;
+                margin-bottom: 11px;
+                margin-top: 13px;
+                padding: 0px;
+            }
+
+            .comp-title {
+                height: 100%;
+                white-space: normal;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                font-weight: bolder;
+            }
+
+            .comp-load-more-container {
+                text-align: center;
+                margin: 40px;
+            }
+
+            .comp-chip-icon {
+                font-size: 12px !important;
+            }
+
+            .comp-button-address {
+                justify-content: start;
+                max-width: 100%;
+                text-transform: initial;
+                font-size: 14px;
+                width: 100%;
+                letter-spacing: initial;
+                text-align: left;
+            }
+
+            .comp-button-address-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+            }
+
+            .comp-info-card-text {
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                /* Firefox scrollbar styling - webkit scrollbar works for all other browsers */
+                scrollbar-width: thin;
+                scrollbar-color: #cdcdcd transparent;
+            }
+            /* Compeititon Info Card Text Scroll Bar */
+            /* width */
+            .comp-info-card-text::-webkit-scrollbar {
+                height: 5px;
+                background-color: transparent;
+            }
+
+            /* Track */
+            .comp-info-card-text::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            /* Handle */
+            .comp-info-card-text::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background-color: rgba(230, 230, 230, 0.9);
+            }
+
+            /* Handle on hover */
+            .comp-info-card-text::-webkit-scrollbar-thumb:hover {
+                background: lightgray;
+            }
+            /* End of Compeititon Info Card Text Scroll Bar */
+
+            .comp-info-card-text-container {
+                display: inline-flex;
+                white-space: nowrap;
+                cursor: default;
+            }
+
+            .comp-info-card-vertical-divider {
+                display: inline;
+            }
+
+            .comp-hor-divider {
+                margin: 8px 16px;
+            }
+
+            .comp-info-card-icon {
+                font-size: 17px !important;
+                margin-right: 4px;
+            }
+
+            @media only screen and (min-width: 550px) {
+                .compcard {
+                    max-width: 344px;
+                    min-width: 344px;
+                }
+            }
+            /* End of Competition Calendar Styling */
+
+            /* Filter Section */
+            .filter-top-bar {
+                display: flex;
+            }
+
+            .filter-top-bar .v-input__slot {
+                margin: 0px;
+            }
+
+            .filter-top-bar .v-messages {
+                display: none;
+            }
+
+            .filter-top-bar-filter-button-desktop {
+                display: none;
+                color: rgba(0, 0, 0, 0.54) !important; /* Same colour as icon buttons */
+            }
+
+            @media only screen and (min-width: 960px) {
+                .filter-top-bar-filter-button-desktop {
+                    display: flex;
+                }
+                .filter-top-bar-filter-button-mobile {
+                    display: none;
+                }
+            }
+
+            .filter-top-bar-checkbox {
+                width: fit-content;
+                margin: 0;
+                display: inline-flex;
+                padding-top: 0px;
             }
 
             .select-container {
-                padding: 12px;
+                padding-bottom: 0px;
             }
 
             .filter-container {
-                padding: 12px;
+                flex-direction: column;
+                border-bottom: 1px lightgray solid;
             }
-        }
 
-        /* Vuetify Overload */
-        .v-btn:not(.v-btn--round).v-size--default {
-            padding: 0 8px;
-        }
-    </style>
-</head>
+            .filter-dropdown-container {
+                padding-top: 0px;
+                padding-bottom: 0px;
+                overflow: hidden;
+                max-height: 0px;
+                transition: all 0.5s;
+            }
 
-<body>
-    <v-app id="app">
+            .filter-dropdown-container-open {
+                max-height: 294px;
+            }
 
-        <!-- Filter Container -->
-        <div class="d-flex">
-            <v-container fluid class="filter-container">
-                <!-- Filters the search results -->
-                <v-row align="center">
-                    <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="months" label="Month" v-model="currentMonth" outlined></v-select>
-                    </v-col>
-                    <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="countries" label="Country" v-model="currentCountry" outlined></v-select>
-                    </v-col>
-                    <v-col class="d-flex select-container" sm="4">
-                        <v-select :items="sortOptions" label="Sort By" v-model="currentSort" outlined></v-select>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </div>
-        <v-divider></v-divider>
+            .filter-dropdown-container .v-text-field {
+                height: 86px;
+            }
 
-        <!-- Competition Calendar -->
-        <div class="comp-calendar">
+            @media only screen and (min-width: 960px) {
+                .filter-dropdown-container-open {
+                    max-height: 98px;
+                }
+            }
+            /* End of Filter Section */
+        </style>
+    </head>
 
-            <template v-for="monthContainer in monthContainers">
-                <!-- Month Header -->
-                <h3 class="comp-month-header">{{ monthContainer.name }}</h3>
+    <body>
+        <v-app id="app">
+            <!-- Filter Container -->
+            <div class="d-flex filter-container">
+                <!-- Top Bar Filter Options -->
+                <v-container>
+                    <div class="filter-top-bar">
+                        <!-- Select All Checkbox -->
+                        <v-checkbox
+                            v-model="selectAllMonth"
+                            label="Display All"
+                            class="filter-top-bar-checkbox"
+                        ></v-checkbox>
+                        <v-spacer></v-spacer>
 
-                <!-- Competition Cards -->
-                <div class="d-flex comp-month-card-container">
-                    <v-card v-for="competition in monthContainer.competitions" class="compcard" :flat="true">
-                        <!-- Header Text -->
-                        <v-list-item>
-                            <!-- Calendar Style Date -->
-                            <v-list-item-avatar color="grey lighten-3">
-                                <p style="margin: 0px; line-height: 0.75;">
-                                    <span style="font-size: 25px;">
-                                        {{ formatDate(competition.date, "DD") }}
-                                    </span>
-                                    <br>
-                                    <span style="text-transform: uppercase; font-size: 12px;">
-                                        {{ formatDate(competition.date, "MMM") }}
-                                    </span>
-                                </p>
-                            </v-list-item-avatar>
+                        <!-- Filter Button Mobile -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-mobile"
+                            color="gray"
+                            small
+                            icon
+                            @click="dropdownState = !dropdownState"
+                        >
+                            <v-icon v-if="!dropdownState">mdi-filter-menu</v-icon>
+                            <v-icon v-else>mdi-filter-menu-outline</v-icon>
+                        </v-btn>
 
-                            <!-- Competition Title Info -->
-                            <v-list-item-content>
-                                <v-list-item-title class="headline">{{ competition.full_name }}</v-list-item-title>
-                                <!-- Country -->
-                                <v-list-item-subtitle>
-                                    {{competition.country}}
-                                </v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
+                        <!-- Filter Button Desktop -->
+                        <v-btn
+                            class="filter-top-bar-filter-button-desktop"
+                            small
+                            text
+                            @click="dropdownState = !dropdownState"
+                        >
+                            <span>Filter</span>
+                            <v-icon right v-if="!dropdownState">mdi-filter-menu</v-icon>
+                            <v-icon right v-else>mdi-filter-menu-outline</v-icon>
+                        </v-btn>
+                    </div>
+                </v-container>
 
-                        <!-- Address -->
-                        <v-card-text class="pb-0 pt-0">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn color="grey" text block v-bind="attrs" v-on="on"
-                                        @click="copyToClipboard(competition.address)"
-                                        style="justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
-                                        <v-icon left>mdi-map-marker</v-icon>
-                                        <template v-if="competition.address">
-                                            {{ competition.address }}
-                                        </template>
-                                        <template v-else>
-                                            Not Provided
-                                        </template>
-                                    </v-btn>
-                                </template>
-                                <span>Copy Address</span>
-                            </v-tooltip>
+                <!-- Dropdown Filter Options -->
+                <v-container
+                    class="filter-dropdown-container"
+                    :class="{'filter-dropdown-container-open': dropdownState}"
+                >
+                    <!-- Filters the search results -->
+                    <v-row align="center">
+                        <!-- Search Bar -->
+                        <v-col class="d-flex select-container" cols="12" md="3" lg="5">
+                            <v-text-field
+                                hide-details
+                                clearable
+                                outlined
+                                single-line
+                                label="Find..."
+                                prepend-inner-icon="mdi-magnify"
+                                v-model="searchText"
+                            ></v-text-field>
+                        </v-col>
 
-                            <!-- Finish Date -->
-                            <v-btn color="grey" text block
-                                style="cursor: default; justify-content: start; max-width: 100%; text-transform: initial; font-size: 14px; width: 100%; letter-spacing: initial;">
-                                <v-icon left>mdi-flag-checkered</v-icon>
-                                <template v-if="competition.date != competition.finish_date">
-                                    {{ formatDate(competition.finish_date, "MMM Do YYYY") }}
-                                </template>
-                                <template v-else>
-                                    Same day
-                                </template>
-                            </v-btn>
-                        </v-card-text>
+                        <!-- Month Select -->
+                        <v-col class="d-flex select-container" cols="12" md="3" lg="3">
+                            <v-select
+                                :items="months"
+                                label="Month"
+                                v-model="selectedMonth"
+                                outlined
+                                :disabled="selectAllMonth"
+                            ></v-select>
+                        </v-col>
 
-                        <!-- Action Buttons -->
-                        <v-card-actions>
-                            <!-- View Button -->
-                            <template v-if="competition.entry_link">
-                                <v-btn color="green accent-4" :href="competition.entry_link" text>
-                                    View
-                                </v-btn>
-                            </template>
+                        <!-- Sort By Select -->
+                        <v-col class="d-flex select-container" cols="7" md="3" lg="2">
+                            <v-select :items="sortOptions" label="Sort By" v-model="selectedSort" outlined></v-select>
+                        </v-col>
 
-                            <!-- View Button Disabled-->
-                            <template v-else>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <div v-bind="attrs" v-on="on">
-                                            <v-btn :disabled="!competition.entry_link" color="green accent-4" href="#"
-                                                text>
-                                                View
-                                            </v-btn>
-                                        </div>
-                                    </template>
-                                    <span>No entry link available</span>
-                                </v-tooltip>
-                            </template>
-                            <v-spacer></v-spacer>
-
-                            <!-- Contact Button -->
-                            <v-tooltip bottom v-if="competition.contact_details">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon v-bind="attrs" v-on="on"
-                                        @click="copyToClipboard(competition.contact_details)">
-                                        <v-icon>mdi-contacts</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>{{ competition.contact_details }}</span>
-                            </v-tooltip>
-                        </v-card-actions>
-                    </v-card>
-                </div>
-            </template>
-
-            <!-- No Competitions Container -->
-            <div v-if="monthContainers.length == 0" class="no-comp-container">
-                <p>No Competitions found!</p>
+                        <!-- Country Select -->
+                        <v-col class="d-flex select-container" cols="5" md="3" lg="2">
+                            <v-select
+                                :items="countries"
+                                item-text="countryCode"
+                                label="Country"
+                                v-model="selectedCountry"
+                                outlined
+                            ></v-select>
+                        </v-col>
+                    </v-row>
+                </v-container>
             </div>
 
-            <!-- Global Snackbar -->
-            <v-snackbar v-model="snackbar" timeout=2000>
-                Copied to clipboard.
-                <template v-slot:action="{ attrs }">
-                    <v-btn dark text v-bind="attrs" @click="snackbar = false">
-                        Close
-                    </v-btn>
+            <!-- Competition Calendar -->
+            <v-container class="comp-calendar" id="competition-calendar" v-scroll.self="calendarScrollHandler">
+                <template v-for="viewableBranch in viewableBranches.slice(0, infiniteLoaderCounter)">
+                    <!-- Month Header -->
+                    <h3 class="comp-month-header">{{ viewableBranch.month }}</h3>
+
+                    <!-- Competition Cards -->
+                    <div class="d-flex comp-month-card-container">
+                        <v-card
+                            v-for="competition in viewableBranch.competitions"
+                            :key="competition.id"
+                            class="compcard my-5"
+                            :flat="true"
+                        >
+                            <!-- Header Text -->
+                            <v-list-item>
+                                <!-- Calendar Style Date -->
+                                <v-list-item-avatar class="comp-date-container" color="grey lighten-3">
+                                    <p>
+                                        <span class="comp-date-day"> {{ formatDate(competition.date, "DD") }} </span>
+                                        <br />
+                                        <span class="comp-date-month"> {{ formatDate(competition.date, "MMM") }} </span>
+                                    </p>
+                                </v-list-item-avatar>
+
+                                <!-- Competition Title Info -->
+                                <v-list-item-content class="comp-title-container">
+                                    <v-list-item-subtitle class="comp-title"
+                                        >{{ competition.full_name }}</v-list-item-subtitle
+                                    >
+                                </v-list-item-content>
+                            </v-list-item>
+
+                            <!-- Competition Extra Information -->
+                            <v-chip-group column class="px-6">
+                                <!-- If It is currently on now -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="isOnNow(competition)"
+                                            >On Now
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is on now</span>
+                                </v-tooltip>
+                                <!-- If Has Expired -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="red darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="hasExpired(competition)"
+                                            >Expired
+                                        </v-chip>
+                                    </template>
+                                    <span>Competition is over</span>
+                                </v-tooltip>
+                                <!-- No. of participants -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-chip
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="green darken-1"
+                                            outlined
+                                            label
+                                            x-small
+                                            :ripple="false"
+                                            v-if="competition.num_competitors > 0"
+                                        >
+                                            <v-icon left class="comp-chip-icon">mdi-account-group</v-icon>{{
+                                            competition.num_competitors }}
+                                        </v-chip>
+                                    </template>
+                                    <span>No. of participants</span>
+                                </v-tooltip>
+                            </v-chip-group>
+
+                            <!-- Competition Info - No Action -->
+                            <v-card-text class="py-0">
+                                <div class="comp-info-card-text pb-2">
+                                    <!-- Finish Date if on different to start date -->
+                                    <template v-if="!isFinishDateSame(competition)">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    <v-icon color="yellow darken-4" class="comp-info-card-icon"
+                                                        >mdi-information-outline</v-icon
+                                                    >
+                                                    {{ formatDate(competition.finish_date, "DD/MM/YY") }}
+                                                </div>
+                                            </template>
+                                            <span>Start date is different to finish date!</span>
+                                        </v-tooltip>
+                                        <v-divider class="comp-info-card-vertical-divider" vertical></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.type">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    {{ competition.type.charAt(0) +
+                                                    competition.type.toLowerCase().slice(1) }}
+                                                </div>
+                                            </template>
+                                            <span>Competition type</span>
+                                        </v-tooltip>
+                                        <v-divider class="comp-info-card-vertical-divider" vertical></v-divider>
+                                    </template>
+
+                                    <!-- Competition Type -->
+                                    <template v-if="competition.age_groups">
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <div
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    class="px-2 comp-info-card-text-container"
+                                                >
+                                                    {{ competition.age_groups }}
+                                                </div>
+                                            </template>
+                                            <span>Competition age groups</span>
+                                        </v-tooltip>
+                                    </template>
+                                </div>
+                            </v-card-text>
+
+                            <!-- Compeition Information Divider - Action -->
+                            <v-divider class="comp-hor-divider"></v-divider>
+
+                            <!-- Address -->
+                            <v-card-text class="py-0">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            color="grey"
+                                            text
+                                            block
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click="copyToClipboard(competition.address)"
+                                            class="comp-button-address"
+                                        >
+                                            <v-icon left>mdi-map-marker</v-icon>
+                                            <template v-if="competition.address">
+                                                <span class="comp-button-address-text">{{ competition.address }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="comp-button-address-text">Not Provided</span>
+                                            </template>
+                                        </v-btn>
+                                    </template>
+                                    <span>Copy Address</span>
+                                </v-tooltip>
+                            </v-card-text>
+
+                            <!-- Action Buttons -->
+                            <v-card-actions class="pt-0">
+                                <!-- View Button -->
+                                <template>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <div v-bind="attrs" v-on="on">
+                                                <!-- Button with Link -->
+                                                <v-btn
+                                                    v-if="competition.entry_link"
+                                                    color="green"
+                                                    :href="competition.entry_link"
+                                                    text
+                                                    >Visit Site</v-btn
+                                                >
+                                                <!-- Disabled button - no link -->
+                                                <v-btn
+                                                    v-else
+                                                    :disabled="!competition.entry_link"
+                                                    color="green"
+                                                    href="#"
+                                                    text
+                                                >
+                                                    Visit Site
+                                                </v-btn>
+                                            </div>
+                                        </template>
+                                        <span v-if="competition.entry_link"
+                                            >View competition and entry information (External Site)</span
+                                        >
+                                        <span v-else>No external site available</span>
+                                    </v-tooltip>
+                                </template>
+                                <v-spacer></v-spacer>
+
+                                <!-- Contact Button -->
+                                <v-tooltip bottom v-if="competition.contact_details">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click="copyToClipboard(competition.contact_details)"
+                                        >
+                                            <v-icon>mdi-contacts</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>{{ competition.contact_details }}</span>
+                                </v-tooltip>
+                            </v-card-actions>
+                        </v-card>
+                    </div>
                 </template>
-            </v-snackbar>
-        </div>
-    </v-app>
 
-    <!-- production version of Vue 2 and Vuetify -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+                <!-- Infinite Scroller - Load More Button -->
+                <div v-if="infiniteLoaderCounter < viewableBranches.length" class="comp-load-more-container">
+                    <v-btn @click="calendarScrollHandler">Load More...</v-btn>
+                </div>
 
-    <!-- Axios - Library to pull in JSON data -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+                <!-- No Competitions Container -->
+                <div v-if="viewableBranches.length == 0" class="no-comp-container">
+                    <p>No Competitions found!</p>
+                </div>
 
-    <!-- Moment.js  - Library to work with date and time -->
-    <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
+                <!-- Global Snackbar -->
+                <v-snackbar v-model="snackbar" timeout="2000">
+                    Copied to clipboard.
+                    <template v-slot:action="{ attrs }">
+                        <v-btn dark text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
+                    </template>
+                </v-snackbar>
+            </v-container>
+        </v-app>
 
-    <script>
-        // The select all value for the selectors.
-        const allSelectOption = "1: Select All"
+        <!-- production version of Vue 2 and Vuetify -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 
-        new Vue({
-            el: '#app',
-            vuetify: new Vuetify(),
-            data() {
-                return {
-                    competitions: [],
-                    currentMonth: allSelectOption,
-                    months: [allSelectOption],
-                    currentCountry: allSelectOption,
-                    countries: [allSelectOption],
-                    currentSort: 1,
-                    sortOptions: [{
-                            text: "Competitions - Ascending",
-                            value: 1,
-                        },
-                        {
-                            text: "Competitions - Descending",
-                            value: 2,
-                        }
-                    ],
-                    snackbar: false
-                }
-            },
-            computed: {
+        <!-- Axios - Library to pull in JSON data -->
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <!-- Moment.js  - Library to work with date and time -->
+        <script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
+
+        <script>
+            new Vue({
+                el: "#app",
+                vuetify: new Vuetify(),
+                data() {
+                    return {
+                        // -- Competition Variables
+                        competitions: [],
+                        // -- Filter Variables
+                        dropdownState: false,
+                        months: [],
+                        // Countries are objects that contain a country code and an array
+                        // of JSON data URLs.
+                        countries: [
+                            {
+                                countryCode: "GBR",
+                                urls: [
+                                    "https://file.opentrack.run/live/euroath/domestic_calendar_gbr_2020.json",
+                                    "https://file.opentrack.run/live/euroath/domestic_calendar_gbr_2021.json",
+                                ],
+                            },
+                        ],
+                        searchText: "",
+                        selectedMonth: null,
+                        selectedCountry: null,
+                        selectedSort: 1,
+                        sortOptions: [
+                            {
+                                text: "Ascending",
+                                value: 1,
+                            },
+                            {
+                                text: "Descending",
+                                value: 2,
+                            },
+                        ],
+                        selectAllMonth: false,
+                        // -- Other
+                        snackbar: false,
+                        infiniteLoaderCounter: 1,
+                    }
+                },
+                watch: {
+                    selectedCountry() {
+                        // Gathers JSON objects from all JSON URLs and sets up the competition tree and filters.
+                        this.buildCompetitionData()
+                    },
+                },
+                computed: {
+                    /**
+                     * A computed property that creates a list of branches from the comptree to display.
+                     * These branches are then flitered and sorted based on the users filter preferences.
+                     */
+                    viewableBranches() {
+                        var viewableBranches = []
+                        var tempCompTree = this.compTreeCreator(this.competitions)
+
+                        // Populates the viewableBranches by filtering out unselected months.
+                        tempCompTree.forEach((branch) => {
+                            // If the branch month matches the selected month then add it to viewableBranches.
+                            if (this.selectAllMonth || branch.month == this.selectedMonth) {
+                                viewableBranches.push(branch)
+                            }
+                        })
+
+                        // Applies the selected sort option to the competitions in the viewableBranches.
+                        viewableBranches.forEach((branch) => {
+                            this.sortCompetitions(this.selectedSort, branch.competitions)
+                        })
+                        // Finally after sorting the competitions in each branch, we then sort the branches themselves.
+                        this.sortBranches(this.selectedSort, viewableBranches)
+
+                        // Resets the infinite loader counter to 1.
+                        this.infiniteLoaderCounter = 1
+
+                        return viewableBranches
+                    },
+                },
                 /**
-                 * A computed property that contains a list of month objects.
-                 * These month objects contain a month name and a list of competitions
-                 * that are taking place within that month. All objects in this computed
-                 * property will be displayed on screen. This property is updated whenever
-                 * a month, country or sort option is changed.
+                 * This function is called once the vue instance has been created.
+                 * It sets the current country to UK. Currently the only country available.
                  */
-                monthContainers() {
-                    // Filters it to a temp array.
-                    var filteredCompetitions = this.competitions.filter(competition => {
-                        // If the compeititon is in the currently selected month.
-                        if (this.currentMonth == allSelectOption || moment(competition.date).format(
-                                "MMMM YYYY") == this.currentMonth) {
-                            // If the competiton is in the currently selected country.
-                            if (this.currentCountry == allSelectOption || competition.country == this
-                                .currentCountry) {
-                                return true
+                created() {
+                    // Sets the current country to the first country in the list.
+                    this.selectedCountry = this.countries[0]
+                },
+                methods: {
+                    /**
+                     * This is an asynchronous function that collects all json data for a given country.
+                     * Then builds a competition tree and sets up the filters on the vue page. This function
+                     * should only be called when changing country to display or when creating the vue page.
+                     */
+                    async buildCompetitionData() {
+                        var competitions = []
+                        // Creates a outer promise (an asynchronous function) that we will
+                        // wait to finish.
+                        let outerPromise = new Promise((resolve, reject) => {
+                            // Creates a lists of inner promises (asynchronous axios calls) based on
+                            // the number of JSON data URLs in the selected country.
+                            var innerPromises = []
+                            this.selectedCountry.urls.forEach((jsonUrl) => {
+                                innerPromises.push(axios.get(jsonUrl))
+                            })
+
+                            // Runs each inner promise, then once all inner promises are complete,
+                            // send a message to let the code waiting know the outer promise is done.
+                            Promise.all(innerPromises).then(function (results) {
+                                results.forEach(function (response) {
+                                    // Gets the json data and adds it to the list of competitions.
+                                    competitions.push(response.data)
+                                })
+                                resolve("done")
+                            })
+                        })
+
+                        // The code waits here for the outer promise to finish before continueing.
+                        await outerPromise
+
+                        // Flatterns the competitions as after the promise it
+                        // contains an array as an element for each json url called.
+                        this.competitions = competitions.flat()
+
+                        // Sets up all filter items.
+                        // This needs to be done here as different filter options will be created based
+                        // on competition data available. One country may have different filter options to another.
+                        this.setUpFilters(this.competitions)
+                    },
+                    /**
+                     * This function formats the given string based on the format
+                     * provided.
+                     */
+                    formatDate(dateString, formatString) {
+                        return moment(dateString).format(formatString)
+                    },
+                    /**
+                     * This function checks if a given competition has already occured and is in the past.
+                     */
+                    hasExpired(competition) {
+                        // compares to the nearest day.
+                        return moment(competition.finish_date).isBefore(moment(), "day")
+                    },
+                    /**
+                     * This function checks if a given competiton will become past by the end of today.
+                     */
+                    expiresToday(competition) {
+                        // compares to the nearest day.
+                        return moment(competition.finish_date).isSame(moment(), "day")
+                    },
+                    /**
+                     * This function checks if a given competition is currently on now.
+                     */
+                    isOnNow(competition) {
+                        // Expires today or in the future, and it has started in the past.
+                        return (
+                            (this.expiresToday(competition) ||
+                                moment(competition.finish_date).isAfter(moment(), "day")) &&
+                            moment(competition.date).isBefore(moment(), "day")
+                        )
+                    },
+                    /**
+                     * This function checks if a given competition has a different finish date to its
+                     * start date.
+                     */
+                    isFinishDateSame(competition) {
+                        return moment(competition.date).isSame(moment(competition.finish_date), "day")
+                    },
+                    /**
+                     * This function is called from a computed property. This function sorts
+                     * a list of competitions, based on the value provided from the sort
+                     * selector element.
+                     */
+                    sortCompetitions(itemValue, competitions) {
+                        // Months - Ascending
+                        if (itemValue == 1) {
+                            competitions.sort(function (x, y) {
+                                if (moment(x.date).isBefore(moment(y.date))) {
+                                    return -1
+                                }
+                                if (moment(x.date).isAfter(moment(y.date))) {
+                                    return 1
+                                }
+                                return 0
+                            })
+
+                            // Months - Descending
+                        } else if (itemValue == 2) {
+                            competitions.sort(function (x, y) {
+                                if (moment(y.date).isBefore(moment(x.date))) {
+                                    return -1
+                                }
+                                if (moment(y.date).isAfter(moment(x.date))) {
+                                    return 1
+                                }
+                                return 0
+                            })
+                        }
+                    },
+                    /**
+                     * This function is called from a computed property. This function sorts
+                     * a list of branches based on their month.
+                     */
+                    sortBranches(itemValue, branches) {
+                        // Ascending
+                        if (itemValue == 1) {
+                            branches.sort(function (x, y) {
+                                if (moment(x.month, "MMMM YYYY").isBefore(moment(y.month, "MMMM YYYY", "month"))) {
+                                    return -1
+                                }
+                                if (moment(x.month, "MMMM YYYY").isAfter(moment(y.month, "MMMM YYYY", "month"))) {
+                                    return 1
+                                }
+                                return 0
+                            })
+
+                            // Descending
+                        } else if (itemValue == 2) {
+                            branches.sort(function (x, y) {
+                                if (moment(y.month, "MMMM YYYY").isBefore(moment(x.month, "MMMM YYYY", "month"))) {
+                                    return -1
+                                }
+                                if (moment(y.month, "MMMM YYYY").isAfter(moment(x.month, "MMMM YYYY", "month"))) {
+                                    return 1
+                                }
+                                return 0
+                            })
+                        }
+                    },
+                    /**
+                     * Takes a list of competitions and breaks them down into a tree based on
+                     * the available months.
+                     */
+                    compTreeCreator(competitions) {
+                        // Creates month containers and supplies is objects that contain each
+                        // available month.
+                        var compBranches = []
+                        this.months.forEach((month) => {
+                            compBranches.push({
+                                month: month,
+                                competitions: [],
+                            })
+                        })
+
+                        // Loops through each competition
+                        competitions.forEach((competition) => {
+                            // Do not add the competition if it is a demo fixture and not an actual fixture.
+                            if (competition.is_demo) return
+
+                            // Loops through each month
+                            this.months.forEach((month) => {
+                                // If the competition month is the same as the current filtered month
+                                // and the competition name matches the search text or the search text is empty
+                                // then add it to its branch.
+                                if (moment(competition.date).isSame(moment(month, "MMMM YYYY"), "month")) {
+                                    if (
+                                        this.searchText == null ||
+                                        competition.full_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+                                        this.searchText == ""
+                                    ) {
+                                        // Finds the branch that matches and adds the competition to its list.
+                                        var branch = compBranches.find((branch) => branch.month == month)
+                                        branch.competitions.push(competition)
+                                    }
+                                }
+                            })
+                        })
+
+                        // Code section below removes all the branches without any competitions from
+                        // the list of compbranches. Its complicated to remove specific elements from
+                        // an array in javascript.
+                        var tempCompBranches = [...compBranches]
+                        var branchesToRemove = []
+                        // Loops through the temp array and finds all indexs to remove.
+                        var i
+                        for (i = 0; i < tempCompBranches.length; i++) {
+                            if (tempCompBranches[i].competitions.length == 0) {
+                                branchesToRemove.push(i)
                             }
                         }
-                        return false
-                    })
+                        // Loops through temp array in reverse order and removes empty elements.
+                        for (var i = branchesToRemove.length - 1; i >= 0; i--) {
+                            tempCompBranches.splice(branchesToRemove[i], 1)
+                        }
 
-                    // Sorts the filteredCompetitions array.
-                    this.updateSort(this.currentSort, filteredCompetitions)
-
-                    // Breaks the competitons down into month container objects.
-                    var monthContainers = this.monthTreeCreator(filteredCompetitions)
-
-                    // Returns an array of month container objects.
-                    return monthContainers
-                }
-            },
-            /**
-             * This function is called once the vue instance has been created.
-             * It creates a list of competitons based on JSON data provided by opentrack.
-             */
-            created() {
-                // Gathers all the competition data before the DOM is mounted.
-                axios.get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
-                    .then(response => {
-                        this.competitions = response.data
-
-                        // Sets the current month.
-                        this.currentMonth = moment().format("MMMM YYYY")
-                        if (!this.months.includes(this.currentMonth)) {
-                            this.months.push(this.currentMonth)
+                        return tempCompBranches
+                    },
+                    /**
+                     * Copies the given string of information to the clipboard.
+                     * Then displays a snackbar to tell the user something has happened.
+                     */
+                    copyToClipboard(info_string) {
+                        navigator.clipboard
+                            .writeText(info_string)
+                            .then(() => {
+                                // Makes the snackbar visible.
+                                this.snackbar = true
+                            })
+                            .catch((error) => {
+                                console.error(error)
+                            })
+                    },
+                    /**
+                     * Sets up the filters to include all available months and countries based off the
+                     * provided list of competitions (Untreed).
+                     */
+                    setUpFilters(competitions) {
+                        // Adds the current month to list of available months.
+                        this.selectedMonth = moment().format("MMMM YYYY")
+                        if (!this.months.includes(this.selectedMonth)) {
+                            this.months.push(this.selectedMonth)
                         }
 
                         // Adds all the available months and countries from list.
-                        this.competitions.forEach(competition => {
+                        competitions.forEach((competition) => {
                             // Adds available months.
                             var month = moment(competition.date).format("MMMM YYYY")
                             if (!this.months.includes(month)) {
                                 this.months.push(month)
-                            }
-
-                            // Adds available countries.
-                            if (!this.countries.includes(competition.country)) {
-                                this.countries.push(competition.country)
                             }
                         })
 
@@ -333,117 +960,30 @@
                         this.countries.sort()
 
                         // Sorts the months in calendar order.
-                        this.months.sort(
-                            (x, y) => moment(x).format('YYYYMM') - moment(y).format('YYYYMM'));
-                    })
-                    .catch(error => {
-                        console.error(error)
-                    })
-            },
-            methods: {
-                /**
-                 * This function formats the given string based on the format
-                 * provided.
-                 */
-                formatDate(dateString, formatString) {
-                    return moment(dateString).format(formatString)
-                },
-                /**
-                 * This function is called from a computed property. This function sorts
-                 * a list of competitions, based on the value provided from the sort
-                 * selector element.
-                 */
-                updateSort(itemValue, competitions) {
-                    // Months - Ascending
-                    if (itemValue == 1) {
-                        competitions.sort(function (x, y) {
-                            if (moment(x.date).isBefore(y.date)) {
-                                return -1
-                            }
-                            if (moment(x.date).isAfter(y.date)) {
-                                return 1
-                            }
-                            return 0
-                        })
+                        this.months.sort((x, y) => moment(x, "MMMM YYYY") - moment(y, "MMMM YYYY"))
+                    },
+                    /**
+                     * This function is the scroll handler for the competition calendar.
+                     * It can also be called directly instead of waiting for the handler to self
+                     * execute. This function loads additional fixtures to the competition calendar.
+                     * This infinite scroll was created as the performace for rendering a large amount of html elements
+                     * was very taxing. The actual computation is fast but the rendering of elements was slow. An infinite
+                     * scroll was created to break down this long computation to much smaller ones.
+                     */
+                    calendarScrollHandler() {
+                        // Gets element by ID instead of using target so other buttons
+                        // can use this function.
+                        const element = document.getElementById("competition-calendar")
 
-                        // Months - Descending
-                    } else if (itemValue == 2) {
-                        competitions.sort(function (x, y) {
-                            if (moment(y.date).isBefore(x.date)) {
-                                return -1
+                        // If the user has scrolled to the button then increment counter.
+                        if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+                            if (this.viewableBranches.length > this.infiniteLoaderCounter) {
+                                this.infiniteLoaderCounter++
                             }
-                            if (moment(y.date).isAfter(x.date)) {
-                                return 1
-                            }
-                            return 0
-                        })
-                    }
-                },
-                /**
-                 * Takes a list of competitions and breaks them down into a tree based on
-                 * the available months.
-                 */
-                monthTreeCreator(filteredCompetitions) {
-                    // Creates month containers and supplies is objects that contain each
-                    // available month.
-                    var monthContainers = []
-                    const filteredMonths = this.months.slice(1)
-                    filteredMonths.forEach(month => {
-                        monthContainers.push({
-                            name: month,
-                            competitions: []
-                        })
-                    })
-
-                    // Loops through each competition
-                    filteredCompetitions.forEach(competition => {
-                        // Loops through each month
-                        filteredMonths.forEach(month => {
-                            // If the competition month is the same as the current filtered month
-                            // then add it to its month container.
-                            if (moment(competition.date).format("MMMM YYYY") == moment(month)
-                                .format("MMMM YYYY")) {
-                                // Finds the month container that matches and adds the competition to its list.
-                                var monthContainer = monthContainers.find(monthContainer =>
-                                    monthContainer.name == month)
-                                monthContainer.competitions.push(competition)
-                            }
-                        })
-                    });
-
-                    // Removes empty month containers
-                    var tempMonthContainers = [...monthContainers]
-                    var monthContainersToRemove = []
-                    // Loops through the temp array and finds all indexs to remove.
-                    var i
-                    for (i = 0; i < tempMonthContainers.length; i++) {
-                        if (tempMonthContainers[i].competitions.length == 0) {
-                            monthContainersToRemove.push(i)
                         }
-                    }
-                    // Loops through temp array in reverse order and removes empty elements.
-                    for (var i = monthContainersToRemove.length - 1; i >= 0; i--) {
-                        tempMonthContainers.splice(monthContainersToRemove[i], 1)
-                    }
-
-                    return tempMonthContainers
+                    },
                 },
-                /**
-                 * Copies the given string of information to the clipboard.
-                 * Then displays a snackbar to tell the user something has happened.
-                 */
-                copyToClipboard(info_string) {
-                    navigator.clipboard.writeText(info_string)
-                        .then(() => {
-                            // Makes the snackbar visible.
-                            this.snackbar = true
-                        }).catch(error => {
-                            console.error(error)
-                        })
-                }
-            }
-        })
-    </script>
-</body>
-
+            })
+        </script>
+    </body>
 </html>
