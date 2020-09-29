@@ -116,8 +116,8 @@
 
             .comp-title-container {
                 width: 100%;
-                height: 30px;
-                margin-bottom: 13px;
+                height: 32px;
+                margin-bottom: 11px;
                 margin-top: 13px;
                 padding: 0px;
             }
@@ -960,7 +960,7 @@
                         this.countries.sort()
 
                         // Sorts the months in calendar order.
-                        this.months.sort((x, y) => moment(x, "MMMM YYYY").isAfter(moment(y, "MMMM YYYY"), "month"))
+                        this.months.sort((x, y) => moment(x, "MMMM YYYY") - moment(y, "MMMM YYYY"))
                     },
                     /**
                      * This function is the scroll handler for the competition calendar.
