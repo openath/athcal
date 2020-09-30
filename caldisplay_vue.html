@@ -20,6 +20,9 @@
         body {
             /* font-family: 'Roboto', sans-serif; */
         }
+        label {
+            font-size: 1em;
+        }
         .month-heading {
             color: #707070;
             text-decoration: underline;
@@ -31,120 +34,119 @@
         .filter-heading {
             font-size: 1.2em;
         }
-
         .fa-chevron-up {
+            font-size: 0.7em;
+        }
+        .form-check-label {
             font-size: 1em;
+        }
+        .card-body {
+            background-color: #da7652;
+        }
+        /* The animation code */
+        @keyframes chevron-flip {
+            0% {transform: rotate(0deg);}
+            100% {transform: rotate(180deg);}
+        }
+        .chevron-animate-up {
+            animation-name: chevron-flip;
+            animation-iteration-count: 1;
+            animation-duration: 0.7s;
+            animation-fill-mode: forwards;
+            animation-direction: normal;
+        }
+        .chevron-animate-down {
+            animation-name: chevron-flip;
+            animation-iteration-count: 1;
+            animation-duration: 0.7s;
+            animation-fill-mode: forwards;
+            animation-direction: reverse;
         }
     </style>
 </head>
 <body>
-    <div id="app" style="height: 1080px">
-        <div class="container-fluid mb-5">
+    <div id="app" style="height: fit-content">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-2 px-0 min-vh-100" style="background-color: #E95420;">
-                    <div class="px-3" style="height: 200px;">
-                        <h4 class="text-white">Filter</h4>
+                    <div class="" style="height: 200px;">
+                        <h5 class="text-white">Filter</h5>
                         <div>
-                            <form>
-                                <div class="form-group">
-                                    <input class="form-control" v-model="name_search_query" type="text" placeholder="Search name">
-                                </div>
-                            </form>
-                            <a class="filter-heading d-block text-white" id="location-filter-heading" data-toggle="collapse" href="#locationFilter" role="button" aria-expanded="false" aria-controls="locationFilter">
+                            <div class="form-group">
+                                <input class="form-control" v-model="name_search_query" type="text" placeholder="Search name">
+                            </div>
+                            <a class="filter-heading d-block text-white" id="location-filter-heading" role="button">
                                 Location <i class="fas fa-chevron-up"></i>
                             </a>
-                            <div class="collapse" id="locationFilter">
+                            <div class="collapse">
                                 <div class="card card-body">
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="country">Choose Country</label>
-                                            <div class="form-group form-check">
-                                                <label class="form-check-label" for="id-reset-loc" @change="selectedCountries=[]">
-                                                    <input class="form-check-input" type="checkbox" name="" id="id-reset-loc">
-                                                    All locations
-                                                </label>
-                                            </div>
-                                            <select multiple v-model="selectedCountries" class="form-control">
-                                                <option disabled selected hidden>...</option>
-                                                <option v-for="option in country_options" :value="option">{{ option }}</option>
-                                            </select>
-                                        </div>
-                                    </form>
+                                    <div class="form-group">
+                                        <label for="country">Choose Country</label>
+                                        <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedCountries=[]">All locations</button>
+                                        <select multiple v-model="selectedCountries" class="form-control">
+                                            <option disabled selected hidden>...</option>
+                                            <option v-for="option in country_options" :value="option">{{ option }}</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#competitionFilter" role="button" aria-expanded="false" aria-controls="competitionFilter">
-                                Competition
+                            <a class="filter-heading d-block text-white" role="button">
+                                Competition <i class="fas fa-chevron-up"></i>
                             </a>
-                            <div class="collapse" id="competitionFilter">
+                            <div class="collapse">
                                 <div class="card card-body">
-                                    <form>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">All competitions</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">European athletics events and meetings</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">IAAF events and meetings</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">Affiliated organisation competitions</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">International matches</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">National championships</label>
-                                        </div>
-                                        <div class="form-group form-check">
-                                            <input class="form-check-input" type="checkbox" name="" id="">
-                                            <label class="form-check-label" for="exampleCheck1">International meetings with national permit</label>
-                                        </div>
-                                    </form>
+                                    <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="">All competitions</button>
+                                    
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">European athletics events and meetings</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">IAAF events and meetings</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">Affiliated organisation competitions</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">International matches</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">National championships</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" name="" id="">
+                                        <label class="form-check-label" for="exampleCheck1">International meetings with national permit</label>
+                                    </div>
                                 </div>
                             </div>
-                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#typeFilter" role="button" aria-expanded="false" aria-controls="typeFilter">
-                                Type
+                            <a class="filter-heading d-block text-white" role="button">
+                                Type <i class="fas fa-chevron-up"></i>
                             </a>
-                            <div class="collapse" id="typeFilter">
+                            <div class="collapse">
                                 <div class="card card-body">
-                                    <form>
-                                        <div class="form-group form-check">
-                                            <label class="form-check-label" for="id-reset-compType" @change="selectedCompType=[]">
-                                                <input class="form-check-input" type="checkbox" id="id-reset-compType">
-                                                All Types
-                                            </label>
-                                        </div>
-                                        <div v-for="(type, i) in compTypes" class="form-group form-check">
-                                            <input class="form-check-input" :value="type.value" :id="'id-type-' + i" type="checkbox" v-model="selectedCompType">
-                                            <label class="form-check-label" :for="'id-type-' + i">{{ type.label }}</label>
-                                        </div>
-                                    </form>
+                                    <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="">All Types</button>
+
+                                    <div v-for="(type, i) in compTypes" class="form-group form-check">
+                                        <input class="form-check-input" :value="type.value" :id="'id-type-' + i" type="checkbox" v-model="selectedCompType">
+                                        <label class="form-check-label" :for="'id-type-' + i">{{ type.label }}</label>
+                                    </div>
                                 </div>
                             </div>
-                            <a class="filter-heading d-block text-white" data-toggle="collapse" href="#ageGroupFilter" role="button" aria-expanded="false" aria-controls="ageGroupFilter">
-                                Age Groups
+                            <a class="filter-heading d-block text-white" role="button">
+                                Age Groups <i class="fas fa-chevron-up"></i>
                             </a>
-                            <div class="collapse" id="ageGroupFilter">
+                            <div class="collapse">
                                 <div class="card card-body">
-                                    <form>
-                                        <div class="form-group form-check">
-                                            <label class="form-check-label" for="id-reset-ag" @change="selectedAG=[]">
-                                                <input class="form-check-input" type="checkbox" id="id-reset-ag">
-                                                All Age Groups
-                                            </label>
-                                        </div>
-                                        <div v-for="(ag, i) in ageGroups" class="form-group form-check">
-                                            <input class="form-check-input" :value="ag.value" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
-                                            <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
-                                        </div>
-                                    </form>
+                                    <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedAG=[]">All Age Groups</button>
+                                    
+                                    <div v-for="(ag, i) in ageGroups" class="form-group form-check">
+                                        <input class="form-check-input" :value="ag.value" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                        <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +156,7 @@
                     <div class="col-md-11 mt-3">
                         <div id="months-headings" class="row">
                             <div class="col-md-1 d-inline" v-if="isLoading != 'undefined' && !isLoading" v-for="month in months_data" >
-                                <h2 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h2>
+                                <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h5>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
                                 </div>
@@ -169,14 +171,14 @@
                             </div>
                             <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                         </div>
-                        <table class="table list bg-white">
+                        <table class="table table-sm list bg-white">
                             <thead class="bg-primary text-white">
                                 <tr>
                                     <th scope="col" class="d-lg-table-cell">Date</th>
                                     <th scope="col">Full Name</th>
-                                    <th scope="col">Age Groups</th>
-                                    <th scope="col">Country</th>
-                                    <th scope="col">Type</th>
+                                    <th class="text-center" scope="col">Age Groups</th>
+                                    <th class="text-center" scope="col">Country</th>
+                                    <th class="text-center" scope="col">Type</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,15 +188,15 @@
                                 <tr v-for="comp in paginatedCompetitions()" :key="comp.id">
                                     <td style="width:125px">{{comp.date}}</td>
                                     <td>{{comp.full_name}}</td>
-                                    <td>{{comp.age_groups}}</td>
-                                    <td>{{comp.country}}</td>
-                                    <td>{{comp.type}}</td>
+                                    <td class="text-center">{{comp.age_groups}}</td>
+                                    <td class="text-center">{{comp.country}}</td>
+                                    <td class="text-center">{{comp.type}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="col-md-11">
-                        <nav class="d-flex justify-content-center mb-3">
+                        <nav class="d-flex justify-content-center">
                             <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                         </nav>
                     </div>
@@ -247,12 +249,31 @@
     <script src="./js/navigator-script.js"></script>
     <script>
         $(document).ready(() => {
-            $("#location-filter-heading").click(function(){
-                $("#locationFilter").collapse('toggle');
+
+            // Toggles the collapse of filters
+            $(".filter-heading.d-block.text-white").click(function(){
+                $(this).next().collapse('toggle');
             });
-            $('#locationFilter').on('show.bs.collapse', function() {
-                console.log("run");
-                $('#location-filter-heading > i').addClass("fa-flip-vertical");
+
+            $('.collapse').on('show.bs.collapse', function() {
+                var chevron = $(this).prev().children('i');
+                chevron.addClass('chevron-animate-up');
+                setTimeout(() => {
+                    chevron.removeClass('chevron-animate-down');
+                    var rotate = chevron.css('transform');
+                    chevron.css('transform', rotate);
+                    chevron.removeClass('chevron-animate-up');
+                }, 800);
+            });
+            $('.collapse').on('hide.bs.collapse', function() {
+                var chevron = $(this).prev().children('i');
+                chevron.addClass('chevron-animate-down');
+                setTimeout(() => {
+                    chevron.removeClass('chevron-animate-up');
+                    var rotate = chevron.css('transform');
+                    chevron.css('transform', rotate);
+                    chevron.removeClass('chevron-animate-down');
+                }, 800);
             });
         });
 
