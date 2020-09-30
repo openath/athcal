@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Athletics Calendars</title>
-</head>
-<body>
-	<h1>Experiments loading calendar data</h1>
-    <p>This project has a few experiments at displaying static JSON data
-    in web pages. I am deliberately using NO FORMATTING at this stage, unless it's bundled
-    with the example, as this is about how we should do Javascript</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Athletics Calendars</title>
+    </head>
+    <body>
+        <h1>Experiments loading calendar data</h1>
+        <p>
+            This project has a few experiments at displaying static JSON data in web pages. I am deliberately using NO
+            FORMATTING at this stage, unless it's bundled with the example, as this is about how we should do Javascript
+        </p>
 
+        <p>
+            Three pages below use different Javascipt approaches. They all load <a href="">this json file</a> from an
+            Amazon S3 bucket, fronted by Amazon Cloudfront in a CORS-friendly way, so hopefully could take web scale
+            loads, and they will still work if our server is down or restarting.
+        </p>
 
-    <p>Three pages below use different Javascipt approaches.  They all load 
-        <a href="">this json file</a> from an Amazon S3 bucket, fronted by
-    Amazon Cloudfront in a CORS-friendly way, so hopefully could take
-    web scale loads, and they will still work if our server is down or restarting.</p>
-
-    <ul>
-        <li><a href="caldisplay_vanilla.html">Here</a>, using <a href="http://vanilla-js.com/">handwritten vanilla Javascript</a>,
-        <li><a href="caldisplay_svelte.html">Here</a>, using <a href="http://svelte.dev">Svelte</a> which compiles to vanilla Javascript, and
-        <li><a href="caldisplay_vue.html">Here</a>, using <a href="http://vuejs.org">VueJS</a>, OpenTrack's usual framework 
-    </ul>
-    
-</body>
+        <ul>
+            <li>
+                <a href="caldisplay_vanilla.html">Here</a>, using
+                <a href="http://vanilla-js.com/">handwritten vanilla Javascript</a>,
+            </li>
+            <li>
+                <a href="caldisplay_svelte.html">Here</a>, using <a href="http://svelte.dev">Svelte</a> which compiles
+                to vanilla Javascript, and
+            </li>
+            <li>
+                <a href="caldisplay_vue.html">Here</a>, using <a href="http://vuejs.org">VueJS</a>, OpenTrack's usual
+                framework
+            </li>
+            <li>
+                <a href="vue-examples/cal-vue.html">Click here</a>, to view an alterantive vue calendar, or
+                <a href="vue-examples/index.html">here</a> to view in an iframe.
+            </li>
+        </ul>
+    </body>
 </html>
