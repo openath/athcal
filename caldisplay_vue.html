@@ -43,6 +43,17 @@
         .card-body {
             background-color: #da7652;
         }
+        #selectedYear {
+            color: #E95420;
+            -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
+        }
+        #selectedYear>i {
+            font-size: 0.8em;
+        }
+        #selectedYear>i:hover {
+            color: #707070;
+            cursor: pointer;
+        }
         /* The animation code */
         @keyframes chevron-flip {
             0% {transform: rotate(0deg);}
@@ -69,7 +80,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-2 px-0 min-vh-100" style="background-color: #E95420;">
-                    <div class="" style="height: 200px;">
+                    <div class="mx-1" style="height: 200px;">
                         <h5 class="text-white">Filter</h5>
                         <div>
                             <div class="form-group">
@@ -95,31 +106,11 @@
                             </a>
                             <div class="collapse">
                                 <div class="card card-body">
-                                    <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="">All competitions</button>
+                                    <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedCategories=[]">All competitions</button>
                                     
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">European athletics events and meetings</label>
-                                    </div>
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">IAAF events and meetings</label>
-                                    </div>
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">Affiliated organisation competitions</label>
-                                    </div>
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">International matches</label>
-                                    </div>
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">National championships</label>
-                                    </div>
-                                    <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" name="" id="">
-                                        <label class="form-check-label" for="exampleCheck1">International meetings with national permit</label>
+                                    <div v-for="(cat, i) in compCategories" class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" :value="cat.value" :id="'id-category-' + i" v-model="selectedCategories">
+                                        <label class="form-check-label" :for="'id-category-' + i">{{ cat.label }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -154,8 +145,17 @@
                 </div>
                 <div class="col-md-10 min-vh-100" style="background-color: #F0F0F0;">
                     <div class="col-md-11 mt-3">
+                        <div class="row">
+                            <div id="selectedYearContainer" class="mx-auto">
+                                <h1 id="selectedYear" class="d-inline">
+                                    <i class="fas fa-angle-left mx-2" @click="decrementYear()"></i>
+                                    {{ selectedYear }}
+                                    <i class="fas fa-angle-right mx-2" @click="incrementYear()"></i>
+                                </h1>
+                            </div>
+                        </div>
                         <div id="months-headings" class="row">
-                            <div class="col-md-1 d-inline" v-if="isLoading != 'undefined' && !isLoading" v-for="month in months_data" >
+                            <div class="col-md-1 d-inline" v-for="month in months_data" >
                                 <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h5>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
@@ -254,7 +254,6 @@
             $(".filter-heading.d-block.text-white").click(function(){
                 $(this).next().collapse('toggle');
             });
-
             $('.collapse').on('show.bs.collapse', function() {
                 var chevron = $(this).prev().children('i');
                 chevron.addClass('chevron-animate-up');
@@ -280,6 +279,12 @@
         var app = new Vue({
             el: '#app',
               props: {
+                compCategories: {
+                    type: Array,
+                    default: function() {
+                        return [{label:'European athletics events and meetings', value:'cat-1'}, {label:'IAAF events and meetings', value:'cat-2'}, {label:'Affiliated organisation competitions', value:'cat-3'}, {label:'International matches', value:'cat-4'}, {label:'National championships', value:'cat-5'}, {label:'International meetings with national permit', value:'cat-6'}];
+                    }
+                },
                 ageGroups: {
                     type: Array,
                     default: function () {
@@ -309,11 +314,13 @@
                     name_search_query: '',
                     all_months: [],
                     country_options: [],
-                    selectedYear: null,
+                    selectedYear: new Date().getFullYear(),
                     selectedMonth: null,
                     selectedCompType: [],
                     selectedAG: [],
                     selectedCountries: [],
+                    selectedCategories: [],
+                    
 
                     showOnPage: 20,
                     page: 1,
@@ -344,8 +351,8 @@
                             return hits.reduce(function (x, y) { return x || y }, false)
                         })
                     }
-                    if (self.selectedMonth) {
-                        output = self.filterByMonth(self.selectedMonth, output);
+                    if (self.selectedYear || self.selectedMonth) {
+                        output = self.filterByDate(self.selectedMonth, output);
                     }
                     return output
                 },
@@ -357,7 +364,7 @@
                             var monObject = {};
                             monObject.num = parseInt(month)+1;
                             monObject.name = self.allMonths[month];
-                            var compList = self.filterByMonth(String(monObject.num).padStart(2, '0'));
+                            var compList = self.filterByDate(String(monObject.num).padStart(2, '0'));
                             monObject.numberOfComps = compList.length;
                             self.all_months.push(monObject);
                         }
@@ -367,6 +374,14 @@
                 }
             },
             methods:{
+                incrementYear: function() {
+                    var self = this;
+                    self.selectedYear++;
+                },
+                decrementYear: function() {
+                    var self = this;
+                    self.selectedYear--;
+                },
                 applyDateFilter: function(month) {
                     this.selectedMonth = String(month).padStart(2, '0');
 
@@ -378,19 +393,25 @@
                     clickedMonth.children[0].style.color = "#E95420";
                     // clickedMonth.classList.add("bg-primary", "text-white");
                 },
-                filterByMonth: function(month, data) {
-                    var output;
+                filterByDate: function(month, data) {
+                    var output, self=this;
                     if (data) {
                         output = data;
                     } else {
                         output = this.info;
                     }
-                    return output.filter((item)=>{
-                        // Need to change this to selectedYear
-                        return item.date.match(`2020-${month}`);
-                    })
+                    if (month) {
+                        return output.filter((item)=>{
+                            // Need to change this to selectedYear
+                            return item.date.match(`${self.selectedYear}-${month}`);
+                        })
+                    } else {
+                        return output.filter((item)=>{
+                            // Need to change this to selectedYear
+                            return item.date.match(`${self.selectedYear}`);
+                        })
+                    }
                 },
-
 
                 setPg: function (p) {
                     this.page = p
