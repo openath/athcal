@@ -33,6 +33,7 @@
         }
         .filter-heading {
             font-size: 1.2em;
+            -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
         }
         .fa-chevron-up {
             font-size: 0.7em;
@@ -62,14 +63,14 @@
         .chevron-animate-up {
             animation-name: chevron-flip;
             animation-iteration-count: 1;
-            animation-duration: 0.7s;
+            animation-duration: 0.4s;
             animation-fill-mode: forwards;
             animation-direction: normal;
         }
         .chevron-animate-down {
             animation-name: chevron-flip;
             animation-iteration-count: 1;
-            animation-duration: 0.7s;
+            animation-duration: 0.4s;
             animation-fill-mode: forwards;
             animation-direction: reverse;
         }
@@ -86,7 +87,7 @@
                             <div class="form-group">
                                 <input class="form-control" v-model="name_search_query" type="text" placeholder="Search name">
                             </div>
-                            <a class="filter-heading d-block text-white" id="location-filter-heading" role="button">
+                            <a class="filter-heading d-block text-white" role="button">
                                 Location <i class="fas fa-chevron-up"></i>
                             </a>
                             <div class="collapse">
@@ -222,7 +223,7 @@
                 <a @click="setPage(pi)" class="page-link">{{ pi }}</a>
             </li>
             <li v-if="numPages > threshold && $parent.page < numPages - 3" class="page-item disabled"><span class="page-link">...</span></li>
-            <li v-if="numPages > threshold && $parent.page < numPages - 2" class="page-item"><a class="page-link" @click="setPage(numPages)">-${ numPages }</a></li>
+            <li v-if="numPages > threshold && $parent.page < numPages - 2" class="page-item"><a class="page-link" @click="setPage(numPages)">{{ numPages }}</a></li>
             <li v-else-if="numPages <= threshold" v-for="i in _.range(1, numPages+1)" :class="{'page-item': true, active: $parent.page == i}">
                 <a @click="setPage(i)" class="page-link">{{ i }}</a>
             </li>
@@ -262,7 +263,7 @@
                     var rotate = chevron.css('transform');
                     chevron.css('transform', rotate);
                     chevron.removeClass('chevron-animate-up');
-                }, 800);
+                }, 500);
             });
             $('.collapse').on('hide.bs.collapse', function() {
                 var chevron = $(this).prev().children('i');
@@ -272,7 +273,7 @@
                     var rotate = chevron.css('transform');
                     chevron.css('transform', rotate);
                     chevron.removeClass('chevron-animate-down');
-                }, 800);
+                }, 500);
             });
         });
 
@@ -377,10 +378,12 @@
                 incrementYear: function() {
                     var self = this;
                     self.selectedYear++;
+                    self.fetchData();
                 },
                 decrementYear: function() {
                     var self = this;
                     self.selectedYear--;
+                    self.fetchData();
                 },
                 applyDateFilter: function(month) {
                     this.selectedMonth = String(month).padStart(2, '0');
@@ -440,18 +443,24 @@
                         start = self.pageStartIdx() - 1;
                     return self.filteredCompetitions.slice(start, start + self.showOnPage)
                 },
-              },
-            mounted() {
-                var self = this;
-                axios
-                    .get('https://file.opentrack.run/live/euroath/european_calendar_2020.json')
+
+
+                fetchData: function() {
+                    var self = this;
+                    axios
+                    .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                     .then(response => {
                         self.info = response.data;
                         self.country_options = self.info.map(item => item.country
                                             ).filter((value, index, list) => list.indexOf(value) === index);
                         self.isLoading = false;                        
                     })
-              }
+                }
+              },
+            mounted() {
+                var self = this;
+                self.fetchData();
+            }
         })
     </script>
 </body>
