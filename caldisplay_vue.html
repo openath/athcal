@@ -29,6 +29,11 @@
                 height: 100%;
                 background-color: #F0F0F0;
             }
+            .row-cols-7>* {
+                -ms-flex: 0 0 14.285714285714285714285714285714%;
+                flex: 0 0 14.285714285714285714285714285714%;
+                max-width: 14.285714285714285714285714285714%;
+            }
             .month-heading {
                 color: #707070;
                 text-decoration: underline;
@@ -92,6 +97,13 @@
             @media (min-width: 768px) {
                 .bd-placeholder-img-lg {
                 font-size: 3.5rem;
+                }
+            }
+            @media (min-width: 992px) {
+                .row-cols-lg-7>* {
+                    -ms-flex: 0 0 14.285714285714285714285714285714%;
+                    flex: 0 0 14.285714285714285714285714285714%;
+                    max-width: 14.285714285714285714285714285714%;
                 }
             }
         </style>
@@ -202,53 +214,34 @@
                                     <i class="fas fa-angle-right mx-2" @click="incrementYear()"></i>
                                 </h1>
                             </div>
-                            <div class="btn-toolbar mb-2 mb-md-0" style="position: absolute;right:20px;">
+                            <!-- <div class="btn-toolbar mb-2 mb-md-0 d-none d-md-block" style="position: absolute;right:20px;">
                                 <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Calendar View</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#eventDays" aria-expanded="false" aria-controls="eventDays">Calendar View</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary">Map View</button>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div id="months-headings" class="row pt-3 pb-2 mb-3 border-bottom">
-                            <div class="col-md-1 d-inline" v-for="month in months_data" >
+                            <div class="d-none col-md-1 d-md-inline" v-for="month in months_data" >
                                 <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h5>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="container-fluid align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group mr-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Calendar View</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Map View</button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div id="selectedYearContainer" class="mx-auto">
-                                <h1 id="selectedYear" class="d-inline">
-                                    <i class="fas fa-angle-left mx-2" @click="decrementYear()"></i>
-                                    {{ selectedYear }}
-                                    <i class="fas fa-angle-right mx-2" @click="incrementYear()"></i>
-                                </h1>
-                            </div>
-                        </div>
-                        <div id="months-headings" class="row">
-                            <div class="col-md-1 d-inline" v-for="month in months_data" >
-                                <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month.num)">{{ month.name }}</h5>
-                                <div class="d-block mx-auto" style="width:fit-content">
-                                    <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        </div> -->
 
-                        <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
+                        <div id="eventDays" class="row row-cols-7 collapse">
+                            <div class="col p-3" v-for="n in 42">
+                                <div class="border border-dark">
+                                    <h3>{{ n }}</h3>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="d-flex flex-horizontal justify-content-between align-items-center">
                             <div>
                                 <span v-if="filteredCompetitions" class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
-                                <a href="javascript:location.reload(true)">Reset filters</a>
+                                <a class="d-block d-md-inline" href="javascript:location.reload(true)">Reset filters</a>
                             </div>
                             <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                         </div>
@@ -269,7 +262,7 @@
                                     </tr>
                                     <tr v-for="comp in paginatedCompetitions()" :key="comp.id">
                                         <td style="width:125px">{{comp.date}}</td>
-                                        <td>{{comp.full_name}}</td>
+                                        <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
                                         <td class="text-center">{{comp.age_groups}}</td>
                                         <td class="text-center">{{comp.country}}</td>
                                         <td class="text-center">{{comp.type}}</td>
@@ -283,7 +276,52 @@
                     </main>
                 </div>
             </div>
+        
+            <!-- Modal -->
+            <div class="modal fade" id="competitionDetailModel" tabindex="-1" aria-labelledby="competitionDetailModel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">{{ selectedCompetition.basic_description }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Contact Name <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_name }}</span></h5></li>
+                                        <li class="list-group-item">Contact Details <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_details }}</span></h5></li>
+                                    </ul>
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                          Competitors
+                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                          Results
+                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
+                                        </li>
+                                      </ul>
+                                </div>
+                                <div class="col">
+                                    <div id="map" class="w-100" style="height:300px"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
 
         <!-- Navigator -->
         <script type="text/template" id="navigator_template">
@@ -321,7 +359,7 @@
             </ul>
         </script>
         
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNwYdWaTG9yfjZydsHKW3tnm-rn8f30sw&libraries=places"></script>
         <script src="dashboard.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -330,7 +368,6 @@
         <script src="./js/navigator-script.js"></script>
         <script>
             $(document).ready(() => {
-
                 // Toggles the collapse of filters
                 $(".filter-heading.d-block.text-white").click(function(){
                     $(this).next().collapse('toggle');
@@ -356,6 +393,8 @@
                     }, 500);
                 });
             });
+
+            
 
             var app = new Vue({
                 el: '#app',
@@ -401,6 +440,11 @@
                         selectedAG: [],
                         selectedCountries: [],
                         selectedCategories: [],
+                        
+                        selectedCompetition: {},
+
+                        map: {},
+                        mapFinder: {},
                         
 
                         showOnPage: 16,
@@ -496,6 +540,55 @@
                         }
                     },
 
+                    showCompetitionDetails: function(comp) {
+                        var self = this;
+                        self.selectedCompetition=comp;
+                        console.log(self.map);
+                        if (self.selectedCompetition.address != "") {
+                            $('#map').show();
+                            self.updateMap(self.selectedCompetition.address);
+                        } else {
+                            $('#map').hide();
+                        }
+                    },
+                    initMap: function() {
+                        var self = this;
+                        self.map = new google.maps.Map(document.getElementById("map"), {
+                            center: null,
+                            zoom: 8,
+                        });
+                        self.mapFinder = new google.maps.places.PlacesService(self.map);
+                    },
+                    updateMap: function(address) {
+                        var self = this;
+                        self.findPlace(address);
+                    },
+                    findPlace: function(address) {
+                        var self = this;
+                        console.log(address);
+                        const request = {
+                            query: address,
+                            fields: ["name", "geometry"],
+                        };
+                        self.mapFinder.findPlaceFromQuery(request, (results, status) => {
+                            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                self.map.setCenter(results[0].geometry.location);
+                                self.createMarker(results[0]);
+                            }else {
+                                console.log("Google Maps: Could not get location");
+                            }
+                        });
+                    },
+                    createMarker: function(place) {
+                        var self = this, map = self.map;
+                        const marker = new google.maps.Marker({
+                            map,
+                            position: place.geometry.location,
+                        });
+                    },
+
+
+
                     setPg: function (p) {
                         this.page = p
                     },
@@ -531,9 +624,12 @@
                         .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                         .then(response => {
                             self.info = response.data;
+                            console.log(self.info);
                             self.country_options = self.info.map(item => item.country
                                                 ).filter((value, index, list) => list.indexOf(value) === index);
-                            self.isLoading = false;                        
+                            self.isLoading = false; 
+
+                            self.initMap();                       
                         })
                     }
                 },
