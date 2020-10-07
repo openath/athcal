@@ -67,6 +67,12 @@
                 color: #707070;
                 cursor: pointer;
             }
+            .table-row-month {
+                background-color: #F0F0F0;
+            }
+            .modal-header > h6 {
+                font-size: 1rem;
+            }
             .page-item {
                 cursor: pointer;
             }
@@ -270,7 +276,7 @@
                             <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-sm list bg-white">
+                            <table id="competitionTable" class="table table-sm list bg-white">
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th scope="col" class="d-lg-table-cell">Date</th>
@@ -285,12 +291,12 @@
                                     <tr v-if="paginatedCompetitions().length == 0">
                                         <td>No competitions</td>
                                     </tr>
-                                    <tr v-for="comp in paginatedCompetitions()" :key="comp.id">
+                                    <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
                                         <td style="width:125px">{{comp.date}}</td>
                                         <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
                                         <td class="text-center">{{comp.age_groups}}</td>
                                         <td class="text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
-
+                                        
                                         <td class="text-center">{{comp.country}}</td>
                                         <td class="text-center">{{comp.type}}</td>
                                     </tr>
@@ -309,7 +315,8 @@
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }}</h5>
+                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }} <h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
+                            
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -323,15 +330,21 @@
                                     <ul class="list-group">
                                         <li class="list-group-item">Contact Name <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_name }}</span></h5></li>
                                         <li class="list-group-item">Contact Details <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_details }}</span></h5></li>
-                                    </ul>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          Competitors
-                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Competitors</p>
+                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          Results
-                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Results</p>
+                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
+                                            <a v-else href="selectedCompetition.results_link" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
+                                        </li>
+                                        <li v-if="selectedCompetition.website != ''" class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Website</p>
+                                            <a  :href="selectedCompetition.website" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill invisible">44</span>
                                         </li>
                                       </ul>
                                 </div>
@@ -557,7 +570,6 @@
                     },
                     applyDateFilter: function(month) {
                         var self = this;
-                        console.log(month);
 
                         // Check if month is contained in list
                         if (self.selectedMonths.some(e => e === month)) {
@@ -568,8 +580,8 @@
                             // Add it
                             self.selectedMonths.push(month);
                         }
-                        console.log(self.selectedMonths);
                         self.displaySelectedMonths();
+                        self.insertMonthInTable();
                     },
                     displaySelectedMonths: function() {
                         var self = this;
@@ -582,6 +594,38 @@
                             clickedMonth.children[0].style.color = "#E95420";
                         });
                     },
+
+                    insertMonthInTable: function() {
+                        // <tr v-for="comp, i in paginatedCompetitions()"  :key="comp.id">
+                        //     <tr>
+                        //         <th v-for="month in months_data" v-if="month.numberOfComps == i && comp.date.match(`${selectedYear}-${month.string}`)" scope="row" class="table-row-month">June</th>
+                        //     </tr>
+                        // </tr>
+                        console.log("here");
+                        var self = this;
+                        var competitions = self.filteredCompetitions;
+                        console.log(competitions);
+                        for (const comp in competitions) {
+                            var number = parseInt(comp)+1;
+                            for (const month of self.months_data) {
+                                console.log(month.numberOfComps == number, competitions[comp].date.match(`${selectedYear}-${month.string}`) == null);
+                                if (month.numberOfComps == number && competitions[comp].date.match(`${selectedYear}-${month.string}`) == null) {
+                                    console.log(competitions[comp].date);
+                                    console.log(number);
+                                    console.log(month.string);
+                                    console.log("inserting row");
+                                    $('#competitionTable tr:last').after(
+                                        `
+                                        <tr class="table-row-month">
+                                            <th scope="row" colspan="6">June</th>
+                                        </tr>
+                                        `
+                                    );;
+                                }
+                            }
+                        }
+                    },
+
                     filterByDate: function(month, data) {
                         var output, self=this;
                         if (data) {
@@ -609,6 +653,7 @@
                         return output.code;
                     },
 
+
                     showCompetitionDetails: function(comp) {
                         var self = this;
                         self.selectedCompetition=comp;
@@ -634,7 +679,6 @@
                     },
                     findPlace: function(address) {
                         var self = this;
-                        console.log(address);
                         const request = {
                             query: address,
                             fields: ["name", "geometry"],
