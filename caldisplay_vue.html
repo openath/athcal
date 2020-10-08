@@ -400,7 +400,7 @@
         </script>
         
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNwYdWaTG9yfjZydsHKW3tnm-rn8f30sw&libraries=places"></script>
-        <script src="dashboard.js"></script>
+        <!-- <script src="dashboard.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script src="./js/lodash.js"></script>
@@ -576,12 +576,13 @@
                             // Remove it
                             var selMonths = self.selectedMonths;
                             self.selectedMonths = selMonths.filter((mon) => mon.num != month.num);
+                            self.removeMonthInTable(month);
                         } else {
                             // Add it
                             self.selectedMonths.push(month);
+                            self.insertMonthInTable();
                         }
                         self.displaySelectedMonths();
-                        self.insertMonthInTable();
                     },
                     displaySelectedMonths: function() {
                         var self = this;
@@ -596,34 +597,67 @@
                     },
 
                     insertMonthInTable: function() {
-                        // <tr v-for="comp, i in paginatedCompetitions()"  :key="comp.id">
-                        //     <tr>
-                        //         <th v-for="month in months_data" v-if="month.numberOfComps == i && comp.date.match(`${selectedYear}-${month.string}`)" scope="row" class="table-row-month">June</th>
-                        //     </tr>
-                        // </tr>
-                        console.log("here");
                         var self = this;
-                        var competitions = self.filteredCompetitions;
-                        console.log(competitions);
-                        for (const comp in competitions) {
-                            var number = parseInt(comp)+1;
-                            for (const month of self.months_data) {
-                                console.log(month.numberOfComps == number, competitions[comp].date.match(`${selectedYear}-${month.string}`) == null);
-                                if (month.numberOfComps == number && competitions[comp].date.match(`${selectedYear}-${month.string}`) == null) {
-                                    console.log(competitions[comp].date);
-                                    console.log(number);
-                                    console.log(month.string);
-                                    console.log("inserting row");
-                                    $('#competitionTable tr:last').after(
-                                        `
-                                        <tr class="table-row-month">
-                                            <th scope="row" colspan="6">June</th>
-                                        </tr>
-                                        `
-                                    );;
+                        var competitions = self.paginatedCompetitions();
+                        // console.log("Insert");
+                        // console.log(competitions);
+
+                        // var month = self.selectedMonths.slice(-1)[0];
+                        var totalNumberOfcomps = 0;
+                        var rowPosition = 0;
+                        var addedMonths = [];
+
+                        // Clear table of months first
+                        self.clearMonthsInTable();
+                        for (const month of self.selectedMonths) {
+                            var html =  `<tr class="table-row-month"><th scope="row" colspan="6">${month.name}</th></tr>`;
+                            var monthIndex = self.selectedMonths.indexOf(month);
+
+                            // Inserts months selected after first
+                                // console.log(competitions.length, month.numberOfComps);
+                                // insertRowLocation = (preMonthCompLength);
+                            if (monthIndex > 0) {
+                                rowPosition = totalNumberOfcomps+(monthIndex-1);
+                            }
+                            // console.log(totalNumberOfcomps);
+                            for (const comp in competitions) {
+                                var number = parseInt(comp)+1;
+                                // console.log(addedMonths.indexOf(month) == -1);
+                                // console.log(competitions[comp].date.match(`${self.selectedYear}-${month.string}`));
+
+                                if (addedMonths.indexOf(month) == -1 && competitions[comp].date.match(`${self.selectedYear}-${month.string}`)) {
+                                    // console.log("inserting row");
+                                    // console.log(rowPosition);
+                                    if (addedMonths.length != 0) {
+                                        $('#competitionTable > tbody > tr').eq(rowPosition).after(html);
+                                    } else {
+                                        $('#competitionTable > tbody > tr').eq(0).before(html);
+                                    }
+                                    addedMonths.push(month);
                                 }
                             }
+                            totalNumberOfcomps += self.filterByDate(month.string, competitions).length;
+                        
                         }
+                    },
+                    clearMonthsInTable: function() {
+                        var self = this;
+                        $('#competitionTable > tbody').children('tr').each((i, element) => {
+                            for (const month of self.selectedMonths) {
+                                if ($(element).text() == month.name) {
+                                    $(element).remove();
+                                }
+                            }
+                        });
+                    },
+                    removeMonthInTable: function(month) {
+                        var self = this;
+                        $('#competitionTable > tbody').children('tr').each((i, element) => {
+                            if ($(element).text() == month.name) {
+                                $(element).remove();
+                            }
+                        });
+                        self.insertMonthInTable();
                     },
 
                     filterByDate: function(month, data) {
@@ -738,13 +772,25 @@
                         .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                         .then(response => {
                             self.info = response.data;
-                            console.log(self.info);
+                            // console.log(self.info);
                             self.country_options = self.info.map(item => item.country
                                                 ).filter((value, index, list) => list.indexOf(value) === index);
                             self.isLoading = false; 
 
                             self.initMap();                       
                         })
+                    }
+                },
+                watch: {
+                    page: function() {
+                        var self = this;
+                        console.log("change");
+                        setTimeout(function(){ self.insertMonthInTable(); }, 50);
+                    },
+                    filteredCompetitions: function() {
+                        var self = this;
+                        console.log("change");
+                        setTimeout(function(){ self.insertMonthInTable(); }, 50);
                     }
                 },
                 mounted() {
