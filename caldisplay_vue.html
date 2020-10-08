@@ -67,6 +67,12 @@
                 color: #707070;
                 cursor: pointer;
             }
+            .table-row-month {
+                background-color: #F0F0F0;
+            }
+            .modal-header > h6 {
+                font-size: 1rem;
+            }
             .page-item {
                 cursor: pointer;
             }
@@ -270,7 +276,7 @@
                             <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-sm list bg-white">
+                            <table id="competitionTable" class="table table-sm list bg-white">
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th scope="col" class="d-lg-table-cell">Date</th>
@@ -285,12 +291,12 @@
                                     <tr v-if="paginatedCompetitions().length == 0">
                                         <td>No competitions</td>
                                     </tr>
-                                    <tr v-for="comp in paginatedCompetitions()" :key="comp.id">
+                                    <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
                                         <td style="width:125px">{{comp.date}}</td>
                                         <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
                                         <td class="text-center">{{comp.age_groups}}</td>
                                         <td class="text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
-
+                                        
                                         <td class="text-center">{{comp.country}}</td>
                                         <td class="text-center">{{comp.type}}</td>
                                     </tr>
@@ -309,7 +315,8 @@
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }}</h5>
+                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }} <h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
+                            
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -323,15 +330,21 @@
                                     <ul class="list-group">
                                         <li class="list-group-item">Contact Name <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_name }}</span></h5></li>
                                         <li class="list-group-item">Contact Details <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_details }}</span></h5></li>
-                                    </ul>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          Competitors
-                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Competitors</p>
+                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          Results
-                                          <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Results</p>
+                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
+                                            <a v-else href="selectedCompetition.results_link" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
+                                        </li>
+                                        <li v-if="selectedCompetition.website != ''" class="list-group-item d-flex align-items-center">
+                                            <p class="mr-auto my-0">Website</p>
+                                            <a  :href="selectedCompetition.website" class="px-3">Click here</a>
+                                            <span class="badge badge-primary badge-pill invisible">44</span>
                                         </li>
                                       </ul>
                                 </div>
@@ -387,7 +400,7 @@
         </script>
         
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNwYdWaTG9yfjZydsHKW3tnm-rn8f30sw&libraries=places"></script>
-        <script src="dashboard.js"></script>
+        <!-- <script src="dashboard.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script src="./js/lodash.js"></script>
@@ -557,18 +570,18 @@
                     },
                     applyDateFilter: function(month) {
                         var self = this;
-                        console.log(month);
 
                         // Check if month is contained in list
                         if (self.selectedMonths.some(e => e === month)) {
                             // Remove it
                             var selMonths = self.selectedMonths;
                             self.selectedMonths = selMonths.filter((mon) => mon.num != month.num);
+                            self.removeMonthInTable(month);
                         } else {
                             // Add it
                             self.selectedMonths.push(month);
+                            self.insertMonthInTable();
                         }
-                        console.log(self.selectedMonths);
                         self.displaySelectedMonths();
                     },
                     displaySelectedMonths: function() {
@@ -582,6 +595,71 @@
                             clickedMonth.children[0].style.color = "#E95420";
                         });
                     },
+
+                    insertMonthInTable: function() {
+                        var self = this;
+                        var competitions = self.paginatedCompetitions();
+                        // console.log("Insert");
+                        // console.log(competitions);
+
+                        // var month = self.selectedMonths.slice(-1)[0];
+                        var totalNumberOfcomps = 0;
+                        var rowPosition = 0;
+                        var addedMonths = [];
+
+                        // Clear table of months first
+                        self.clearMonthsInTable();
+                        for (const month of self.selectedMonths) {
+                            var html =  `<tr class="table-row-month"><th scope="row" colspan="6">${month.name}</th></tr>`;
+                            var monthIndex = self.selectedMonths.indexOf(month);
+
+                            // Inserts months selected after first
+                                // console.log(competitions.length, month.numberOfComps);
+                                // insertRowLocation = (preMonthCompLength);
+                            if (monthIndex > 0) {
+                                rowPosition = totalNumberOfcomps+(monthIndex-1);
+                            }
+                            // console.log(totalNumberOfcomps);
+                            for (const comp in competitions) {
+                                var number = parseInt(comp)+1;
+                                // console.log(addedMonths.indexOf(month) == -1);
+                                // console.log(competitions[comp].date.match(`${self.selectedYear}-${month.string}`));
+
+                                if (addedMonths.indexOf(month) == -1 && competitions[comp].date.match(`${self.selectedYear}-${month.string}`)) {
+                                    // console.log("inserting row");
+                                    // console.log(rowPosition);
+                                    if (addedMonths.length != 0) {
+                                        $('#competitionTable > tbody > tr').eq(rowPosition).after(html);
+                                    } else {
+                                        $('#competitionTable > tbody > tr').eq(0).before(html);
+                                    }
+                                    addedMonths.push(month);
+                                }
+                            }
+                            totalNumberOfcomps += self.filterByDate(month.string, competitions).length;
+                        
+                        }
+                    },
+                    clearMonthsInTable: function() {
+                        var self = this;
+                        $('#competitionTable > tbody').children('tr').each((i, element) => {
+                            for (const month of self.selectedMonths) {
+                                if ($(element).text() == month.name) {
+                                    $(element).remove();
+                                }
+                            }
+                        });
+                    },
+                    removeMonthInTable: function(month) {
+                        var self = this;
+                        $('#competitionTable > tbody').children('tr').each((i, element) => {
+                            if ($(element).text() == month.name) {
+                                $(element).remove();
+                            }
+                        });
+                        self.insertMonthInTable();
+                    },
+
                     filterByDate: function(month, data) {
                         var output, self=this;
                         if (data) {
@@ -609,6 +687,7 @@
                         return output.code;
                     },
 
+
                     showCompetitionDetails: function(comp) {
                         var self = this;
                         self.selectedCompetition=comp;
@@ -634,7 +713,6 @@
                     },
                     findPlace: function(address) {
                         var self = this;
-                        console.log(address);
                         const request = {
                             query: address,
                             fields: ["name", "geometry"],
@@ -694,13 +772,25 @@
                         .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                         .then(response => {
                             self.info = response.data;
-                            console.log(self.info);
+                            // console.log(self.info);
                             self.country_options = self.info.map(item => item.country
                                                 ).filter((value, index, list) => list.indexOf(value) === index);
                             self.isLoading = false; 
 
                             self.initMap();                       
                         })
+                    }
+                },
+                watch: {
+                    page: function() {
+                        var self = this;
+                        console.log("change");
+                        setTimeout(function(){ self.insertMonthInTable(); }, 50);
+                    },
+                    filteredCompetitions: function() {
+                        var self = this;
+                        console.log("change");
+                        setTimeout(function(){ self.insertMonthInTable(); }, 50);
                     }
                 },
                 mounted() {
