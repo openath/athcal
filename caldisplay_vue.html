@@ -13,10 +13,8 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-        <!-- Bootstrap JS, Popper.js, and jQuery -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <!-- Bootstrap Multiselct -->
+        <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css" />
         <link href="css/caldisplay_vue.css" rel="stylesheet">
         <style>
             html, body {
@@ -34,19 +32,51 @@
                 flex: 0 0 14.285714285714285714285714285714%;
                 max-width: 14.285714285714285714285714285714%;
             }
-            .month-heading {
-                color: #707070;
-                text-decoration: underline;
-                -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
+            .bg-orange {
+                background-color: #E95420;
+                color: white;
             }
-            .month-heading:hover {
-                color: #E95420;
-                cursor: pointer;
+            
+            /* SideBar Filtering */
+            .sidebar-sticky {
+                max-height: 700px;
+                overflow: auto;
             }
             .filter-heading {
                 font-size: 1.2em;
                 -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
             }
+
+            /* Multiselect */
+            .filter-button {
+                color: white;
+                font-weight: 500;
+                text-decoration: none;
+                /* margin: .5rem 1rem; */
+            }
+            .btn-link:hover {
+                color: white;
+                text-decoration: none;
+            }
+            .multiselect-container>li>a>label {
+                padding: 3px 20px 3px 10px;
+                display: block;
+                -webkit-box-align: unset;
+                -webkit-align-items: unset;
+                -ms-flex-align: unset;
+                align-items: unset;
+                -webkit-box-pack: unset;
+                -webkit-justify-content: unset;
+                -ms-flex-pack: unset;
+                justify-content: unset;
+                margin-bottom: unset;
+            }
+            #m-wa-category-choices + div > ul {
+			    min-width: 11rem;
+		    }
+            #m-discipline-choices + div > ul {
+			    min-width: 11rem;
+		    }
             .fa-chevron-up {
                 font-size: 0.7em;
             }
@@ -56,6 +86,8 @@
             .card-body {
                 background-color: #da7652;
             }
+
+            /* Year Filter */
             #selectedYear {
                 color: #E95420;
                 -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
@@ -67,12 +99,28 @@
                 color: #707070;
                 cursor: pointer;
             }
+            
+            /* Month Filter */
+            .month-heading {
+                color: #707070;
+                text-decoration: underline;
+                -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
+            }
+            .month-heading:hover {
+                color: #E95420;
+                cursor: pointer;
+            }
+            /* Month Filter (table row) */
             .table-row-month {
                 background-color: #F0F0F0;
             }
+
+            /* LightBox Competition Details */
             .modal-header > h6 {
                 font-size: 1rem;
             }
+
+            /* Pagination */
             .page-item {
                 cursor: pointer;
             }
@@ -106,10 +154,9 @@
                 -ms-user-select: none;
                 user-select: none;
             }
-
             @media (min-width: 768px) {
                 .bd-placeholder-img-lg {
-                font-size: 3.5rem;
+                    font-size: 3.5rem;
                 }
             }
             @media (min-width: 992px) {
@@ -168,6 +215,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <select name="location" id="location-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
                                     <a class="filter-heading d-block text-white nav-link" role="button">
@@ -185,8 +233,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <select name="wa-category" id="wa-category-choices"  multiple="multiple"></select>
                                 </li>
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="filter-heading d-block text-white nav-link" role="button">
                                         Competition <i class="fas fa-chevron-up"></i>
                                     </a>
@@ -200,14 +249,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a class="filter-heading d-block text-white nav-link" role="button">
-                                        Type <i class="fas fa-chevron-up"></i>
+                                        Discipline <i class="fas fa-chevron-up"></i>
                                     </a>
                                     <div class="collapse">
                                         <div class="card card-body">
-                                            <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="">All Types</button>
+                                            <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedCompType=[]">All Disciplines</button>
 
                                             <div v-for="(type, i) in compTypes" class="form-group form-check">
                                                 <input class="form-check-input" :value="type.value" :id="'id-type-' + i" type="checkbox" v-model="selectedCompType">
@@ -215,6 +264,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <select name="discipline" id="discipline-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
                                     <a class="filter-heading d-block text-white nav-link" role="button">
@@ -251,8 +301,23 @@
                                 </div>
                             </div> -->
                         </div>
-                        <div id="months-headings" class="row pt-3 pb-2 mb-3 border-bottom">
-                            <div class="d-none col-md-1 d-md-inline" v-for="month in months_data" >
+
+                        <!-- Toggles show/hide of filters -->
+                        <a class="btn btn-primary btn-sm d-sm-block d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
+                            <i class="fas fa-filter"></i>
+                        </a>
+
+                        <!-- Data is injected into multiselct through 'initialiseMultiSelect' -->
+                        <div id="mobileFilter" class="collapse">
+                            <select name="location" id="m-location-choices"  multiple="multiple"></select>
+                            <select name="wa-category" id="m-wa-category-choices"  multiple="multiple"></select>
+                            <select name="discipline" id="m-discipline-choices"  multiple="multiple"></select>
+                            <select name="age_group" id="m-age-group-choices"  multiple="multiple"></select>
+                        </div>
+
+                        <!-- Shows each month -->
+                        <div id="months-headings" class="d-none d-md-flex row pt-3 pb-2 mb-3 border-bottom">
+                            <div class="col-md-1 d-md-inline" v-for="month in months_data" >
                                 <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month)">{{ month.name }}</h5>
                                 <div class="d-block mx-auto" style="width:fit-content">
                                     <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
@@ -260,6 +325,7 @@
                             </div>
                         </div>
 
+                        <!-- Shows each day of each month -->
                         <div id="eventDays" class="row row-cols-7 collapse">
                             <div class="col p-3" v-for="n in 42">
                                 <div class="border border-dark">
@@ -267,7 +333,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div class="d-flex flex-horizontal justify-content-between align-items-center">
                             <div>
                                 <span v-if="filteredCompetitions" class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
@@ -281,10 +347,10 @@
                                     <tr>
                                         <th scope="col" class="d-lg-table-cell">Date</th>
                                         <th scope="col">Full Name</th>
-                                        <th class="text-center" scope="col">Age Groups</th>
-                                        <th class="text-center" scope="col">WA Cat</th>
-                                        <th class="text-center" scope="col">Country</th>
-                                        <th class="text-center" scope="col">Type</th>
+                                        <th class="d-none d-lg-table-cell text-center" scope="col">Age Groups</th>
+                                        <th class="d-none d-lg-table-cell text-center" scope="col">WA Cat</th>
+                                        <th class="d-none d-lg-table-cell text-center" scope="col">Country</th>
+                                        <th class="text-center" scope="col">Discipline</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -294,10 +360,10 @@
                                     <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
                                         <td style="width:125px">{{comp.date}}</td>
                                         <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
-                                        <td class="text-center">{{comp.age_groups}}</td>
-                                        <td class="text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
+                                        <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
+                                        <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
                                         
-                                        <td class="text-center">{{comp.country}}</td>
+                                        <td class="d-none d-lg-table-cell text-center">{{comp.country}}</td>
                                         <td class="text-center">{{comp.type}}</td>
                                     </tr>
                                 </tbody>
@@ -398,16 +464,27 @@
                 </li>
             </ul>
         </script>
+        <!-- Bootstrap JS, Popper.js, and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
         
+        <!-- Bootstrap Multiselct JS -->
+        <script type="text/javascript" src="./js/bootstrap-multiselect.js"></script>
+        
+        <!-- Google Maps API -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNwYdWaTG9yfjZydsHKW3tnm-rn8f30sw&libraries=places"></script>
-        <!-- <script src="dashboard.js"></script> -->
+        <!-- Vue -->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- Axios -->
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <!-- Lodash -->
         <script src="./js/lodash.js"></script>
-
+        <!-- Paginator JS -->
         <script src="./js/navigator-script.js"></script>
         <script>
             $(document).ready(() => {
+                // Handles toggling of show/hide animations for filter options
                 // Toggles the collapse of filters
                 $(".filter-heading.d-block.text-white").click(function(){
                     $(this).next().collapse('toggle');
@@ -434,8 +511,6 @@
                 });
             });
 
-            
-
             var app = new Vue({
                 el: '#app',
                 props: {
@@ -454,13 +529,13 @@
                     ageGroups: {
                         type: Array,
                         default: function () {
-                            return [{label:'Seniors',value:'S'}, {label:'Masters',value:'M'}, {label:'U23',value:'U23'}, {label:'U20',value:'U20'}, {label:'U18',value:'U18'}]
+                            return [{label:'Seniors',value:'SEN'}, {label:'Masters',value:'M'}, {label:'U23',value:'U23'}, {label:'U20',value:'U20'}, {label:'U18',value:'U18'}]
                         }
                     },
                     compTypes: {
                         type: Array,
                         default: function () {
-                            return [{label:'Outdoor', value:'TRACK'}, {label:'Indoor', value:'Indoor'}, {label:'Road races', value:'Road races'}, {label:'Cross country', value:'Cross country'}, {label:'Mountain running', value:'Mountain running'}, {label:'Race walking', value:'Race walking'}]
+                            return [{label:'Outdoor', value:'TRACK'}, {label:'Indoor', value:'INDOOR'}, {label:'Road races', value:'ROAD'}, {label:'Cross country', value:'XC'}, {label:'Mountain running', value:'MOUNTAIN'}, {label:'Race walking', value:'WALK'}]
                         }
                     },
                     allMonths: {
@@ -512,6 +587,11 @@
                         if (self.selectedCountries.length > 0) {
                             output = output.filter(function (item) {
                                 return self.selectedCountries.indexOf(item.country) >= 0
+                            })
+                        }
+                        if (self.selectedCompType.length > 0) {
+                            output = output.filter(function (item) {
+                                return self.selectedCompType.indexOf(item.type) >= 0
                             })
                         }
                         if (self.selectedAG.length > 0) {
@@ -633,7 +713,7 @@
                                     } else {
                                         $('#competitionTable > tbody > tr').eq(0).before(html);
                                     }
-                                    addedMonths.push(month);
+                                    addedMonths.push(month);               
                                 }
                             }
                             totalNumberOfcomps += self.filterByDate(month.string, competitions).length;
@@ -687,7 +767,7 @@
                         return output.code;
                     },
 
-
+                    // Show competition detail when clicked on competition
                     showCompetitionDetails: function(comp) {
                         var self = this;
                         self.selectedCompetition=comp;
@@ -699,6 +779,8 @@
                             $('#map').hide();
                         }
                     },
+
+                    // Google maps methods
                     initMap: function() {
                         var self = this;
                         self.map = new google.maps.Map(document.getElementById("map"), {
@@ -734,8 +816,178 @@
                         });
                     },
 
+                    // Initialisation of multiselect filtering buttons
+                    initialiseMultiSelect: function() {
+                        var self = this;
+                        // Multiselect Buttons
+
+                        var locationMultiselectConfig = {
+                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            includeSelectAllOption: true,
+                            selectAllValue: 'ALL',
+                            selectAllText: 'All countries',
+                            allSelectedText: '(All countries)',
+                            // nonSelectedText: 'Age groups (none)',
+                            maxHeight: 200,
+
+                            numberDisplayed: 1,
+                            buttonText: function(options, select) {
+                                if (options.length == 1) {
+                                    return options.html();
+                                }
+                                else {
+                                    return `Countries (${options.length})`;
+                                }
+                            },
+                            onChange: function(option, checked, select) {
+                                console.log(checked)
+                                if (checked) {
+                                    self.selectedCountries.push(option.val());
+                                } else {
+                                    self.selectedCountries = _.remove(self.selectedCountries, v => v != option.val())
+                                }
+                                console.log(self.selectedCountries)
+                            }
+                        };
+
+                        var waCategoryMultiselectConfig = {
+                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            includeSelectAllOption: true,
+                            selectAllValue: 'ALL',
+                            selectAllText: 'All categories',
+                            allSelectedText: '(All categories)',
+                            // nonSelectedText: 'Age groups (none)',
+                            maxHeight: 200,
+
+                            numberDisplayed: 1,
+                            buttonText: function(options, select) {
+                                if (options.length == 1) {
+                                    return options.html();
+                                }
+                                else {
+                                    return `WA Categories (${options.length})`;
+                                }
+                            },
+                            onChange: function(option, checked, select) {
+                                console.log(checked)
+                                if (checked) {
+                                    self.selectedWACategories.push(option.val());
+                                } else {
+                                    self.selectedWACategories = _.remove(self.selectedWACategories, v => v != option.val())
+                                }
+                                console.log(self.selectedWACategories)
+                            }
+                        }
+
+                        var disciplineMultiselectConfig = {
+                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            includeSelectAllOption: true,
+                            selectAllValue: 'ALL',
+                            selectAllText: 'All disciplines',
+                            allSelectedText: '(All disciplines)',
+                            // nonSelectedText: 'Age groups (none)',
+                            maxHeight: 200,
+
+                            numberDisplayed: 1,
+                            buttonText: function(options, select) {
+                                if (options.length == 1) {
+                                    return options.html();
+                                }
+                                else {
+                                    return `Disciplines (${options.length})`;
+                                }
+                            },
+                            onChange: function(option, checked, select) {
+                                console.log(checked)
+                                if (checked) {
+                                    self.selectedCompType.push(option.val());
+                                } else {
+                                    self.selectedCompType = _.remove(self.selectedCompType, v => v != option.val())
+                                }
+                                console.log(self.selectedCompType)
+                            }
+                        }
 
 
+                        // Mobile multiselect
+                        $('#m-location-choices').multiselect(locationMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopLocationMultiselectConfig = locationMultiselectConfig;
+                        desktopLocationMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
+                        $('#location-choices').multiselect(desktopLocationMultiselectConfig);
+
+
+                        // Mobile multiselect
+                        $('#m-wa-category-choices').multiselect(waCategoryMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopwaCategoryMultiselectConfig = waCategoryMultiselectConfig;
+                        desktopwaCategoryMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
+                        $('#wa-category-choices').multiselect(desktopwaCategoryMultiselectConfig);
+
+                        // Mobile multiselect
+                        $('#m-discipline-choices').multiselect(disciplineMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopdisciplineMultiselectConfig = disciplineMultiselectConfig;
+                        desktopdisciplineMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
+                        $('#discipline-choices').multiselect(desktopdisciplineMultiselectConfig);
+
+
+
+
+                        $('#m-discipline-choices').multiselect();
+                        $('#m-age-group-choices').multiselect({
+                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            includeSelectAllOption: true,
+                            selectAllValue: 'ALL',
+                            selectAllText: 'All age groups',
+                            allSelectedText: '(All age groups)',
+                            // nonSelectedText: 'Age groups (none)',
+                            maxHeight: 200,
+
+                            numberDisplayed: 1,
+                            buttonText: function(options, select) {
+                                if (options.length == 1) {
+                                    return options.html();
+                                }
+                                else {
+                                    return `Age groups (${options.length})`;
+                                }
+                            },
+                            onChange: function(option, checked, select) {
+                                console.log(checked)
+                                if (checked) {
+                                    self.selectedAG.push(option.val());
+                                } else {
+                                    self.selectedAG = _.remove(self.selectedAG, v => v != option.val())
+                                }
+                                console.log(self.selectedAG)
+                            }
+                        });
+
+
+                        var country_options = [];
+                        self.country_options.forEach(c => country_options.push({label: c, value: c}));
+                        $('#location-choices').multiselect('dataprovider', country_options);
+                        $('#m-location-choices').multiselect('dataprovider', country_options);
+                        
+
+                        var wa_category_options = [];
+                        self.waCategories.forEach(c => wa_category_options.push({label: c.code, value: c.value, title: c.label}));
+                        $('#wa-category-choices').multiselect('dataprovider', wa_category_options);
+                        $('#m-wa-category-choices').multiselect('dataprovider', wa_category_options);
+
+                        var type_options = [];
+                        self.compTypes.forEach(t => type_options.push({label: t.label, value: t.value}));
+                        $('#discipline-choices').multiselect('dataprovider', type_options);
+                        $('#m-discipline-choices').multiselect('dataprovider', type_options);
+
+                        var age_group_options = [];
+                        self.ageGroups.forEach(ag => age_group_options.push({label: ag.label, value: ag.value}));
+                        $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
+
+                    },
+
+                    // Pagination methods
                     setPg: function (p) {
                         this.page = p
                     },
@@ -777,7 +1029,9 @@
                                                 ).filter((value, index, list) => list.indexOf(value) === index);
                             self.isLoading = false; 
 
-                            self.initMap();                       
+                            self.initMap();   
+
+                            self.initialiseMultiSelect();                    
                         })
                     }
                 },
