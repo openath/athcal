@@ -376,7 +376,7 @@
                 </div>
             </div>
         
-            <!-- Modal -->
+            <!-- Competition Modal/Lightbox -->
             <div class="modal fade" id="competitionDetailModel" tabindex="-1" aria-labelledby="competitionDetailModel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
@@ -419,6 +419,26 @@
                                 </div>
                             </div>
                             
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Modal - displays error when fetching data -->
+            <div class="modal fade show" id="errorModel" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="errorModel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="errorModelTitle">"Error title"</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="errorModelDescription">
+                            "error message"
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -1024,7 +1044,7 @@
                         .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                         .then(response => {
                             self.info = response.data;
-                            // console.log(self.info);
+                            console.log(self.info);
                             self.country_options = self.info.map(item => item.country
                                                 ).filter((value, index, list) => list.indexOf(value) === index);
                             self.isLoading = false; 
@@ -1033,17 +1053,37 @@
 
                             self.initialiseMultiSelect();                    
                         })
+                        .catch(error => {
+                            console.log(error.response);
+                            if (error.response.status == 404) {
+                                // alert("No data found for this year!");
+                                $('#errorModelTitle').text(`Competition Data Error!`)
+                                $('#errorModelDescription').text(`No data found for year ${self.selectedYear}!`)
+                                $('#errorModel').modal('show')
+                            }
+                            else if (error.response.status >= 500 && error.response.status < 600) {
+                                // alert("Access denied to competition data!");
+                                $('#errorModelTitle').text(`Data Access Error!`)
+                                $('#errorModelDescription').text(`Unable to access competition data for year ${self.selectedYear}!`)
+                                $('#errorModel').modal('show')
+                            }
+                            else if (error.request) {
+                                // alert("Error making request for competition data!");
+                                $('#errorModelTitle').text(`Data Request Error!`)
+                                $('#errorModelDescription').text(`Request for data unresponsive, API server down?`)
+                                $('#errorModel').modal('show')
+                            }
+                            self.isLoading = false; 
+                        })
                     }
                 },
                 watch: {
                     page: function() {
                         var self = this;
-                        console.log("change");
                         setTimeout(function(){ self.insertMonthInTable(); }, 50);
                     },
                     filteredCompetitions: function() {
                         var self = this;
-                        console.log("change");
                         setTimeout(function(){ self.insertMonthInTable(); }, 50);
                     }
                 },
