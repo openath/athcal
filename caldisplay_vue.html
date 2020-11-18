@@ -14,7 +14,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <!-- Bootstrap Multiselct -->
-        <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css" />
+        <link rel="stylesheet" href="css/bootstrap-multiselect.min.css" type="text/css" />
         <link href="css/caldisplay_vue.css" rel="stylesheet">
         <style>
             html, body {
@@ -48,16 +48,39 @@
             }
 
             /* Multiselect */
+            .multiselect-native-select .btn-group {
+                width: 160px;
+                vertical-align: middle;
+            }
             .filter-button {
                 color: white;
                 font-weight: 500;
                 text-decoration: none;
                 /* margin: .5rem 1rem; */
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+            }
+            .filter-button .multiselect-selected-text {
+                font-size: 0.8em;
+            }
+            .dropdown-toggle::after {
+                margin-top: 6px;
+            }
+            .btn-link {
+                text-decoration: none;
             }
             .btn-link:hover {
                 color: white;
                 text-decoration: none;
             }
+            .btn-link.focus, .btn-link:focus {
+                text-decoration: none;
+            }
+            .checkbox {
+                font-size: 0.8em;
+            }
+            
             .multiselect-container>li>a>label {
                 padding: 3px 20px 3px 10px;
                 display: block;
@@ -71,10 +94,22 @@
                 justify-content: unset;
                 margin-bottom: unset;
             }
-            #m-wa-category-choices + div > ul {
-			    min-width: 11rem;
+            #event-choices + div > div {
+                max-width: 11rem;
 		    }
-            #m-discipline-choices + div > ul {
+            #age-group-choices + div > div {
+                max-width: 11rem;
+		    }
+            #wa-category-choices + div > div {
+                max-width: 11rem;
+		    }
+            #m-wa-category-choices + div > div {
+			    min-width: 11rem;
+            }
+            #discipline-choices + div > div {
+                max-width: 11rem;
+		    }
+            #m-discipline-choices + div > div {
 			    min-width: 11rem;
 		    }
             .fa-chevron-up {
@@ -200,7 +235,7 @@
                             </div>
                             <ul class="nav flex-column">
                                 <li class="nav-item">
-                                    <a class="filter-heading d-block text-white nav-link" role="button">
+                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
                                         Location <i class="fas fa-chevron-up"></i>
                                     </a>
                                     <div class="collapse">
@@ -214,11 +249,11 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <select name="location" id="location-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="filter-heading d-block text-white nav-link" role="button">
+                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
                                         WA Category <i class="fas fa-chevron-up"></i>
                                     </a>
                                     <div class="collapse">
@@ -232,7 +267,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <select name="wa-category" id="wa-category-choices"  multiple="multiple"></select>
                                 </li>
                                 <!-- <li class="nav-item">
@@ -251,7 +286,7 @@
                                     </div>
                                 </li> -->
                                 <li class="nav-item">
-                                    <a class="filter-heading d-block text-white nav-link" role="button">
+                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
                                         Discipline <i class="fas fa-chevron-up"></i>
                                     </a>
                                     <div class="collapse">
@@ -263,11 +298,11 @@
                                                 <label class="form-check-label" :for="'id-type-' + i">{{ type.label }}</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <select name="discipline" id="discipline-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="filter-heading d-block text-white nav-link" role="button">
+                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
                                         Age Groups <i class="fas fa-chevron-up"></i>
                                     </a>
                                     <div class="collapse">
@@ -279,7 +314,24 @@
                                                 <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
+                                    <select name="age-groups" id="age-group-choices"  multiple="multiple"></select>
+                                </li>
+                                <li class="nav-item">
+                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
+                                        Events <i class="fas fa-chevron-up"></i>
+                                    </a>
+                                    <div class="collapse">
+                                        <div class="card card-body">
+                                            <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedAG=[]">All Age Groups</button>
+                                            
+                                            <div v-for="(ag, i) in ageGroups" class="form-group form-check">
+                                                <input class="form-check-input" :value="ag.value" :id="'id-ag-' + i" type="checkbox" v-model="selectedAG">
+                                                <label class="form-check-label" :for="'id-ag-' + i">{{ ag.label }}</label>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <select name="events" id="event-choices"  multiple="multiple"></select>
                                 </li>
                             </ul>
                         </div>
@@ -313,6 +365,7 @@
                             <select name="wa-category" id="m-wa-category-choices"  multiple="multiple"></select>
                             <select name="discipline" id="m-discipline-choices"  multiple="multiple"></select>
                             <select name="age_group" id="m-age-group-choices"  multiple="multiple"></select>
+                            <select name="age_group" id="m-event-choices"  multiple="multiple"></select>
                         </div>
 
                         <!-- Shows each month -->
@@ -363,7 +416,7 @@
                                         <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
                                         <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
                                         
-                                        <td class="d-none d-lg-table-cell text-center">{{comp.country}}</td>
+                                        <td class="d-none d-lg-table-cell text-center">{{comp.country_ioc}}</td>
                                         <td class="text-center">{{comp.type}}</td>
                                     </tr>
                                 </tbody>
@@ -558,6 +611,12 @@
                             return [{label:'Outdoor', value:'TRACK'}, {label:'Indoor', value:'INDOOR'}, {label:'Road races', value:'ROAD'}, {label:'Cross country', value:'XC'}, {label:'Mountain running', value:'MOUNTAIN'}, {label:'Race walking', value:'WALK'}]
                         }
                     },
+                    events: {
+                        type: Array,
+                        default: function () {
+                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: 'Other Throw', value: 'OT'}, {label: '60m', value: '60'}, {label: '60m Hurdles', value: '60H'}, {label: '2000m Steelechase', value: '2000SC'}, {label: '20km Walk', value: '20KW'}, {label: 'Decathlon', value: 'DEC'}, {label: 'Heptathlon', value: 'HEP'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Quadkids', value: 'QUAD'}, {label: 'Octathlon', value: 'OCT'}, {label: '4X100m Relay', value: '4X100'}, {label: 'Mile', value: 'MILE'}, {label: '5km', value: '5K'}, {label: '5 miles', value: '2M'}, {label: 'Marathon', value: 'MAR'}, {label: 'Half-Marathon', value: 'HM'}, {label: '5 mile X Country', value: '5MXC'}, {label: 'Height Event', value: 'H1'}, {label: 'Quickest to Completion Event', value: 'L1'}, {label: 'Set Time Event', value: 'T30'}, {label: 'Standing Long Jump', value: 'SLJ'}, {label: 'Standing Vertical Jump', value: 'SHJ'}, {label: 'Balance Test', value: 'BAL'}, {label: 'Speed Bounce', value: 'SPB'}, {label: 'Target Throw', value: 'TART'}, {label: 'Overhead Heave', value: 'OHT'}, {label: 'Hi-Stepper 4*8m', value: '32H'}, {label: 'Chest Push', value: 'CHT'}, {label: 'Shuttle Run 10m*10m', value: '100'}, {label: 'Indoor Javelin', value: 'JT'}, {label: '800m', value: '800'}]
+                        }
+                    },
                     allMonths: {
                         type: Array,
                         default: function () {
@@ -582,8 +641,8 @@
                         selectedCountries: [],
                         selectedWACategories: [],
                         selectedCategories: [],
-                        
                         selectedCompetition: {},
+                        selectedEvents: [],
 
                         map: {},
                         mapFinder: {},
@@ -606,7 +665,7 @@
                         }
                         if (self.selectedCountries.length > 0) {
                             output = output.filter(function (item) {
-                                return self.selectedCountries.indexOf(item.country) >= 0
+                                return self.selectedCountries.indexOf(item.country_ioc) >= 0
                             })
                         }
                         if (self.selectedCompType.length > 0) {
@@ -633,8 +692,13 @@
                         }
                         if (self.selectedWACategories.length > 0) {
                             output = output.filter(function (item) {
-                                return self.selectedWACategories.indexOf(item.wa_rankings_category) >= 0
+                                return self.selectedWACategories.indexOf(item.wa_rankings_category.toString()) >= 0
                             })
+                        }
+                        if (self.selectedEvents.length > 0) {
+                            output = output.filter(function (item) {
+                                return item.events ? item.events.some(e=> self.selectedEvents.indexOf(e.event_code) >= 0) : false
+1                           })
                         }
                         return output
                     },
@@ -843,13 +907,13 @@
 
                         var locationMultiselectConfig = {
                             buttonClass: 'btn btn-primary btn-sm mb-2',
+                            maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
                             selectAllText: 'All countries',
                             allSelectedText: '(All countries)',
-                            // nonSelectedText: 'Age groups (none)',
-                            maxHeight: 200,
-
+                            // includeResetOption: true,
+                            // resetText: "Reset all",
                             numberDisplayed: 1,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
@@ -860,25 +924,29 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log(checked)
                                 if (checked) {
                                     self.selectedCountries.push(option.val());
                                 } else {
                                     self.selectedCountries = _.remove(self.selectedCountries, v => v != option.val())
                                 }
-                                console.log(self.selectedCountries)
+                            },
+                            onSelectAll: function() {
+                                self.selectedCountries = [];
+                            },
+                            onDeselectAll: function() {
+                                self.selectedCountries = [];
                             }
                         };
 
                         var waCategoryMultiselectConfig = {
                             buttonClass: 'btn btn-primary btn-sm mb-2',
+                            maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
                             selectAllText: 'All categories',
                             allSelectedText: '(All categories)',
-                            // nonSelectedText: 'Age groups (none)',
-                            maxHeight: 200,
-
+                            // includeResetOption: true,
+                            // resetText: "Reset all",
                             numberDisplayed: 1,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
@@ -889,25 +957,29 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log(checked)
                                 if (checked) {
                                     self.selectedWACategories.push(option.val());
                                 } else {
                                     self.selectedWACategories = _.remove(self.selectedWACategories, v => v != option.val())
                                 }
-                                console.log(self.selectedWACategories)
+                            },
+                            onSelectAll: function() {
+                                self.selectedWACategories = [];
+                            },
+                            onDeselectAll: function() {
+                                self.selectedWACategories = [];
                             }
                         }
 
                         var disciplineMultiselectConfig = {
                             buttonClass: 'btn btn-primary btn-sm mb-2',
+                            maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
                             selectAllText: 'All disciplines',
                             allSelectedText: '(All disciplines)',
-                            // nonSelectedText: 'Age groups (none)',
-                            maxHeight: 200,
-
+                            // includeResetOption: true,
+                            // resetText: "Reset all",
                             numberDisplayed: 1,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
@@ -918,52 +990,29 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log(checked)
                                 if (checked) {
                                     self.selectedCompType.push(option.val());
                                 } else {
                                     self.selectedCompType = _.remove(self.selectedCompType, v => v != option.val())
                                 }
-                                console.log(self.selectedCompType)
+                            },
+                            onSelectAll: function() {
+                                self.selectedCompType = [];
+                            },
+                            onDeselectAll: function() {
+                                self.selectedCompType = [];
                             }
                         }
 
-
-                        // Mobile multiselect
-                        $('#m-location-choices').multiselect(locationMultiselectConfig);
-                        // Desktop multiselect
-                        var desktopLocationMultiselectConfig = locationMultiselectConfig;
-                        desktopLocationMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
-                        $('#location-choices').multiselect(desktopLocationMultiselectConfig);
-
-
-                        // Mobile multiselect
-                        $('#m-wa-category-choices').multiselect(waCategoryMultiselectConfig);
-                        // Desktop multiselect
-                        var desktopwaCategoryMultiselectConfig = waCategoryMultiselectConfig;
-                        desktopwaCategoryMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
-                        $('#wa-category-choices').multiselect(desktopwaCategoryMultiselectConfig);
-
-                        // Mobile multiselect
-                        $('#m-discipline-choices').multiselect(disciplineMultiselectConfig);
-                        // Desktop multiselect
-                        var desktopdisciplineMultiselectConfig = disciplineMultiselectConfig;
-                        desktopdisciplineMultiselectConfig.buttonClass = 'btn btn-link filter-button d-none';
-                        $('#discipline-choices').multiselect(desktopdisciplineMultiselectConfig);
-
-
-
-
-                        $('#m-discipline-choices').multiselect();
-                        $('#m-age-group-choices').multiselect({
+                        var ageGroupsMultiselectConfig = {
                             buttonClass: 'btn btn-primary btn-sm mb-2',
+                            maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
                             selectAllText: 'All age groups',
                             allSelectedText: '(All age groups)',
-                            // nonSelectedText: 'Age groups (none)',
-                            maxHeight: 200,
-
+                            // includeResetOption: true,
+                            // resetText: "Reset all",
                             numberDisplayed: 1,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
@@ -974,16 +1023,102 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log(checked)
                                 if (checked) {
                                     self.selectedAG.push(option.val());
                                 } else {
                                     self.selectedAG = _.remove(self.selectedAG, v => v != option.val())
                                 }
-                                console.log(self.selectedAG)
+                            },
+                            onSelectAll: function() {
+                                self.selectedAG = [];
+                            },
+                            onDeselectAll: function() {
+                                self.selectedAG = [];
                             }
-                        });
+                        }
 
+                        var eventsMultiselectConfig = {
+                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            maxHeight: 200,
+                            includeSelectAllOption: true,
+                            selectAllValue: 'ALL',
+                            selectAllText: 'All  events',
+                            allSelectedText: '(All events)',
+                            // includeResetOption: true,
+                            // resetText: "Reset all",
+                            numberDisplayed: 1,
+                            buttonText: function(options, select) {
+                                if (options.length == 1) {
+                                    return options.html();
+                                }
+                                else {
+                                    return `Events (${options.length})`;
+                                }
+                            },
+                            onChange: function(option, checked, select) {
+                                console.log("change")
+                                if (checked) {
+                                    self.selectedEvents.push(option.val());
+                                } else {
+                                    self.selectedEvents = _.remove(self.selectedEvents, v => v != option.val())
+                                }
+                            },
+                            onSelectAll: function() {
+                                self.selectedEvents = [];
+                            },
+                            onDeselectAll: function() {
+                                self.selectedEvents = [];
+                            }
+                        }
+
+
+                        // Mobile multiselect
+                        $('#m-location-choices').multiselect(locationMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopLocationMultiselectConfig = locationMultiselectConfig;
+                        desktopLocationMultiselectConfig.buttonClass = 'btn btn-link filter-button';
+                        $('#location-choices').multiselect(desktopLocationMultiselectConfig);
+
+                        // Mobile multiselect
+                        $('#m-wa-category-choices').multiselect(waCategoryMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopwaCategoryMultiselectConfig = waCategoryMultiselectConfig;
+                        desktopwaCategoryMultiselectConfig.buttonClass = 'btn btn-link filter-button';
+                        $('#wa-category-choices').multiselect(desktopwaCategoryMultiselectConfig);
+
+                        // Mobile multiselect
+                        $('#m-discipline-choices').multiselect(disciplineMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopdisciplineMultiselectConfig = disciplineMultiselectConfig;
+                        desktopdisciplineMultiselectConfig.buttonClass = 'btn btn-link filter-button';
+                        $('#discipline-choices').multiselect(desktopdisciplineMultiselectConfig);
+
+                        // Mobile multiselect
+                        $('#m-age-group-choices').multiselect(ageGroupsMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopageGroupsMultiselectConfig = ageGroupsMultiselectConfig;
+                        desktopageGroupsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
+                        $('#age-group-choices').multiselect(desktopageGroupsMultiselectConfig);
+
+                        // Mobile multiselect
+                        $('#m-event-choices').multiselect(eventsMultiselectConfig);
+                        // Desktop multiselect
+                        var desktopEventsMultiselectConfig = eventsMultiselectConfig;
+                        desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
+                        $('#event-choices').multiselect(desktopEventsMultiselectConfig);
+
+
+                        // $('#event-choices').next().find('.multiselect-reset.text-center.p-2 button').click($.proxy(function () {
+                        //     this.clearSelection();
+                        //     console.log("clicked")
+                        // }, this)
+                        // // .on("click", function() {
+                        // //     console.log("clicked")
+                        // // });
+                        
+                        // console.log($('#event-choices').next().find('.multiselect-reset.text-center.p-2 button'))
+
+                        // Sets the options for the multiselect
 
                         var country_options = [];
                         self.country_options.forEach(c => country_options.push({label: c, value: c}));
@@ -1003,7 +1138,14 @@
 
                         var age_group_options = [];
                         self.ageGroups.forEach(ag => age_group_options.push({label: ag.label, value: ag.value}));
+                        $('#age-group-choices').multiselect('dataprovider', age_group_options);
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
+
+                        var event_options = [];
+                        self.events.forEach(e => event_options.push({label: e.value, value: e.value, title: e.label}));
+                        $('#event-choices').multiselect('dataprovider', event_options);
+                        $('#m-event-choices').multiselect('dataprovider', event_options);
+
 
                     },
 
@@ -1045,8 +1187,8 @@
                         .then(response => {
                             self.info = response.data;
                             console.log(self.info);
-                            self.country_options = self.info.map(item => item.country
-                                                ).filter((value, index, list) => list.indexOf(value) === index);
+                            self.country_options = self.info.map(item => item.country_ioc
+                                                ).filter((value, index, list) => list.indexOf(value) === index).sort();
                             self.isLoading = false; 
 
                             self.initMap();   
