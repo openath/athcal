@@ -60,9 +60,11 @@
                 text-align: left;
                 display: flex;
                 justify-content: space-between;
+                margin-left: 5px;
             }
             .filter-button .multiselect-selected-text {
                 font-size: 0.8em;
+                white-space: normal;
             }
             .dropdown-toggle::after {
                 margin-top: 6px;
@@ -119,7 +121,7 @@
                 padding: .25rem 1rem;
             }
             #series-choices + div > div {
-                max-width: 10.5rem;
+                max-width: 10rem;
 		    }
             #event-choices + div > div {
                 min-width: 10.5rem;
@@ -544,7 +546,7 @@
                     compSeries: {
                         type: Array,
                         default: function() {
-                            return [{label:'WACT Europe Special Meetings', value:'1'}, {label:'WACT Europe Silver Meetings', value:'2'}, {label:'WACT Europe Bronze Meetings', value:'3'}, {label:'National Senior Championships', value:'4'}, {label:'European Athletics Events', value:'5'}, {label:'World Athletics Events', value:'6'}, {label:'International Matches', value:'7'}];
+                            return [{label:'European Athletics Events', value:'5'}, {label:'WACT Europe Special Meetings', value:'1'}, {label:'WACT Europe Silver Meetings', value:'2'}, {label:'WACT Europe Bronze Meetings', value:'3'}, {label:'World Athletics Events', value:'6'}, {label:'National Senior Championships', value:'4'}, {label:'International Matches', value:'7'}];
                         }
                     },
                     ageGroups: {
