@@ -117,11 +117,19 @@
                 justify-content: unset;
                 margin-bottom: unset;
             }
+            ul.nav.flex-column {
+                position: fixed;
+            }
             .dropdown-item {
                 padding: .25rem 1rem;
             }
+            #m-series-choices + div > div {
+                min-width: 17rem;
+            }
             #series-choices + div > div {
-                max-width: 10rem;
+                width: 300px;
+                max-width: 300px;
+                transform: translate3d(-1px, 33px, 0px)!important;
 		    }
             #event-choices + div > div {
                 min-width: 10.5rem;
@@ -147,7 +155,7 @@
             .form-check-label {
                 font-size: 0.9em;
                 white-space: normal;
-                max-width: 180px;
+                max-width: 300px;
             }
             .card-body {
                 background-color: #da7652;
@@ -184,6 +192,17 @@
             /* LightBox Competition Details */
             .modal-header > h6 {
                 font-size: 1rem;
+            }
+
+            /* LightBox / Competition Detail */
+            .list-group-item h6 {
+                font-size: 0.9rem; 
+            }
+            #eventTable {
+                width: 200px;
+            }
+            #eventTable td , #eventTable th {
+                padding: 0.25rem;
             }
 
             /* Pagination */
@@ -311,11 +330,12 @@
 
                         <!-- Data is injected into multiselct through 'initialiseMultiSelect' -->
                         <div id="mobileFilter" class="collapse">
-                            <select name="location" id="m-location-choices"  multiple="multiple"></select>
-                            <select name="wa-category" id="m-wa-category-choices"  multiple="multiple"></select>
-                            <select name="discipline" id="m-discipline-choices"  multiple="multiple"></select>
-                            <select name="age_group" id="m-age-group-choices"  multiple="multiple"></select>
-                            <select name="age_group" id="m-event-choices"  multiple="multiple"></select>
+                            <select name="location" id="m-location-choices" multiple="multiple"></select>
+                            <select name="wa-category" id="m-wa-category-choices" multiple="multiple"></select>
+                            <select name="series" id="m-series-choices" multiple="multiple"></select>
+                            <select name="discipline" id="m-discipline-choices" multiple="multiple"></select>
+                            <select name="age_group" id="m-age-group-choices" multiple="multiple"></select>
+                            <select name="events" id="m-event-choices" multiple="multiple"></select>
                         </div>
 
                         <!-- Shows each month -->
@@ -397,21 +417,48 @@
                             <div class="row">
                                 <div class="col">
                                     <ul class="list-group">
-                                        <li class="list-group-item">Contact Name <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_name }}</span></h5></li>
-                                        <li class="list-group-item">Contact Details <h5><span class="badge badge-primary badge-pill">{{ selectedCompetition.contact_details }}</span></h5></li>
+                                        <li class="list-group-item d-flex align-items-center"><h6 class="mr-auto my-0">Contact Name</h6>
+                                            <span v-if="selectedCompetition.contact_name !=''" class="badge badge-primary badge-pill">{{ selectedCompetition.contact_name }}</span>
+                                            <span v-else >None</span>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center"><h6 class="mr-auto my-0">Contact Details</h6>
+                                            <span v-if="selectedCompetition.contact_details !=''" class="badge badge-primary badge-pill">{{ selectedCompetition.contact_details }}</span>
+                                            <span v-else >None</span>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center"><h6 class="mr-auto my-0">Dates</h6> 
+                                            <a>
+                                                From <span class="badge badge-success badge-pill">{{ selectedCompetition.date }}</span> 
+                                                To <span class="badge badge-danger badge-pill">{{ selectedCompetition.finish_date }}</span>
+                                            </a>
+                                        </li>
                                         <li class="list-group-item d-flex align-items-center">
-                                            <p class="mr-auto my-0">Competitors</p>
+                                            <h6 class="mr-auto my-0">Events detail</h6> 
+                                            <table id="eventTable" class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                      <th scope="col">Code</th>
+                                                      <th scope="col">Genders</th>
+                                                      <th scope="col">Age</th>
+                                                    </tr>
+                                                  </thead>
+                                                <body>
+                                                    <tr v-for="e in selectedCompetition.events"><td>{{ e.event_code }}</td><td>{{ e.genders }}</td><td>{{ e.age_groups }}</td></tr>
+                                                </body>
+                                            </table>
+                                        </li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <h6 class="mr-auto my-0">Competitors</h6>
                                             <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
                                             <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
                                         </li>
                                         <li class="list-group-item d-flex align-items-center">
-                                            <p class="mr-auto my-0">Results</p>
+                                            <h6 class="mr-auto my-0">Results</h6>
                                             <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
                                             <a v-else href="selectedCompetition.results_link" class="px-3">Click here</a>
                                             <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
                                         </li>
                                         <li v-if="selectedCompetition.website != ''" class="list-group-item d-flex align-items-center">
-                                            <p class="mr-auto my-0">Website</p>
+                                            <h6 class="mr-auto my-0">Website</h6>
                                             <a  :href="selectedCompetition.website" class="px-3">Click here</a>
                                             <span class="badge badge-primary badge-pill invisible">44</span>
                                         </li>
