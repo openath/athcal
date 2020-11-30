@@ -278,19 +278,6 @@
                                     <select name="wa-category" id="wa-category-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
-                                    <!-- <a class="filter-heading d-block text-white nav-link" role="button">
-                                        Competition <i class="fas fa-chevron-up"></i>
-                                    </a>
-                                    <div class="collapse">
-                                        <div class="card card-body">
-                                            <button type="button" class="btn btn-light btn-sm btn-block mb-2" @click="selectedCategories=[]">All competitions</button>
-                                            
-                                            <div v-for="(cat, i) in compCategories" class="form-group form-check">
-                                                <input class="form-check-input" type="checkbox" :value="cat.value" :id="'id-category-' + i" v-model="selectedCategories">
-                                                <label class="form-check-label" :for="'id-category-' + i">{{ cat.label }}</label>
-                                            </div>
-                                        </div>
-                                    </div> -->
                                     <select name="Series" id="series-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
@@ -593,7 +580,7 @@
                     compSeries: {
                         type: Array,
                         default: function() {
-                            return [{label:'European Athletics Events', value:'5'}, {label:'WACT Europe Special Meetings', value:'1'}, {label:'WACT Europe Silver Meetings', value:'2'}, {label:'WACT Europe Bronze Meetings', value:'3'}, {label:'World Athletics Events', value:'6'}, {label:'National Senior Championships', value:'4'}, {label:'International Matches', value:'7'}];
+                            return [{label:'EA Events', value:'5', title: 'European Athletics Events'}, {label:'WACT Eur. Spe.', value:'1', title: 'WACT Europe Special Meetings'}, {label:'WACT Eur. Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Eur. Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WAS', value:'6', title: 'World Athletics Series'}, {label:'National Senior Championships', value:'4', title: 'National Senior Championships'}, {label:'International Matches', value:'7', title: 'International Matches'}];
                         }
                     },
                     ageGroups: {
@@ -648,6 +635,7 @@
                         showOnPage: 16,
                         page: 1,
                         isLoading: true,
+                        hasInitialised: false,
                     }
                 },
                 computed: {
@@ -734,6 +722,20 @@
                         var self = this;
                         self.selectedYear--;
                         self.fetchData();
+                    },
+                    resetFilters: function() {
+                        var self = this;
+                        self.selectedMonths = [];
+                        self.selectedCompType = [];
+                        self.selectedAG = [];
+                        self.selectedCountries = [];
+                        self.selectedWACategories = [];
+                        self.selectedSeries = [];
+                        self.selectedCompetition = {};
+                        self.selectedEvents = [];
+
+                        self.displaySelectedMonths();
+                        self.clearMonthsInTable();
                     },
                     applyDateFilter: function(month) {
                         var self = this;
@@ -1147,17 +1149,15 @@
                         $('#location-choices').multiselect('dataprovider', country_options);
                         $('#m-location-choices').multiselect('dataprovider', country_options);
                         
-
                         var wa_category_options = [];
                         self.waCategories.forEach(c => wa_category_options.push({label: c.code, value: c.value, title: c.label}));
                         $('#wa-category-choices').multiselect('dataprovider', wa_category_options);
                         $('#m-wa-category-choices').multiselect('dataprovider', wa_category_options);
 
                         var comp_series_options = [];
-                        self.compSeries.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.label}));
+                        self.compSeries.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.title}));
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
-                        
 
                         var type_options = [];
                         self.compTypes.forEach(t => type_options.push({label: t.label, value: t.value}));
@@ -1219,9 +1219,12 @@
                                                 ).filter((value, index, list) => list.indexOf(value) === index).sort();
                             self.isLoading = false; 
 
-                            self.initMap();   
-
-                            self.initialiseMultiSelect();                    
+                            if (!self.hasInitialised) {
+                                self.initMap();   
+                                self.initialiseMultiSelect();
+                                self.hasInitialised = true;
+                            }
+                                               
                         })
                         .catch(error => {
                             console.log(error.response);
