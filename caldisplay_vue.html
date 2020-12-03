@@ -577,12 +577,6 @@
                             return [{label:'Olympic Games & World Championships', code:'OW', value:1}, {label:'Diamond League Finals', code:'DF', value:2}, {label:'World specialist championships (e.g. indoor), DLs', code:'GW', value:3}, {label:'Platinum and Gold Label', code:'GL', value:4}, {label:'Major Games, WACT Gold', code:'A', value:5}, {label:'WACT Silver, ETCH, National Champs', code:'B', value:6}, {label:'WA U20, WACT Bronze, Area 3rd Tier', code:'C', value:7}, {label:'Traditional International, National Senior Indoor', code:'D', value:8}, {label:"Int'l Matches, Selected National Meetings", code:'E', value:9}, {label:'International Meetings with National Permit', code:'F', value:10}, {label:'Unclassified but of international interest', code:'U', value:11}];
                         } 
                     },
-                    compSeries: {
-                        type: Array,
-                        default: function() {
-                            return [{label:'EA Events', value:'5', title: 'European Athletics Events'}, {label:'WACT Eur. Spe.', value:'1', title: 'WACT Europe Special Meetings'}, {label:'WACT Eur. Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Eur. Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WAS', value:'6', title: 'World Athletics Series'}, {label:'National Senior Championships', value:'4', title: 'National Senior Championships'}, {label:'International Matches', value:'7', title: 'International Matches'}];
-                        }
-                    },
                     ageGroups: {
                         type: Array,
                         default: function () {
@@ -617,6 +611,7 @@
                         info: [],
                         name_search_query: '',
                         all_months: [],
+                        series_options: [],
                         country_options: [],
                         selectedYear: new Date().getFullYear(),
                         selectedMonths: [],
@@ -1140,10 +1135,11 @@
                         var desktopEventsMultiselectConfig = eventsMultiselectConfig;
                         desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
                         $('#event-choices').multiselect(desktopEventsMultiselectConfig);
+                    },
 
-
+                    injectDataMultiSelect: function() {
+                        var self = this;
                         // Sets the options for the multiselect
-
                         var country_options = [];
                         self.country_options.forEach(c => country_options.push({label: c, value: c}));
                         $('#location-choices').multiselect('dataprovider', country_options);
@@ -1155,7 +1151,8 @@
                         $('#m-wa-category-choices').multiselect('dataprovider', wa_category_options);
 
                         var comp_series_options = [];
-                        self.compSeries.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.title}));
+                        console.log(self.series_options)
+                        self.series_options.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.title}));
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
 
@@ -1174,7 +1171,32 @@
                         $('#event-choices').multiselect('dataprovider', event_options);
                         $('#m-event-choices').multiselect('dataprovider', event_options);
 
+                    },
 
+                    setFilterOptions: function() {
+                        var self = this;
+
+                        // Country filter options
+                        self.country_options = self.info.map(item => item.country_ioc
+                                                ).filter((value, index, list) => list.indexOf(value) === index).sort();
+
+                        // Series filter options
+                        var options = [];
+                        self.info.forEach(data => {
+                            if (data.series) {
+                                var result = data.series.map(item => {
+                                    return {label: item.series_name, value: item.series_id, title: item.series_name};
+                                });
+                                options = options.concat(result)
+                            }
+                        });
+                        options = options.filter((value, index, list) => list.findIndex(series => (series.value == value.value)) === index);
+                        // Sorting the array againest an already sorted version
+                        var sortedSeries = ['EA Events', 'WACT Eur. Spe', 'WACT Eur. Silver', 'WACT Eur. Bronze', 'WAS', 'National Senior Championships', 'International Matches']
+                        var options = _.sortBy(options, function(item){
+                            return sortedSeries.indexOf(item.label)
+                        });
+                        self.series_options = options;
                     },
 
                     // Pagination methods
@@ -1215,8 +1237,10 @@
                         .then(response => {
                             self.info = response.data;
                             console.log(self.info);
-                            self.country_options = self.info.map(item => item.country_ioc
-                                                ).filter((value, index, list) => list.indexOf(value) === index).sort();
+
+
+                            self.setFilterOptions();
+
                             self.isLoading = false; 
 
                             if (!self.hasInitialised) {
@@ -1224,6 +1248,8 @@
                                 self.initialiseMultiSelect();
                                 self.hasInitialised = true;
                             }
+
+                            self.injectDataMultiSelect();
                                                
                         })
                         .catch(error => {
