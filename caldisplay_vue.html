@@ -1142,6 +1142,8 @@
                         // Sets the options for the multiselect
                         var country_options = [];
                         self.country_options.forEach(c => country_options.push({label: c, value: c}));
+                        if (country_options.length == 0) country_options.push({label: 'No filters', value: ''});
+
                         $('#location-choices').multiselect('dataprovider', country_options);
                         $('#m-location-choices').multiselect('dataprovider', country_options);
                         
@@ -1153,6 +1155,7 @@
                         var comp_series_options = [];
                         console.log(self.series_options)
                         self.series_options.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.title}));
+                        if (comp_series_options.length == 0) comp_series_options.push({label: 'No filters', value: ''});
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
 
