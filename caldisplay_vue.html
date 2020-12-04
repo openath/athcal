@@ -574,8 +574,14 @@
                     waCategories: {
                         type: Array,
                         default: function() {
-                            return [{label:'Olympic Games & World Championships', code:'OW', value:1}, {label:'Diamond League Finals', code:'DF', value:2}, {label:'World specialist championships (e.g. indoor), DLs', code:'GW', value:3}, {label:'Platinum and Gold Label', code:'GL', value:4}, {label:'Major Games, WACT Gold', code:'A', value:5}, {label:'WACT Silver, ETCH, National Champs', code:'B', value:6}, {label:'WA U20, WACT Bronze, Area 3rd Tier', code:'C', value:7}, {label:'Traditional International, National Senior Indoor', code:'D', value:8}, {label:"Int'l Matches, Selected National Meetings", code:'E', value:9}, {label:'International Meetings with National Permit', code:'F', value:10}, {label:'Unclassified but of international interest', code:'U', value:11}];
+                            return [{label:'Olympic Games & World Championships', code:'OW', value:1}, {label:'Diamond League Finals', code:'DF', value:2}, {label:'World specialist championships (e.g. indoor), DLs', code:'GW', value:3}, {label:'Platinum and Gold Label', code:'GL', value:4}, {label:'Major Games, WACT Gold', code:'A', value:5}, {label:'WACT Silver, ETCH, National Champs', code:'B', value:6}, {label:'WA U20, WACT Bronze, Area 3rd Tier', code:'C', value:7}, {label:'Traditional International, National Senior Indoor', code:'D', value:8}, {label:"Int'l Matches, Selected National Meetings", code:'E', value:9}, {label:'International Meetings with National Permit', code:'F', value:10}, {label:'Unclassified but of international interest', code:'Unclassified', value:11}];
                         } 
+                    },
+                    compSeries: {	
+                        type: Array,	
+                        default: function() {	
+                            return [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'8', title: 'Diamond League'}, {label:'WACT Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WACT Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'10', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'12', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}];	
+                        }	
                     },
                     ageGroups: {
                         type: Array,
@@ -592,7 +598,7 @@
                     events: {
                         type: Array,
                         default: function () {
-                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: 'Other Throw', value: 'OT'}, {label: '60m', value: '60'}, {label: '60m Hurdles', value: '60H'}, {label: '2000m Steelechase', value: '2000SC'}, {label: '20km Walk', value: '20KW'}, {label: 'Decathlon', value: 'DEC'}, {label: 'Heptathlon', value: 'HEP'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Quadkids', value: 'QUAD'}, {label: 'Octathlon', value: 'OCT'}, {label: '4X100m Relay', value: '4X100'}, {label: 'Mile', value: 'MILE'}, {label: '5km', value: '5K'}, {label: '5 miles', value: '2M'}, {label: 'Marathon', value: 'MAR'}, {label: 'Half-Marathon', value: 'HM'}, {label: '5 mile X Country', value: '5MXC'}, {label: 'Height Event', value: 'H1'}, {label: 'Quickest to Completion Event', value: 'L1'}, {label: 'Set Time Event', value: 'T30'}, {label: 'Standing Long Jump', value: 'SLJ'}, {label: 'Standing Vertical Jump', value: 'SHJ'}, {label: 'Balance Test', value: 'BAL'}, {label: 'Speed Bounce', value: 'SPB'}, {label: 'Target Throw', value: 'TART'}, {label: 'Overhead Heave', value: 'OHT'}, {label: 'Hi-Stepper 4*8m', value: '32H'}, {label: 'Chest Push', value: 'CHT'}, {label: 'Shuttle Run 10m*10m', value: '100'}, {label: 'Indoor Javelin', value: 'JT'}, {label: '800m', value: '800'}]
+                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steelechase', value: '2000SC', title: '2000 Metres Steelechase'}, {label: '3000m Steelechase', value: '3000SC', title: '3000 Metres Steelechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
                         }
                     },
                     allMonths: {
@@ -949,7 +955,7 @@
                                     return options.html();
                                 }
                                 else {
-                                    return `WA Categories (${options.length})`;
+                                    return `World Ranking Categories (${options.length})`;
                                 }
                             },
                             onChange: function(option, checked, select) {
@@ -1066,15 +1072,15 @@
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
-                            selectAllText: 'All  series',
-                            allSelectedText: '(All series)',
+                            selectAllText: 'All  groups',
+                            allSelectedText: '(All groups)',
                             numberDisplayed: 1,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
                                     return options.html();
                                 }
                                 else {
-                                    return `Series (${options.length})`;
+                                    return `Competition Groups (${options.length})`;
                                 }
                             },
                             onChange: function(option, checked, select) {
@@ -1152,9 +1158,7 @@
                         $('#wa-category-choices').multiselect('dataprovider', wa_category_options);
                         $('#m-wa-category-choices').multiselect('dataprovider', wa_category_options);
 
-                        var comp_series_options = [];
-                        console.log(self.series_options)
-                        self.series_options.forEach(c => comp_series_options.push({label: c.label, value: c.value, title: c.title}));
+                        var comp_series_options = self.compSeries;
                         if (comp_series_options.length == 0) comp_series_options.push({label: 'No filters', value: ''});
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
@@ -1170,7 +1174,7 @@
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
 
                         var event_options = [];
-                        self.events.forEach(e => event_options.push({label: e.value, value: e.value, title: e.label}));
+                        self.events.forEach(e => event_options.push({label: e.label, value: e.value, title: e.title}));
                         $('#event-choices').multiselect('dataprovider', event_options);
                         $('#m-event-choices').multiselect('dataprovider', event_options);
 
