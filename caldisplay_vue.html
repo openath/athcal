@@ -296,7 +296,7 @@
                                 <li class="nav-item">
                                     <select name="age-groups" id="age-group-choices"  multiple="multiple"></select>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item d-none">
                                     <select name="events" id="event-choices"  multiple="multiple"></select>
                                 </li>
                                 <li class="nav-item">
@@ -593,7 +593,7 @@
                     compSeries: {	
                         type: Array,	
                         default: function() {	
-                            return [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'8', title: 'Diamond League'}, {label:'WACT Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WACT Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'10', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'12', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}];	
+                            return [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}, {label:'WACT Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WACT Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'12', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}];	
                         }	
                     },
                     ageGroups: {
@@ -767,7 +767,7 @@
                         var self = this;
 
                         // Check if month is contained in list
-                        if (self.selectedMonths.some(e => e === month)) {
+                        if (self.selectedMonths.some(e => e.name === month.name)) {
                             // Remove it
                             var selMonths = self.selectedMonths;
                             self.selectedMonths = selMonths.filter((mon) => mon.num != month.num);
@@ -775,9 +775,20 @@
                         } else {
                             // Add it
                             self.selectedMonths.push(month);
+                            // sort list
+                            self.sortSelectedMonths();
                             self.insertMonthInTable();
                         }
                         self.displaySelectedMonths();
+                    },
+                    sortSelectedMonths: function() {
+                        var self = this;
+                        var months = self.selectedMonths;
+                        console.log(self.selectedMonths)
+                        self.selectedMonths = _.sortBy(months, function(item){
+                            return self.allMonths.indexOf(item.name)
+                        });
+                        console.log(self.selectedMonths)
                     },
                     displaySelectedMonths: function() {
                         var self = this;
@@ -1180,46 +1191,60 @@
                         var self = this;
                         // Sets the options for the multiselect
                         var country_options = [];
-                        self.country_options.forEach(c => country_options.push({label: c, value: c}));
-                        if (country_options.length == 0) country_options.push({label: 'No filters', value: ''});
-
+                        self.country_options.forEach(c => country_options.push({label: c, value: c, selected: false}));
+                        if (country_options.length == 0) country_options.push({label: 'No filters', value: '', selected: false});
+                        // Checks if any filters where applied before changing year
+                        self.selectedCountries.forEach(selcnty => country_options.forEach(cnty => { if (selcnty == cnty.value) cnty.selected = true }));
                         $('#location-choices').multiselect('dataprovider', country_options);
                         $('#m-location-choices').multiselect('dataprovider', country_options);
                         
                         var wa_category_options = [];
-                        self.waCategories.forEach(c => wa_category_options.push({label: c.code, value: c.value, title: c.label}));
+                        self.waCategories.forEach(c => wa_category_options.push({label: c.code, value: c.value, title: c.label, selected: false}));
+                        // Checks if any filters where applied before changing year
+                        self.selectedWACategories.forEach(selWAcat => wa_category_options.forEach(WAcat => { if (selWAcat == WAcat.value) WAcat.selected = true }));
                         $('#wa-category-choices').multiselect('dataprovider', wa_category_options);
                         $('#m-wa-category-choices').multiselect('dataprovider', wa_category_options);
 
                         var comp_series_options = self.compSeries;
-                        if (comp_series_options.length == 0) comp_series_options.push({label: 'No filters', value: ''});
+                        if (comp_series_options.length == 0) comp_series_options.push({label: 'No filters', value: '', selected: false});
+                        // Checks if any filters where applied before changing year
+                        self.selectedSeries.forEach(selseries => comp_series_options.forEach(series => { if (selseries == series.value) series.selected = true }));
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
 
                         var type_options = [];
-                        self.compTypes.forEach(t => type_options.push({label: t.label, value: t.value}));
+                        self.compTypes.forEach(t => type_options.push({label: t.label, value: t.value, selected: false}));
+                        // Checks if any filters where applied before changing year
+                        self.selectedCompType.forEach(seltype => type_options.forEach(type => { if (seltype == type.value) type.selected = true }));
                         $('#discipline-choices').multiselect('dataprovider', type_options);
                         $('#m-discipline-choices').multiselect('dataprovider', type_options);
 
                         var age_group_options = [];
-                        self.ageGroups.forEach(ag => age_group_options.push({label: ag.label, value: ag.value}));
+                        self.ageGroups.forEach(ag => age_group_options.push({label: ag.label, value: ag.value, selected: false}));
+                        // Checks if any filters where applied before changing year
+                        self.selectedAG.forEach(selag => age_group_options.forEach(ag => { if (selag == ag.value) ag.selected = true }));
                         $('#age-group-choices').multiselect('dataprovider', age_group_options);
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
 
                         var event_options = [];
-                        self.events.forEach(e => event_options.push({label: e.label, value: e.value, title: e.title}));
+                        self.events.forEach(e => event_options.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        // Checks if any filters where applied before changing year
+                        self.selectedEvents.forEach(selevent => event_options.forEach(event => { if (selevent == event.value) event.selected = true }));
                         $('#event-choices').multiselect('dataprovider', event_options);
                         $('#m-event-choices').multiselect('dataprovider', event_options);
 
                         // TEMP
                         var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}];
-                        self.trackEvents.forEach(e => event_options[0].children.push({label: e.label, value: e.value, title: e.title}));
-                        self.fieldEvents.forEach(e => event_options[1].children.push({label: e.label, value: e.value, title: e.title}));
+                        self.trackEvents.forEach(e => event_options[0].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        self.fieldEvents.forEach(e => event_options[1].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        // Checks if any filters where applied before changing year
+                        self.selectedEvents.forEach(selevent => event_options.forEach(grp => grp.children.forEach(event => { if (selevent == event.value) event.selected = true })));
                         $('#event-choices-new').multiselect('dataprovider', event_options);
 
                     },
 
                     setFilterOptions: function() {
+                        // filter options are automatically set by what is found in the data
                         var self = this;
 
                         // Country filter options
