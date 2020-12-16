@@ -784,11 +784,9 @@
                     sortSelectedMonths: function() {
                         var self = this;
                         var months = self.selectedMonths;
-                        console.log(self.selectedMonths)
                         self.selectedMonths = _.sortBy(months, function(item){
                             return self.allMonths.indexOf(item.name)
                         });
-                        console.log(self.selectedMonths)
                     },
                     displaySelectedMonths: function() {
                         var self = this;
@@ -1118,7 +1116,7 @@
                                     return options.html();
                                 }
                                 else {
-                                    return `WA Groups (${options.length})`;
+                                    return `Competition Groups (${options.length})`;
                                 }
                             },
                             onChange: function(option, checked, select) {
