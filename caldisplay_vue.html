@@ -170,6 +170,9 @@
             .card-body {
                 background-color: #da7652;
             }
+            button[title="Group 1"], button[title="Group 3"], button[title="hidden"] {
+                display: none !important;
+            }
 
             /* Year Filter */
             #selectedYear {
@@ -593,7 +596,7 @@
                     compSeries: {	
                         type: Array,	
                         default: function() {	
-                            return [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}, {label:'WACT Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WACT Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WACT Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'12', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}];	
+                            return [{label: '', children: [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}]}, {label:'WA Indoor Tour', children: [{label:'hidden', value:'12', title: 'hidden', hidden: true}, {label:'WA Indoor Tour Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'WA Indoor Tour Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WA Indoor Tour Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}]}, {label: '', children: [{label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'14', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}]}];	
                         }	
                     },
                     ageGroups: {
@@ -712,7 +715,6 @@
                             })
                         }
                         if (self.selectedSeries.length > 0) {
-                            console.log(self.selectedSeries)
                             output = output.filter(function (item) {
                                 return item.series ? item.series.some(e=> self.selectedSeries.indexOf(e.series_id.toString()) >= 0) : false
                             })
@@ -1088,11 +1090,21 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log("change")
+                                var selectedGroup = option instanceof Array;
                                 if (checked) {
-                                    self.selectedEvents.push(option.val());
+                                    if (!selectedGroup) {
+                                        self.selectedEvents.push(option.val());
+                                    }
+                                    else if (selectedGroup) {
+                                        option.forEach(o => self.selectedEvents.push(o.val()));
+                                    }
                                 } else {
-                                    self.selectedEvents = _.remove(self.selectedEvents, v => v != option.val())
+                                    if (!selectedGroup) {
+                                        self.selectedEvents = _.remove(self.selectedEvents, v => v != option.val())
+                                    }
+                                    else if (selectedGroup) {
+                                        option.forEach(o => self.selectedEvents = _.remove(self.selectedEvents, v => v != o.val()));
+                                    }
                                 }
                             },
                             onSelectAll: function() {
@@ -1111,6 +1123,8 @@
                             selectAllText: 'All  groups',
                             allSelectedText: '(All groups)',
                             numberDisplayed: 1,
+                            enableCollapsibleOptGroups: true,
+                            enableClickableOptGroups: true,
                             buttonText: function(options, select) {
                                 if (options.length == 1) {
                                     return options.html();
@@ -1120,11 +1134,21 @@
                                 }
                             },
                             onChange: function(option, checked, select) {
-                                console.log("change")
+                                var selectedGroup = option instanceof Array;
                                 if (checked) {
-                                    self.selectedSeries.push(option.val());
+                                    if (!selectedGroup) {
+                                        self.selectedSeries.push(option.val());
+                                    }
+                                    else if (selectedGroup) {
+                                        option.forEach(o => self.selectedSeries.push(o.val()));
+                                    }
                                 } else {
-                                    self.selectedSeries = _.remove(self.selectedSeries, v => v != option.val())
+                                    if (!selectedGroup) {
+                                        self.selectedSeries = _.remove(self.selectedSeries, v => v != option.val())
+                                    }
+                                    else if (selectedGroup) {
+                                        option.forEach(o => self.selectedSeries = _.remove(self.selectedSeries, v => v != o.val()));
+                                    }
                                 }
                             },
                             onSelectAll: function() {
@@ -1178,7 +1202,6 @@
                         desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
                         $('#event-choices').multiselect(desktopEventsMultiselectConfig);
 
-                        // TEMP
                         // Desktop multiselect
                         var desktopEventsMultiselectConfig = eventsMultiselectConfig;
                         desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
@@ -1206,7 +1229,7 @@
                         var comp_series_options = self.compSeries;
                         if (comp_series_options.length == 0) comp_series_options.push({label: 'No filters', value: '', selected: false});
                         // Checks if any filters where applied before changing year
-                        self.selectedSeries.forEach(selseries => comp_series_options.forEach(series => { if (selseries == series.value) series.selected = true }));
+                        self.selectedSeries.forEach(selseries => comp_series_options.forEach(group => group.forEach( series => { if (selseries == series.value) series.selected = true })));
                         $('#series-choices').multiselect('dataprovider', comp_series_options);
                         $('#m-series-choices').multiselect('dataprovider', comp_series_options);
 
