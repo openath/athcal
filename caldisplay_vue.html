@@ -48,8 +48,12 @@
             }
 
             /* Multiselect */
-            .multiselect-native-select .btn-group {
-                width: 160px;
+            #mobileFilter .multiselect-native-select .btn-group {
+                width: 49%;
+                vertical-align: middle;
+            }
+            #sidebarMenu .multiselect-native-select .btn-group {
+                width: 180px;
                 vertical-align: middle;
             }
             .filter-button {
@@ -218,6 +222,20 @@
                 padding: 0.25rem;
             }
 
+            /* Custom width */
+            @media (min-width: 768px) {
+                .col-md-2-5 {
+                    -ms-flex: 0 0 20.8333333%;
+                    flex: 0 0 20.8333333%;
+                    max-width: 20.8333333%;
+                }
+                .col-md-9-5 {
+                    -ms-flex: 0 0 79.1666667%;
+                    flex: 0 0 79.1666667%;
+                    max-width: 79.1666667%;
+                }
+            }
+
             /* Pagination */
             .page-item {
                 cursor: pointer;
@@ -271,7 +289,7 @@
         <div id="app">
             <div class="container-fluid">
                 <div class="row">
-                    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse" style="background-color: #E95420;">
+                    <nav id="sidebarMenu" class="col-md-2-5 col-lg-2 d-md-block sidebar collapse" style="background-color: #E95420;">
                         <div class="sidebar-sticky pt-3">
                             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                                 <span class="text-white">Filter</span>
@@ -309,7 +327,7 @@
                         </div>
                     </nav>
 
-                    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                    <main role="main" class="col-md-9-5 ml-sm-auto col-lg-10 px-md-4">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center ">
                             <div id="selectedYearContainer" class="mx-auto">
                                 <h1 id="selectedYear" class="d-inline">
@@ -327,7 +345,7 @@
                         </div>
 
                         <!-- Toggles show/hide of filters -->
-                        <a class="btn btn-primary btn-sm d-sm-block d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
+                        <a class="btn btn-primary btn-sm d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
                             <i class="fas fa-filter"></i>
                         </a>
 
@@ -375,7 +393,7 @@
                                         <th scope="col">Full Name</th>
                                         <th class="d-none d-lg-table-cell text-center" scope="col">Age Groups</th>
                                         <th class="d-none d-lg-table-cell text-center" scope="col">WA Cat</th>
-                                        <th class="d-none d-lg-table-cell text-center" scope="col">Country</th>
+                                        <th class="text-center" scope="col">Country</th>
                                         <th class="text-center" scope="col">Discipline</th>
                                     </tr>
                                 </thead>
@@ -389,7 +407,7 @@
                                         <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
                                         <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
                                         
-                                        <td class="d-none d-lg-table-cell text-center">{{comp.country_ioc}}</td>
+                                        <td class="text-center">{{comp.country_ioc}}</td>
                                         <td class="text-center">{{comp.type}}</td>
                                     </tr>
                                 </tbody>
@@ -979,7 +997,7 @@
                         };
 
                         var waCategoryMultiselectConfig = {
-                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            buttonClass: 'btn btn-primary btn-sm mb-2 ',
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
@@ -1010,7 +1028,7 @@
                         }
 
                         var disciplineMultiselectConfig = {
-                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            buttonClass: 'btn btn-primary btn-sm mb-2 ',
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
@@ -1041,7 +1059,7 @@
                         }
 
                         var ageGroupsMultiselectConfig = {
-                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            buttonClass: 'btn btn-primary btn-sm mb-2 ',
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
@@ -1072,7 +1090,7 @@
                         }
 
                         var eventsMultiselectConfig = {
-                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            buttonClass: 'btn btn-primary btn-sm mb-2 ',
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
@@ -1116,7 +1134,7 @@
                         }
 
                         var seriesMultiselectConfig = {
-                            buttonClass: 'btn btn-primary btn-sm mb-2',
+                            buttonClass: 'btn btn-primary btn-sm mb-2 ',
                             maxHeight: 200,
                             includeSelectAllOption: true,
                             selectAllValue: 'ALL',
