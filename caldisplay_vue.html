@@ -33,8 +33,11 @@
                 max-width: 14.285714285714285714285714285714%;
             }
             .bg-orange {
-                background-color: #E95420;
+                background-color: #F15A22;
                 color: white;
+            }
+            .text-orange {
+                color: #F15A22 !important;
             }
             
             /* SideBar Filtering */
@@ -45,6 +48,14 @@
             .filter-heading {
                 font-size: 1.2em;
                 -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
+            }
+            @media (min-width: 576px) {
+                #mobileHeader {
+                    padding: 0 !important;
+                    box-shadow: unset !important;
+                    position: unset !important;
+                    background-color: transparent !important;
+                }
             }
 
             /* Multiselect */
@@ -87,7 +98,7 @@
                 font-size: 0.8em;
             }
             .multiselect-group.dropdown-item > span > label {
-                color: #C63527;
+                color: #F15A22;
                 font-weight: bolder;
             }
             .multiselect-container.dropdown-menu::-webkit-scrollbar, body::-webkit-scrollbar {
@@ -98,7 +109,7 @@
             body::-webkit-scrollbar-thumb {
                 border-radius: 10px;
                 -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-                background-color:#E95420;
+                background-color:#F15A22;
             }
             .multiselect-container.dropdown-menu::-webkit-scrollbar-thumb {
                 border-radius: 10px;
@@ -176,11 +187,10 @@
             }
             button[title="Group 1"], button[title="Group 3"], button[title="hidden"] {
                 display: none !important;
-            }
+            }           
 
             /* Year Filter */
             #selectedYear {
-                color: #E95420;
                 -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
             }
             #selectedYear>i {
@@ -198,7 +208,7 @@
                 -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
             }
             .month-heading:hover {
-                color: #E95420;
+                color: #F15A22;
                 cursor: pointer;
             }
             /* Month Filter (table row) */
@@ -210,8 +220,12 @@
             .modal-header > h6 {
                 font-size: 1rem;
             }
-
-            /* LightBox / Competition Detail */
+            @media (min-width: 576px) {
+                .modal-dialog {
+                    max-width: 800px;
+                    margin: 1.75rem auto;
+                }
+            }
             .list-group-item h6 {
                 font-size: 0.9rem; 
             }
@@ -222,6 +236,21 @@
                 padding: 0.25rem;
             }
 
+            /* Table */
+            .bg-primary {
+                background-color: #00053E !important;
+            }
+            #competitionTable tbody tr td:first-child {
+                width:90px
+            }
+            .table-responsive {
+                padding-top: 0px;
+            }
+            @media (max-width: 576px) {
+                .table-responsive {
+                    padding-top: 200px;
+                }
+            }
             /* Custom width */
             @media (min-width: 768px) {
                 .col-md-2-5 {
@@ -233,6 +262,14 @@
                     -ms-flex: 0 0 79.1666667%;
                     flex: 0 0 79.1666667%;
                     max-width: 79.1666667%;
+                }
+            }
+
+            /* Pagination / reset filters */
+            @media (max-width: 576px) {
+                #paginatorContainer {
+                    flex-direction: column;
+                    align-items: unset!important;
                 }
             }
 
@@ -289,7 +326,7 @@
         <div id="app">
             <div class="container-fluid">
                 <div class="row">
-                    <nav id="sidebarMenu" class="col-md-2-5 col-lg-2 d-md-block sidebar collapse" style="background-color: #E95420;">
+                    <nav id="sidebarMenu" class="col-md-2-5 col-lg-2 d-md-block sidebar collapse bg-orange">
                         <div class="sidebar-sticky pt-3">
                             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                                 <span class="text-white">Filter</span>
@@ -328,73 +365,77 @@
                     </nav>
 
                     <main role="main" class="col-md-9-5 ml-sm-auto col-lg-10 px-md-4">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center ">
-                            <div id="selectedYearContainer" class="mx-auto">
-                                <h1 id="selectedYear" class="d-inline">
-                                    <i class="fas fa-angle-left mx-2" @click="decrementYear()"></i>
-                                    {{ selectedYear }}
-                                    <i class="fas fa-angle-right mx-2" @click="incrementYear()"></i>
-                                </h1>
-                            </div>
-                            <!-- <div class="btn-toolbar mb-2 mb-md-0 d-none d-md-block" style="position: absolute;right:20px;">
-                                <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#eventDays" aria-expanded="false" aria-controls="eventDays">Calendar View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Map View</button>
+                        <div id="mobileHeader" class="bg-white fixed-top shadow p-3">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center ">
+                                <div id="selectedYearContainer" class="mx-auto">
+                                    <h1 id="selectedYear" class="d-inline text-orange">
+                                        <i class="fas fa-angle-left mx-2" @click="decrementYear()"></i>
+                                        {{ selectedYear }}
+                                        <i class="fas fa-angle-right mx-2" @click="incrementYear()"></i>
+                                    </h1>
                                 </div>
-                            </div> -->
-                        </div>
-
-                        <!-- Toggles show/hide of filters -->
-                        <a class="btn btn-primary btn-sm d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
-                            <i class="fas fa-filter"></i>
-                        </a>
-
-                        <!-- Data is injected into multiselct through 'initialiseMultiSelect' -->
-                        <div id="mobileFilter" class="collapse">
-                            <select name="location" id="m-location-choices" multiple="multiple"></select>
-                            <select name="wa-category" id="m-wa-category-choices" multiple="multiple"></select>
-                            <select name="series" id="m-series-choices" multiple="multiple"></select>
-                            <select name="discipline" id="m-discipline-choices" multiple="multiple"></select>
-                            <select name="age_group" id="m-age-group-choices" multiple="multiple"></select>
-                            <select name="events" id="m-event-choices" multiple="multiple"></select>
-                        </div>
-
-                        <!-- Shows each month -->
-                        <div id="months-headings" class="d-none d-md-flex row pt-3 pb-2 mb-3 border-bottom">
-                            <div class="col-md-1 d-md-inline" v-for="month in months_data" >
-                                <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month)">{{ month.name }}</h5>
-                                <div class="d-block mx-auto" style="width:fit-content">
-                                    <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
-                                </div>
+                                <!-- <div class="btn-toolbar mb-2 mb-md-0 d-none d-md-block" style="position: absolute;right:20px;">
+                                    <div class="btn-group mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#eventDays" aria-expanded="false" aria-controls="eventDays">Calendar View</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Map View</button>
+                                    </div>
+                                </div> -->
                             </div>
-                        </div>
 
-                        <!-- Shows each day of each month -->
-                        <div id="eventDays" class="row row-cols-7 collapse">
-                            <div class="col p-3" v-for="n in 42">
-                                <div class="border border-dark">
-                                    <h3>{{ n }}</h3>
+                            <!-- Toggles show/hide of filters -->
+                            <a class="btn btn-primary btn-sm d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
+                                <i class="fas fa-filter"></i>
+                            </a>
+
+                            <!-- Data is injected into multiselct through 'initialiseMultiSelect' -->
+                            <div id="mobileFilter" class="collapse">
+                                <select name="location" id="m-location-choices" multiple="multiple"></select>
+                                <select name="wa-category" id="m-wa-category-choices" multiple="multiple"></select>
+                                <select name="series" id="m-series-choices" multiple="multiple"></select>
+                                <select name="discipline" id="m-discipline-choices" multiple="multiple"></select>
+                                <select name="age_group" id="m-age-group-choices" multiple="multiple"></select>
+                                <select name="events" id="m-event-choices" multiple="multiple"></select>
+                            </div>
+
+
+                            <!-- Shows each month -->
+                            <div id="months-headings" class="d-none d-md-flex row pt-3 pb-2 mb-3 border-bottom">
+                                <div class="col-md-1 d-md-inline" v-for="month in months_data" >
+                                    <h5 class="month-heading d-block mb-0 text-center" v-on:click="applyDateFilter(month)">{{ month.name }}</h5>
+                                    <div class="d-block mx-auto" style="width:fit-content">
+                                        <span class="badge badge-pill badge-secondary">{{ month.numberOfComps }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="d-flex flex-horizontal justify-content-between align-items-center">
-                            <div>
-                                <span v-if="filteredCompetitions" class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
-                                <a class="d-block d-md-inline" href="javascript:location.reload(true)">Reset filters</a>
+
+                            <!-- Shows each day of each month -->
+                            <div id="eventDays" class="row row-cols-7 collapse">
+                                <div class="col p-3" v-for="n in 42">
+                                    <div class="border border-dark">
+                                        <h3>{{ n }}</h3>
+                                    </div>
+                                </div>
                             </div>
-                            <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
+                            
+                            <div id="paginatorContainer" class="d-flex flex-horizontal justify-content-between align-items-center">
+                                <div class="d-block d-md-inline">
+                                    <span v-if="filteredCompetitions" class="d-none d-md-block badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
+                                    <a class="d-block d-md-inline" href="javascript:location.reload(true)">Reset filters</a>
+                                </div>
+                                <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
+                            </div>
                         </div>
+
                         <div class="table-responsive">
                             <table id="competitionTable" class="table table-sm list bg-white">
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th scope="col" class="d-lg-table-cell">Date</th>
-                                        <th scope="col">Full Name</th>
-                                        <th class="d-none d-lg-table-cell text-center" scope="col">Age Groups</th>
+                                        <th scope="col"><span class="d-none d-sm-block">Full Name</span><span class="d-block d-sm-none">Name</span></th>
+                                        <th class="d-none d-lg-table-cell text-center" scope="col"><span class="d-none d-sm-block">Age Groups</span><span class="d-block d-sm-none">Age</span></th>
                                         <th class="d-none d-lg-table-cell text-center" scope="col">WA Cat</th>
-                                        <th class="text-center" scope="col">Country</th>
-                                        <th class="text-center" scope="col">Discipline</th>
+                                        <th class="text-center" scope="col"><span class="d-none d-sm-block">Country</span><span class="d-block d-sm-none">Cnty</span></th>
+                                        <th class="text-center" scope="col"><span class="d-none d-sm-block">Discipline</span><span class="d-block d-sm-none">Type</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -402,7 +443,7 @@
                                         <td>No competitions</td>
                                     </tr>
                                     <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
-                                        <td style="width:125px">{{comp.date}}</td>
+                                        <td>{{comp.date}}</td>
                                         <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
                                         <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
                                         <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
@@ -422,7 +463,7 @@
         
             <!-- Competition Modal/Lightbox -->
             <div class="modal fade" id="competitionDetailModel" tabindex="-1" aria-labelledby="competitionDetailModel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }} <h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
@@ -469,18 +510,22 @@
                                         </li>
                                         <li class="list-group-item d-flex align-items-center">
                                             <h6 class="mr-auto my-0">Competitors</h6>
-                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
+                                            <a v-if="selectedCompetition.ot_supported && selectedCompetition.num_competitors > 0" :href="`${opentrackURL}/x/${selectedCompetition.year}/${selectedCompetition.country_ioc}/${selectedCompetition.slug}/competitor/`" class="px-3" target="_blank" rel="noopener noreferrer">Click here</a>
                                             <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_competitors }}</span>
                                         </li>
                                         <li class="list-group-item d-flex align-items-center">
                                             <h6 class="mr-auto my-0">Results</h6>
-                                            <a v-if="selectedCompetition.ot_supported" href="" class="px-3">Click here</a>
-                                            <a v-else href="selectedCompetition.results_link" class="px-3">Click here</a>
+                                            <a v-if="selectedCompetition.ot_supported && selectedCompetition.results_link" :href="selectedCompetition.results_link" class="px-3" target="_blank" rel="noopener noreferrer">Click here</a>
                                             <span class="badge badge-primary badge-pill">{{ selectedCompetition.num_results }}</span>
                                         </li>
                                         <li v-if="selectedCompetition.website != ''" class="list-group-item d-flex align-items-center">
                                             <h6 class="mr-auto my-0">Website</h6>
-                                            <a  :href="selectedCompetition.website" class="px-3">Click here</a>
+                                            <a :href="selectedCompetition.website" class="px-3" target="_blank" rel="noopener noreferrer">Click here</a>
+                                            <span class="badge badge-primary badge-pill invisible">44</span>
+                                        </li>
+                                        <li v-if="selectedCompetition.ot_supported && selectedCompetition.num_competitors == 0 && !selectedCompetition.results_link" class="list-group-item d-flex align-items-center">
+                                            <h6 class="mr-auto my-0">OpenTrack</h6>
+                                            <a :href="`${opentrackURL}/x/${selectedCompetition.year}/${selectedCompetition.country_ioc}/${selectedCompetition.slug}/`" class="px-3" target="_blank" rel="noopener noreferrer">Click here</a>
                                             <span class="badge badge-primary badge-pill invisible">44</span>
                                         </li>
                                       </ul>
@@ -656,6 +701,10 @@
                     pageSize: {
                         type: Number,
                         default: function () { return 50 }
+                    },
+                    opentrackURL: {
+                        type: String,
+                        default: function () { return 'https://data.opentrack.run'}
                     }
                 },
                 data() {
@@ -812,11 +861,11 @@
                         var self = this;
                         // Diplays which month is currently being filtered by
                         var calMonths = document.getElementById('months-headings');
-                        Array.from(calMonths.children).forEach(mon => mon.children[0].style.color = "#707070");
+                        Array.from(calMonths.children).forEach(mon => mon.children[0].classList.remove("text-orange"));
 
                         self.selectedMonths.forEach((month) => {
                             var clickedMonth = calMonths.children[month.num-1];
-                            clickedMonth.children[0].style.color = "#E95420";
+                            clickedMonth.children[0].classList.add("text-orange");
                         });
                     },
 
@@ -915,6 +964,7 @@
                     showCompetitionDetails: function(comp) {
                         var self = this;
                         self.selectedCompetition=comp;
+                        console.log(comp);
                         // console.log(self.map);
                         if (self.selectedCompetition.address != "") {
                             $('#map').show();
