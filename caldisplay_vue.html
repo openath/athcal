@@ -97,10 +97,29 @@
             .checkbox {
                 font-size: 0.8em;
             }
-            .multiselect-group.dropdown-item > span > label {
+            .multiselect-item.multiselect-group > a {
                 color: #F15A22;
-                font-weight: bolder;
+                width: fit-content;
             }
+            .multiselect-item.multiselect-group > a:hover {
+                text-decoration: none;
+            }
+            .multiselect-container>li.multiselect-group label {
+                padding: 3px 20px 3px 10px;
+                display: inline;
+            }
+            .caret-container .caret {
+                display: inline-block;
+                margin-left: .255em;
+                vertical-align: .255em;
+                content: "";
+                border-top: .3em solid;
+                border-right: .3em solid transparent;
+                border-bottom: 0;
+                border-left: .3em solid transparent;
+            }
+
+            /* CUSTOM SCROLL */
             .multiselect-container.dropdown-menu::-webkit-scrollbar, body::-webkit-scrollbar {
                 width: 6px;
                 height:6px;
@@ -121,8 +140,12 @@
                 border-radius: 10px;
                 background-color: #F5F5F5;
             }
+
+            
             
             .multiselect-container>li>a>label {
+                font-size: 0.9em;
+                font-weight: unset !important;
                 padding: 3px 20px 3px 10px;
                 display: block;
                 -webkit-box-align: unset;
@@ -141,37 +164,58 @@
             .dropdown-item {
                 padding: .25rem 1rem;
             }
-            #m-series-choices + div > div {
+            .multiselect-container > li {
+                padding: .25rem 1rem;
+            }
+            .multiselect-container > .active {
+                color: #fff;
+                text-decoration: none;
+                background-color: #007bff;
+            }
+            .multiselect-item.multiselect-all {
+                text-align: center;
+                font-weight: 700;
+            }
+            .multiselect-item.multiselect-all input {
+                visibility: hidden;
+                display: none;
+            }
+            #m-series-choices + div > ul {
                 min-width: 17rem;
             }
-            #series-choices + div > div {
-                width: 220px;
-                max-width: 220px;
+            #series-choices + div > ul {
+                width: 260px;
+                max-width: 260px;
                 transform: translate3d(-1px, 33px, 0px)!important;
 		    }
-            #event-choices + div > div {
-                min-width: 10.5rem;
-		    }
-            #event-choices-new + div > div {
-                width: 180px;
-                max-width: 180px;
-                transform: translate3d(-1px, 33px, 0px)!important;
-            }
-            #age-group-choices + div > div {
-                max-width: 10.5rem;
-		    }
-            #wa-category-choices + div > div {
-                max-width: 10.5rem;
-		    }
-            #m-wa-category-choices + div > div {
-			    min-width: 11rem;
-            }
-            #discipline-choices + div > div {
+            #event-choices + div > ul {
                 width: 200px;
                 max-width: 200px;
                 transform: translate3d(-1px, 33px, 0px)!important;
             }
-            #m-discipline-choices + div > div {
+            #m-event-choices + div > ul {
+                width: 12rem;
+                max-width: 12rem;
+            }
+            #m-age-group-choices + div > ul {
+                width: 11rem;
+                max-width: 11rem;
+		    }
+            #age-group-choices + div > ul {
+                max-width: 12rem;
+		    }
+            #wa-category-choices + div > ul {
+                max-width: 10.5rem;
+		    }
+            #m-wa-category-choices + div > ul {
+			    min-width: 11rem;
+            }
+            #discipline-choices + div > ul {
+                width: 200px;
+                max-width: 200px;
+                transform: translate3d(-1px, 33px, 0px)!important;
+            }
+            #m-discipline-choices + div > ul {
 			    min-width: 11rem;
 		    }
             .fa-chevron-up {
@@ -185,7 +229,7 @@
             .card-body {
                 background-color: #da7652;
             }
-            button[title="Group 1"], button[title="Group 3"], button[title="hidden"] {
+            label[title="hidden"] {
                 display: none !important;
             }           
 
@@ -247,8 +291,15 @@
                 padding-top: 0px;
             }
             @media (max-width: 576px) {
+                body {
+                    overflow-y: hidden;
+                }
                 .table-responsive {
                     padding-top: 200px;
+                }
+                #main-content {
+                    overflow-y: auto;
+                    height: 750px;
                 }
             }
             /* Custom width */
@@ -354,17 +405,17 @@
                                 <li class="nav-item">
                                     <select name="age-groups" id="age-group-choices"  multiple="multiple"></select>
                                 </li>
-                                <li class="nav-item d-none">
-                                    <select name="events" id="event-choices"  multiple="multiple"></select>
-                                </li>
                                 <li class="nav-item">
-                                    <select name="events" id="event-choices-new"  multiple="multiple"></select>
+                                    <select name="events" id="event-choices"  multiple="multiple"></select>
                                 </li>
                             </ul>
                         </div>
                     </nav>
 
-                    <main role="main" class="col-md-9-5 ml-sm-auto col-lg-10 px-md-4">
+                    
+
+                    <main role="main" class="col-md-9-5 ml-sm-auto col-lg-10 px-0 px-md-4">
+                        
                         <div id="mobileHeader" class="bg-white fixed-top shadow p-3">
                             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center ">
                                 <div id="selectedYearContainer" class="mx-auto">
@@ -381,12 +432,12 @@
                                     </div>
                                 </div> -->
                             </div>
-
+    
                             <!-- Toggles show/hide of filters -->
                             <a class="btn btn-primary btn-sm d-md-none mb-1" data-toggle="collapse" href="#mobileFilter" role="button" aria-expanded="false" aria-controls="mobileFilter">
                                 <i class="fas fa-filter"></i>
                             </a>
-
+    
                             <!-- Data is injected into multiselct through 'initialiseMultiSelect' -->
                             <div id="mobileFilter" class="collapse">
                                 <select name="location" id="m-location-choices" multiple="multiple"></select>
@@ -396,8 +447,8 @@
                                 <select name="age_group" id="m-age-group-choices" multiple="multiple"></select>
                                 <select name="events" id="m-event-choices" multiple="multiple"></select>
                             </div>
-
-
+    
+    
                             <!-- Shows each month -->
                             <div id="months-headings" class="d-none d-md-flex row pt-3 pb-2 mb-3 border-bottom">
                                 <div class="col-md-1 d-md-inline" v-for="month in months_data" >
@@ -407,7 +458,7 @@
                                     </div>
                                 </div>
                             </div>
-
+    
                             <!-- Shows each day of each month -->
                             <div id="eventDays" class="row row-cols-7 collapse">
                                 <div class="col p-3" v-for="n in 42">
@@ -418,45 +469,47 @@
                             </div>
                             
                             <div id="paginatorContainer" class="d-flex flex-horizontal justify-content-between align-items-center">
-                                <div class="d-block d-md-inline">
-                                    <span v-if="filteredCompetitions" class="d-none d-md-block badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
-                                    <a class="d-block d-md-inline" href="javascript:location.reload(true)">Reset filters</a>
+                                <div class="d-flex d-md-inline">
+                                    <span v-if="filteredCompetitions" class="badge badge-secondary mb-0">{{ filteredCompetitions.length || 0 }} of {{ info && info.length || 0 }} competitions</span>
+                                    <a class="d-block d-md-inline ml-1" href="javascript:location.reload(true)">Reset filters</a>
                                 </div>
                                 <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
                             </div>
                         </div>
 
-                        <div class="table-responsive">
-                            <table id="competitionTable" class="table table-sm list bg-white">
-                                <thead class="bg-primary text-white">
-                                    <tr>
-                                        <th scope="col" class="d-lg-table-cell">Date</th>
-                                        <th scope="col"><span class="d-none d-sm-block">Full Name</span><span class="d-block d-sm-none">Name</span></th>
-                                        <th class="d-none d-lg-table-cell text-center" scope="col"><span class="d-none d-sm-block">Age Groups</span><span class="d-block d-sm-none">Age</span></th>
-                                        <th class="d-none d-lg-table-cell text-center" scope="col">WA Cat</th>
-                                        <th class="text-center" scope="col"><span class="d-none d-sm-block">Country</span><span class="d-block d-sm-none">Cnty</span></th>
-                                        <th class="text-center" scope="col"><span class="d-none d-sm-block">Discipline</span><span class="d-block d-sm-none">Type</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-if="paginatedCompetitions().length == 0">
-                                        <td>No competitions</td>
-                                    </tr>
-                                    <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
-                                        <td>{{comp.date}}</td>
-                                        <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
-                                        <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
-                                        <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
-                                        
-                                        <td class="text-center">{{comp.country_ioc}}</td>
-                                        <td class="text-center">{{comp.type}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div id="main-content" class="px-2">
+                            <div class="table-responsive">
+                                <table id="competitionTable" class="table table-sm list bg-white">
+                                    <thead class="bg-primary text-white">
+                                        <tr>
+                                            <th scope="col" class="d-lg-table-cell">Date</th>
+                                            <th scope="col"><span class="d-none d-sm-block">Full Name</span><span class="d-block d-sm-none">Name</span></th>
+                                            <th class="d-none d-lg-table-cell text-center" scope="col"><span class="d-none d-sm-block">Age Groups</span><span class="d-block d-sm-none">Age</span></th>
+                                            <th class="d-none d-lg-table-cell text-center" scope="col">WA Cat</th>
+                                            <th class="text-center" scope="col"><span class="d-none d-sm-block">Country</span><span class="d-block d-sm-none">Cnty</span></th>
+                                            <th class="text-center" scope="col"><span class="d-none d-sm-block">Discipline</span><span class="d-block d-sm-none">Type</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-if="paginatedCompetitions().length == 0">
+                                            <td>No competitions</td>
+                                        </tr>
+                                        <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
+                                            <td>{{comp.date}}</td>
+                                            <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
+                                            <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
+                                            <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
+                                            
+                                            <td class="text-center">{{comp.country_ioc}}</td>
+                                            <td class="text-center">{{comp.type}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav class="d-flex justify-content-center">
+                                <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
+                            </nav>
                         </div>
-                        <nav class="d-flex justify-content-center">
-                            <navigator class="float-right" :is-loading="isLoading" :total="filteredCompetitions && filteredCompetitions.length || 0" @movePage="mvPg" @changePage="setPg" :results-per-page="showOnPage"></navigator>
-                        </nav>
                     </main>
                 </div>
             </div>
@@ -645,6 +698,16 @@
                         chevron.removeClass('chevron-animate-down');
                     }, 500);
                 });
+
+                // Hide certain dropdown options
+                setTimeout(() => {
+                    $('input[value="dropdown"]').parent().parent().parent().css('display', "none")
+                    $('label[title="hidden"]').parent().parent().attr('style', 'display: none !important');
+
+                }, 1000);
+
+
+                
             });
 
             var app = new Vue({
@@ -659,7 +722,7 @@
                     compSeries: {	
                         type: Array,	
                         default: function() {	
-                            return [{label: '', children: [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}]}, {label:'WA Indoor Tour', children: [{label:'hidden', value:'12', title: 'hidden', hidden: true}, {label:'WA Indoor Tour Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'WA Indoor Tour Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WA Indoor Tour Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}]}, {label: '', children: [{label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'14', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}]}];	
+                            return [{label: '', value: 'dropdown', children: [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}]}, {label:'WA Indoor Tour', children: [{label:'hidden', value:'12', title: 'hidden', hidden: true}, {label:'WA Indoor Tour Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'WA Indoor Tour Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WA Indoor Tour Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}]}, {label: '', value: 'dropdown', children: [{label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'14', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}]}];	
                         }	
                     },
                     ageGroups: {
@@ -1198,7 +1261,7 @@
                                     return options.html();
                                 }
                                 else {
-                                    return `Competition Groups (${options.length})`;
+                                    return `Competition Grps (${options.length})`;
                                 }
                             },
                             onChange: function(option, checked, select) {
@@ -1269,11 +1332,6 @@
                         var desktopEventsMultiselectConfig = eventsMultiselectConfig;
                         desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
                         $('#event-choices').multiselect(desktopEventsMultiselectConfig);
-
-                        // Desktop multiselect
-                        var desktopEventsMultiselectConfig = eventsMultiselectConfig;
-                        desktopEventsMultiselectConfig.buttonClass = 'btn btn-link filter-button';
-                        $('#event-choices-new').multiselect(desktopEventsMultiselectConfig);
                     },
 
                     injectDataMultiSelect: function() {
@@ -1315,20 +1373,14 @@
                         $('#age-group-choices').multiselect('dataprovider', age_group_options);
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
 
-                        var event_options = [];
-                        self.events.forEach(e => event_options.push({label: e.label, value: e.value, title: e.title, selected: false}));
-                        // Checks if any filters where applied before changing year
-                        self.selectedEvents.forEach(selevent => event_options.forEach(event => { if (selevent == event.value) event.selected = true }));
-                        $('#event-choices').multiselect('dataprovider', event_options);
-                        $('#m-event-choices').multiselect('dataprovider', event_options);
-
-                        // TEMP
                         var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}];
                         self.trackEvents.forEach(e => event_options[0].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         self.fieldEvents.forEach(e => event_options[1].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         // Checks if any filters where applied before changing year
                         self.selectedEvents.forEach(selevent => event_options.forEach(grp => grp.children.forEach(event => { if (selevent == event.value) event.selected = true })));
-                        $('#event-choices-new').multiselect('dataprovider', event_options);
+                        $('#event-choices').multiselect('dataprovider', event_options);
+                        $('#m-event-choices').multiselect('dataprovider', event_options);
+
 
                     },
 
