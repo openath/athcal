@@ -140,13 +140,10 @@
                 border-radius: 10px;
                 background-color: #F5F5F5;
             }
-
-            
-            
             .multiselect-container>li>a>label {
                 font-size: 0.9em;
                 font-weight: unset !important;
-                padding: 3px 20px 3px 10px;
+                padding: .25rem 1rem;
                 display: block;
                 -webkit-box-align: unset;
                 -webkit-align-items: unset;
@@ -160,12 +157,6 @@
             }
             ul.nav.flex-column {
                 position: fixed;
-            }
-            .dropdown-item {
-                padding: .25rem 1rem;
-            }
-            .multiselect-container > li {
-                padding: .25rem 1rem;
             }
             .multiselect-container > .active {
                 color: #fff;
@@ -703,11 +694,7 @@
                 setTimeout(() => {
                     $('input[value="dropdown"]').parent().parent().parent().css('display', "none")
                     $('label[title="hidden"]').parent().parent().attr('style', 'display: none !important');
-
                 }, 1000);
-
-
-                
             });
 
             var app = new Vue({
@@ -758,7 +745,7 @@
                     allMonths: {
                         type: Array,
                         default: function () {
-                            return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+                            return [{name: 'JAN', num: 1, numberOfComps: 0, string: "01"}, {name: 'FEB', num: 2, numberOfComps: 0, string: "02"}, {name: 'MAR', num: 3, numberOfComps: 0, string: "03"}, {name: 'APR', num: 4, numberOfComps: 0, string: "04"}, {name: 'MAY', num: 5, numberOfComps: 0, string: "05"}, {name: 'JUN', num: 6, numberOfComps: 0, string: "06"}, {name: 'JUL', num: 7, numberOfComps: 0, string: "07"}, {name: 'AUG', num: 8, numberOfComps: 0, string: "08"}, {name: 'SEP', num: 9, numberOfComps: 0, string: "09"}, {name: 'OCT', num: 10, numberOfComps: 0, string: "10"}, {name: 'NOV', num: 11, numberOfComps: 0, string: "11"}, {name: 'DEC', num: 12, numberOfComps: 0, string: "12"}]
                         }
                     },
                     pageSize: {
@@ -771,6 +758,7 @@
                     }
                 },
                 data() {
+                    var self=this;
                     return {
                         info: [],
                         name_search_query: '',
@@ -855,15 +843,10 @@
                         var self = this;
                         self.all_months = [];
                         if (self.info) {
-                            for (month in self.allMonths) {
-                                var monObject = {
-                                    num: parseInt(month)+1,
-                                    name: self.allMonths[month],
-                                    string: String(parseInt(month)+1).padStart(2, '0')
-                                };
-                                var compList = self.filterByDate(monObject.string);
-                                monObject.numberOfComps = compList.length;
-                                self.all_months.push(monObject);
+                            for (month of self.allMonths) {
+                                var compList = self.filterByDate(month.string);
+                                month.numberOfComps = compList.length;
+                                self.all_months.push(month);
                             }
                         }
                         var output = self.all_months;
@@ -998,21 +981,14 @@
 
                     filterByDate: function(month, data) {
                         var output, self=this;
-                        if (data) {
-                            output = data;
-                        } else {
-                            output = this.info;
-                        }
+                        data ? output = data : output = this.info;
                         if (month) {
                             var result = output.filter((item)=>{
-                                // Need to change this to selectedYear
                                 return item.date.match(`${self.selectedYear}-${month}`);
                             })
-                            // console.log(result);
                             return result;
                         } else {
                             return output.filter((item)=>{
-                                // Need to change this to selectedYear
                                 return item.date.match(`${self.selectedYear}`);
                             })
                         }
@@ -1439,7 +1415,29 @@
                             start = self.pageStartIdx() - 1;
                         return self.filteredCompetitions.slice(start, start + self.showOnPage)
                     },
+                    startPageFromToday: function() {
+                        var self = this,
+                            todaysMonth = self.allMonths[new Date().getMonth()].string,
+                            found = false,
+                            pageCounter = 1;
+                        
+                        console.log(self.page)
 
+                        // Going through all competitions
+                        while (self.page > self.maxPages() || !found) {
+                            let start = self.pageStartIdx() - 1;
+                            let data = self.filteredCompetitions.slice(start, start + self.showOnPage);
+                            if (self.filterByDate(todaysMonth, data).length > 0) {
+                                found = true;
+                            }
+                            // next page
+                            pageCounter++;
+                            self.mvPg(1)
+                            console.log(self.page)
+                        }
+                        console.log(pageCounter-1)
+                        if (found) self.setPg(pageCounter-1);
+                    },
 
                     fetchData: function() {
                         var self = this;
@@ -1462,29 +1460,35 @@
                             }
 
                             self.injectDataMultiSelect();
-                                               
+
+                            self.startPageFromToday();
+
+                            self.displaySelectedMonths();
                         })
                         .catch(error => {
-                            console.log(error.response);
-                            if (error.response.status == 404) {
-                                // alert("No data found for this year!");
-                                $('#errorModelTitle').text(`Competition Data Error!`)
-                                $('#errorModelDescription').text(`No data found for year ${self.selectedYear}!`)
-                                $('#errorModel').modal('show')
+                            console.log(error)
+                            if (error.response) {
+                                console.log(error.response);
+                                if (error.response.status == 404) {
+                                    // alert("No data found for this year!");
+                                    $('#errorModelTitle').text(`Competition Data Error!`)
+                                    $('#errorModelDescription').text(`No data found for year ${self.selectedYear}!`)
+                                    $('#errorModel').modal('show')
+                                }
+                                else if (error.response.status >= 500 && error.response.status < 600) {
+                                    // alert("Access denied to competition data!");
+                                    $('#errorModelTitle').text(`Data Access Error!`)
+                                    $('#errorModelDescription').text(`Unable to access competition data for year ${self.selectedYear}!`)
+                                    $('#errorModel').modal('show')
+                                }
+                                else if (error.request) {
+                                    // alert("Error making request for competition data!");
+                                    $('#errorModelTitle').text(`Data Request Error!`)
+                                    $('#errorModelDescription').text(`Request for data unresponsive, API server down?`)
+                                    $('#errorModel').modal('show')
+                                }
+                                self.isLoading = false; 
                             }
-                            else if (error.response.status >= 500 && error.response.status < 600) {
-                                // alert("Access denied to competition data!");
-                                $('#errorModelTitle').text(`Data Access Error!`)
-                                $('#errorModelDescription').text(`Unable to access competition data for year ${self.selectedYear}!`)
-                                $('#errorModel').modal('show')
-                            }
-                            else if (error.request) {
-                                // alert("Error making request for competition data!");
-                                $('#errorModelTitle').text(`Data Request Error!`)
-                                $('#errorModelDescription').text(`Request for data unresponsive, API server down?`)
-                                $('#errorModel').modal('show')
-                            }
-                            self.isLoading = false; 
                         })
                     }
                 },
