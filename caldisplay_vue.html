@@ -703,7 +703,7 @@
                     waCategories: {
                         type: Array,
                         default: function() {
-                            return [{label:'Olympic Games & World Championships', code:'OW', value:1}, {label:'Diamond League Finals', code:'DF', value:2}, {label:'World specialist championships (e.g. indoor), DLs', code:'GW', value:3}, {label:'Platinum and Gold Label', code:'GL', value:4}, {label:'Major Games, WACT Gold', code:'A', value:5}, {label:'WACT Silver, ETCH, National Champs', code:'B', value:6}, {label:'WA U20, WACT Bronze, Area 3rd Tier', code:'C', value:7}, {label:'Traditional International, National Senior Indoor', code:'D', value:8}, {label:"Int'l Matches, Selected National Meetings", code:'E', value:9}, {label:'International Meetings with National Permit', code:'F', value:10}, {label:'Unclassified but of international interest', code:'Unclassified', value:11}];
+                            return [{label:'Olympic Games & World Championships', code:'OW', value:"1"}, {label:'Diamond League Finals', code:'DF', value:"2"}, {label:'World specialist championships (e.g. indoor), DLs', code:'GW', value:"3"}, {label:'Platinum and Gold Label', code:'GL', value:"4"}, {label:'Major Games, WACT Gold', code:'A', value:"5"}, {label:'WACT Silver, ETCH, National Champs', code:'B', value:"6"}, {label:'WA U20, WACT Bronze, Area 3rd Tier', code:'C', value:"7"}, {label:'Traditional International, National Senior Indoor', code:'D', value:"8"}, {label:"Int'l Matches, Selected National Meetings", code:'E', value:"9"}, {label:'International Meetings with National Permit', code:'F', value:"10"}, {label:'Unclassified but of international interest', code:'Unclassified', value:"11"}];
                         } 
                     },
                     compSeries: {	
@@ -715,7 +715,7 @@
                     ageGroups: {
                         type: Array,
                         default: function () {
-                            return [{label:'Seniors',value:'SEN'}, {label:'Masters',value:'M'}, {label:'U23',value:'U23'}, {label:'U20',value:'U20'}, {label:'U18',value:'U18'}]
+                            return [{label:'Seniors', value:'SEN'}, {label:'Masters', value:'M'}, {label:'U23', value:'U23'}, {label:'U20', value:'U20'}, {label:'U18', value:'U18'}]
                         }
                     },
                     compTypes: {
@@ -1054,6 +1054,19 @@
                         var self = this;
                         // Multiselect Buttons
 
+                        function btnText(options, select, text) {
+                            if (options.length == 1) {
+                                if (options.html() != "") {
+                                    return options.html();
+                                } else {
+                                    return options[0].label;
+                                }
+                            }
+                            else {
+                                return `${text} (${options.length})`;
+                            }
+                        }
+
                         var locationMultiselectConfig = {
                             buttonClass: 'btn btn-primary btn-sm mb-2',
                             maxHeight: 200,
@@ -1062,14 +1075,7 @@
                             selectAllText: 'All countries',
                             allSelectedText: '(All countries)',
                             numberDisplayed: 1,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `Countries (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "Countries"),
                             onChange: function(option, checked, select) {
                                 if (checked) {
                                     self.selectedCountries.push(option.val());
@@ -1078,7 +1084,7 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedCountries = [];
+                                self.selectedCountries = self.country_options;
                             },
                             onDeselectAll: function() {
                                 self.selectedCountries = [];
@@ -1093,14 +1099,7 @@
                             selectAllText: 'All categories',
                             allSelectedText: '(All categories)',
                             numberDisplayed: 1,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `World Ranking (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "World Ranking"),
                             onChange: function(option, checked, select) {
                                 if (checked) {
                                     self.selectedWACategories.push(option.val());
@@ -1109,7 +1108,7 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedWACategories = [];
+                                self.waCategories.forEach(wac => self.selectedWACategories.push(wac.value));
                             },
                             onDeselectAll: function() {
                                 self.selectedWACategories = [];
@@ -1124,14 +1123,7 @@
                             selectAllText: 'All disciplines',
                             allSelectedText: '(All disciplines)',
                             numberDisplayed: 1,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `Disciplines (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "Disciplines"),
                             onChange: function(option, checked, select) {
                                 if (checked) {
                                     self.selectedCompType.push(option.val());
@@ -1140,7 +1132,8 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedCompType = [];
+                                self.compTypes.forEach(type => self.selectedCompType.push(type.value));
+
                             },
                             onDeselectAll: function() {
                                 self.selectedCompType = [];
@@ -1155,14 +1148,7 @@
                             selectAllText: 'All age groups',
                             allSelectedText: '(All age groups)',
                             numberDisplayed: 1,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `Age groups (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "Age groups"),
                             onChange: function(option, checked, select) {
                                 if (checked) {
                                     self.selectedAG.push(option.val());
@@ -1171,7 +1157,8 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedAG = [];
+                                self.ageGroups.forEach(age => self.selectedAG.push(age.value));
+
                             },
                             onDeselectAll: function() {
                                 self.selectedAG = [];
@@ -1188,14 +1175,7 @@
                             numberDisplayed: 1,
                             enableCollapsibleOptGroups: true,
                             enableClickableOptGroups: true,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `Events (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "Events"),
                             onChange: function(option, checked, select) {
                                 var selectedGroup = option instanceof Array;
                                 if (checked) {
@@ -1215,7 +1195,8 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedEvents = [];
+                                self.trackEvents.forEach(ev => self.selectedEvents.push(ev.value));
+                                self.fieldEvents.forEach(ev => self.selectedEvents.push(ev.value));
                             },
                             onDeselectAll: function() {
                                 self.selectedEvents = [];
@@ -1232,14 +1213,7 @@
                             numberDisplayed: 1,
                             enableCollapsibleOptGroups: true,
                             enableClickableOptGroups: true,
-                            buttonText: function(options, select) {
-                                if (options.length == 1) {
-                                    return options.html();
-                                }
-                                else {
-                                    return `Competition Grps (${options.length})`;
-                                }
-                            },
+                            buttonText: (options, select) => btnText(options, select, "Competition Grps"),
                             onChange: function(option, checked, select) {
                                 var selectedGroup = option instanceof Array;
                                 if (checked) {
@@ -1259,7 +1233,7 @@
                                 }
                             },
                             onSelectAll: function() {
-                                self.selectedSeries = [];
+                                self.compSeries.forEach(grp => grp.children.forEach(series => self.selectedSeries.push(series.value)));
                             },
                             onDeselectAll: function() {
                                 self.selectedSeries = [];
@@ -1421,8 +1395,7 @@
                             found = false,
                             pageCounter = 1;
                         
-                        console.log(self.page)
-
+                        
                         // Going through all competitions
                         while (self.page > self.maxPages() || !found) {
                             let start = self.pageStartIdx() - 1;
@@ -1433,9 +1406,7 @@
                             // next page
                             pageCounter++;
                             self.mvPg(1)
-                            console.log(self.page)
                         }
-                        console.log(pageCounter-1)
                         if (found) self.setPg(pageCounter-1);
                     },
 
