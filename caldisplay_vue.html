@@ -483,16 +483,19 @@
                                     </thead>
                                     <tbody>
                                         <tr v-if="paginatedCompetitions().length == 0">
+                                            <td></td>
                                             <td>No competitions</td>
                                         </tr>
                                         <tr v-for="comp in paginatedCompetitions()"  :key="comp.id">
                                             <td>{{comp.date}}</td>
-                                            <td><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{comp.full_name}}</a></td>
-                                            <td class="d-none d-lg-table-cell text-center">{{comp.age_groups}}</td>
+                                            <td v-if="comp.english_name != ''"><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{ comp.english_name }}</a></td>
+                                            <td v-else><a href="" @click="showCompetitionDetails(comp)" data-toggle="modal" data-target="#competitionDetailModel">{{ comp.full_name }}</a></td>
+
+                                            <td class="d-none d-lg-table-cell text-center">{{ comp.age_groups }}</td>
                                             <td class="d-none d-lg-table-cell text-center">{{ getCategoryCode(comp.wa_rankings_category) }}</td>
                                             
-                                            <td class="text-center">{{comp.country_ioc}}</td>
-                                            <td class="text-center">{{comp.type}}</td>
+                                            <td class="text-center">{{ comp.country_ioc }}</td>
+                                            <td class="text-center">{{ comp.type }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -510,7 +513,8 @@
                 <div class="modal-dialog modal-xl modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }} <h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
+                            <h5 class="modal-title" id="competitionDetailName">{{ selectedCompetition.english_name }}<h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
+                            <h5 v-if="selectedCompetition.english_name == ''" class="modal-title" id="competitionDetailName">{{ selectedCompetition.full_name }}<h6 v-if="selectedCompetition.name_local != ''" class="blockquote-footer my-auto mx-2">{{ selectedCompetition.name_local }}</h6></h5>
                             
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -518,7 +522,10 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col">{{ selectedCompetition.basic_description }}</div>
+                                <div class="col">
+                                    <p v-if="selectedCompetition.english_name != ''">{{ selectedCompetition.full_name }}</p>
+                                    <p>{{ selectedCompetition.basic_description }}</p>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col">
@@ -792,7 +799,11 @@
 
                         if (self.name_search_query != '') {
                             output = output.filter(function (item) {
-                                return item.full_name.toLowerCase().includes(self.name_search_query.toLowerCase())
+                                if (item.english_name != "") {
+                                    return item.english_name.toLowerCase().includes(self.name_search_query.toLowerCase())
+                                } else {
+                                    return item.full_name.toLowerCase().includes(self.name_search_query.toLowerCase())
+                                }
                             })
                         }
                         if (self.selectedCountries.length > 0) {
@@ -815,11 +826,11 @@
                             })
                         }
                         if (self.selectedYear) {
-                            output = self.filterByDate(null, output)
+                            output = self.filterByDate(null, null, output)
                         }
                         if (self.selectedMonths.length > 0) {
                             var list = [];
-                            self.selectedMonths.forEach(month => list = list.concat(self.filterByDate(month.string, output)));
+                            self.selectedMonths.forEach(month => list = list.concat(self.filterByDate(month.string, null, output)));
                             output = list;
                         }
                         if (self.selectedWACategories.length > 0) {
@@ -881,6 +892,11 @@
                     applyDateFilter: function(month) {
                         var self = this;
 
+                        // Resets page when first applying month filter
+                        if (self.selectedMonths.length == 0) {
+                            self.setPg(1);
+                        }
+
                         // Check if month is contained in list
                         if (self.selectedMonths.some(e => e.name === month.name)) {
                             // Remove it
@@ -895,6 +911,8 @@
                             self.insertMonthInTable();
                         }
                         self.displaySelectedMonths();
+
+                        
                     },
                     sortSelectedMonths: function() {
                         var self = this;
@@ -955,7 +973,7 @@
                                     addedMonths.push(month);               
                                 }
                             }
-                            totalNumberOfcomps += self.filterByDate(month.string, competitions).length;
+                            totalNumberOfcomps += self.filterByDate(month.string, null, competitions).length;
                         
                         }
                     },
@@ -979,15 +997,22 @@
                         self.insertMonthInTable();
                     },
 
-                    filterByDate: function(month, data) {
-                        var output, self=this;
-                        data ? output = data : output = this.info;
-                        if (month) {
+                    filterByDate: function(month, day=null, data=this.info) {
+                        var output = data,
+                            self=this;
+                        if (month && !day) {
                             var result = output.filter((item)=>{
                                 return item.date.match(`${self.selectedYear}-${month}`);
                             })
                             return result;
-                        } else {
+                        } 
+                        else if (month && day) {
+                            var result = output.filter((item)=>{
+                                return item.date.match(`${self.selectedYear}-${month}-${day}`);
+                            })
+                            return result;
+                        }
+                        else {
                             return output.filter((item)=>{
                                 return item.date.match(`${self.selectedYear}`);
                             })
@@ -1390,24 +1415,45 @@
                         return self.filteredCompetitions.slice(start, start + self.showOnPage)
                     },
                     startPageFromToday: function() {
+                        // Finds the lastest upcoming competition and sets the page to display this competition first.
+
                         var self = this,
+                            todaysYear = new Date().getFullYear(),
                             todaysMonth = self.allMonths[new Date().getMonth()].string,
-                            found = false,
+                            todaysDay = new Date().getDate(),
+                            daysInMonth = new Date(todaysYear, todaysMonth, 0).getDate(),
+                            found = false;
+                        
+
+                        // If no competitions are happening on todays date, then go to next day.
+                        do {
+                            // Going through all competitions for a page
+                            // then filter by the date
+
+                            // reset
+                            self.setPg(1);
                             pageCounter = 1;
-                        
-                        
-                        // Going through all competitions
-                        while (self.page > self.maxPages() || !found) {
-                            let start = self.pageStartIdx() - 1;
-                            let data = self.filteredCompetitions.slice(start, start + self.showOnPage);
-                            if (self.filterByDate(todaysMonth, data).length > 0) {
-                                found = true;
+
+                            while (self.page <= self.maxPages() && !found) {
+                                let start = self.pageStartIdx() - 1;
+                                let data = self.filteredCompetitions.slice(start, start + self.showOnPage);
+                                let filteredData = self.filterByDate(todaysMonth, todaysDay.toString().padStart(2, '0'), data)
+                                if (filteredData.length > 0 && filteredData.length != self.info.length ) {
+                                    found = true;
+                                }
+                                // next page
+                                pageCounter++;
+                                self.mvPg(1)
                             }
-                            // next page
-                            pageCounter++;
-                            self.mvPg(1)
+                            todaysDay++;
+                        } while(todaysDay <= daysInMonth && !found);
+
+                        if (found) {
+                            self.setPg(pageCounter-1)
+                        } else {
+                            // If no competitions found, then just set to page 1
+                            self.setPg(1);
                         }
-                        if (found) self.setPg(pageCounter-1);
                     },
 
                     fetchData: function() {
