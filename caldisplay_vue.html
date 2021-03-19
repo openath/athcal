@@ -1460,7 +1460,7 @@
                         var self = this;
                         self.isLoading = true;
                         axios
-                        .get(`https://file.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
+                        .get(`https://s3.eu-west-2.amazonaws.com/files.opentrack.run/live/euroath/european_calendar_${self.selectedYear}.json`)
                         .then(response => {
                             self.info = response.data;
                             console.log(self.info);
