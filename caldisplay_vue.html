@@ -716,7 +716,7 @@
                     compSeries: {	
                         type: Array,	
                         default: function() {	
-                            return [{label: '', value: 'dropdown', children: [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}]}, {label:'WA Indoor Tour', children: [{label:'hidden', value:'12', title: 'hidden', hidden: true}, {label:'WA Indoor Tour Gold', value:'1', title: 'WACT Europe Gold Meetings'}, {label:'WA Indoor Tour Silver', value:'2', title: 'WACT Europe Silver Meetings'}, {label:'WA Indoor Tour Bronze', value:'3', title: 'WACT Europe Bronze Meetings'}]}, {label: '', value: 'dropdown', children: [{label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'14', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}]}];	
+                            return [{label: '', value: 'dropdown', children: [{label:'WA Major Events', value:'6', title: 'WA Major Events'}, {label:'Diamond League', value:'10', title: 'Diamond League'}]}, {label:'WA Outdoor Tour', children: [{label:'WA Outdoor Tour Gold', value:'1', title: 'WACT Europe Gold Meetings (Indoors)'}, {label:'WA Outdoor Tour Silver', value:'2', title: 'WACT Europe Silver Meetings (Indoors)'}, {label:'WA Outdoor Tour Bronze', value:'3', title: 'WACT Europe Bronze Meetings (Indoors)'}]}, {label:'WA Indoor Tour', children: [{label:'hidden', value:'12', title: 'hidden', hidden: true}, {label:'WA Indoor Tour Gold', value:'77', title: 'WACT Europe Gold Meetings'}, {label:'WA Indoor Tour Silver', value:'78', title: 'WACT Europe Silver Meetings'}, {label:'WA Indoor Tour Bronze', value:'79', title: 'WACT Europe Bronze Meetings'}]}, {label: '', value: 'dropdown', children: [{label:'EA Major Events', value:'5', title: 'European Athletics Major Events'}, {label:'WA Permits', value:'9', title: 'WA Permits'}, {label:'EA Permits', value:'15', title: 'EA Permits'}, {label:'National Championships', value:'4', title: 'National Championships'}, {label:'National Permits', value:'11', title: 'National Permits'}, {label:'International Matches', value:'7', title: 'International Matches'}, {label:'Other international events', value:'14', title: 'Other international events'}, {label:'Other national events', value:'13', title: 'Other national events'}]}];
                         }	
                     },
                     ageGroups: {
@@ -734,7 +734,7 @@
                     events: {
                         type: Array,
                         default: function () {
-                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steelechase', value: '2000SC', title: '2000 Metres Steelechase'}, {label: '3000m Steelechase', value: '3000SC', title: '3000 Metres Steelechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
+                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steelechase', value: '2000SC', title: '2000 Metres Steelechase'}, {label: '3000m Steelechase', value: '3000SC', title: '3000 Metres Steelechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}]
                         }
                     },
                     trackEvents: {
@@ -746,7 +746,13 @@
                     fieldEvents: {
                         type: Array,
                         default: function () {
-                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
+                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
+                        }
+                    },
+                    combinedEvents: {
+                        type: Array,
+                        default: function () {
+                            return [{label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}]
                         }
                     },
                     allMonths: {
@@ -1222,6 +1228,7 @@
                             onSelectAll: function() {
                                 self.trackEvents.forEach(ev => self.selectedEvents.push(ev.value));
                                 self.fieldEvents.forEach(ev => self.selectedEvents.push(ev.value));
+                                self.combinedEvents.forEach(ev => self.selectedEvents.push(ev.value));
                             },
                             onDeselectAll: function() {
                                 self.selectedEvents = [];
@@ -1348,9 +1355,10 @@
                         $('#age-group-choices').multiselect('dataprovider', age_group_options);
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
 
-                        var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}];
+                        var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}, {label: 'Combined Events', children: []}];
                         self.trackEvents.forEach(e => event_options[0].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         self.fieldEvents.forEach(e => event_options[1].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        self.combinedEvents.forEach(e => event_options[2].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         // Checks if any filters where applied before changing year
                         self.selectedEvents.forEach(selevent => event_options.forEach(grp => grp.children.forEach(event => { if (selevent == event.value) event.selected = true })));
                         $('#event-choices').multiselect('dataprovider', event_options);
