@@ -734,19 +734,25 @@
                     events: {
                         type: Array,
                         default: function () {
-                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steelechase', value: '2000SC', title: '2000 Metres Steelechase'}, {label: '3000m Steelechase', value: '3000SC', title: '3000 Metres Steelechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}]
+                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steeplechase', value: '2000SC', title: '2000 Metres Steeplechase'}, {label: '3000m Steeplechase', value: '3000SC', title: '3000 Metres Steeplechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: '100mH', value: '100H', title: '100 Metres Hurdles'}, {label: '110mH', value: '110H', title: '110 Metres Hurdles'}, {label: '400mH', value: '400H', title: '400 Metres Hurdles'}, {label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}, {label: 'Pentathlon', value: 'PEN'}, {label: 'Heptathlon', value: 'HEP'},  {label: 'Decathlon', value: 'DEC'}]
                         }
                     },
                     trackEvents: {
                         type: Array,
                         default: function () {
-                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steelechase', value: '2000SC', title: '2000 Metres Steelechase'}, {label: '3000m Steelechase', value: '3000SC', title: '3000 Metres Steelechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}]
+                            return [{label: '60m', value: '60', title: '60 Metres'}, {label: '100m', value: '100', title: '100 Metres'}, {label: '200m', value: '200', title: '200 Metres'}, {label: '400m', value: '400', title: '400 Metres'}, {label: '800m', value: '800', title: '800 Metres'}, {label: '1500m', value: '1500', title: '1500 Metres'}, {label: '3000m', value: '3000', title: '3000 Metres'}, {label: '5000m', value: '5000', title: '5000 Metres'}, {label: '10,000m', value: '10000', title: '10,000 Metres'}, {label: 'Half-Marathon', value: 'HM', title: 'Half Marathon (21.0975km)'}, {label: 'Marathon', value: 'MAR', title: 'Marathon (42.195km)'}, {label: '2000m Steeplechase', value: '2000SC', title: '2000 Metres Steeplechase'}, {label: '3000m Steeplechase', value: '3000SC', title: '3000 Metres Steeplechase'}, {label: '60mH', value: '60H', title: '60 Metres Hurdles'}, {label: '100mH', value: '100H', title: '100 Metres Hurdles'}, {label: '110mH', value: '110H', title: '110 Metres Hurdles'}, {label: '400mH', value: '400H', title: '400 Metres Hurdles'}]
                         }
                     },
                     fieldEvents: {
                         type: Array,
                         default: function () {
-                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}, {label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
+                            return [{label: 'High Jump', value: 'HJ'}, {label: 'Pole Vault', value: 'PV'}, {label: 'Long Jump', value: 'LJ'}, {label: 'Triple Jump', value: 'TJ'}, {label: 'Shot Put', value: 'SP'}, {label: 'Discus', value: 'DT'}, {label: 'Hammer', value: 'HT'}, {label: 'Javelin', value: 'JT'}]
+                        }
+                    },
+                    roadEvents: {
+                        type: Array,
+                        default: function () {
+                            return [{label: '20km Walk', value: '20KW'}, {label: '4X100m Relay', value: '4X100'}]
                         }
                     },
                     combinedEvents: {
@@ -1228,6 +1234,7 @@
                             onSelectAll: function() {
                                 self.trackEvents.forEach(ev => self.selectedEvents.push(ev.value));
                                 self.fieldEvents.forEach(ev => self.selectedEvents.push(ev.value));
+                                self.roadEvents.forEach(ev => self.selectedEvents.push(ev.value));
                                 self.combinedEvents.forEach(ev => self.selectedEvents.push(ev.value));
                             },
                             onDeselectAll: function() {
@@ -1355,10 +1362,11 @@
                         $('#age-group-choices').multiselect('dataprovider', age_group_options);
                         $('#m-age-group-choices').multiselect('dataprovider', age_group_options);
 
-                        var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}, {label: 'Combined Events', children: []}];
+                        var event_options = [{label:'Track Events', children: []}, {label: 'Field Events', children: []}, {label: 'Road Events', children: []}, {label: 'Combined Events', children: []}];
                         self.trackEvents.forEach(e => event_options[0].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         self.fieldEvents.forEach(e => event_options[1].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
-                        self.combinedEvents.forEach(e => event_options[2].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        self.roadEvents.forEach(e => event_options[2].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
+                        self.combinedEvents.forEach(e => event_options[3].children.push({label: e.label, value: e.value, title: e.title, selected: false}));
                         // Checks if any filters where applied before changing year
                         self.selectedEvents.forEach(selevent => event_options.forEach(grp => grp.children.forEach(event => { if (selevent == event.value) event.selected = true })));
                         $('#event-choices').multiselect('dataprovider', event_options);
